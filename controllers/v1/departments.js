@@ -1,26 +1,8 @@
 import prisma from "../../utils/prisma.js"
+import { getDocument } from "./base"
+const department = prisma.department
 
-const getDepartment = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    const department = await prisma.department.findUnique({
-      where: { id: Number(id) },
-    });
-
-    if (!department) {
-      return res
-        .status(200)
-        .json({ msg: `No department with the id: ${id} found` });
-    }
-
-    return res.json({ data: department });
-  } catch (err) {
-    return res.status(500).json({
-      msg: err.message,
-    });
-  }
-};
+const getDepartment = getDocument(department)
 
 const getDepartments = async (req, res) => {
   try {

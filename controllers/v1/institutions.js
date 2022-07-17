@@ -1,30 +1,9 @@
 import prisma from "../../utils/prisma.js"
+import { getDocument } from "./base.js"
+const institution = prisma.institution
 
-const getInstitution = async (req, res) => {
-  try {
-    const { id } = req.params;
 
-    /**
-     * The findUnique function returns a single record using
-     * an id or unique identifier
-     */
-    const institution = await prisma.institution.findUnique({
-      where: { id: Number(id) },
-    });
-
-    if (!institution) {
-      return res
-        .status(200)
-        .json({ msg: `No institution with the id: ${id} found` });
-    }
-
-    return res.json({ data: institution });
-  } catch (err) {
-    return res.status(500).json({
-      msg: err.message,
-    });
-  }
-};
+const getInstitution = getDocument(institution)
 
 const getInstitutions = async (req, res) => {
   try {
