@@ -5,15 +5,12 @@
 import dotenv from 'dotenv'
 import express, { urlencoded, json } from 'express'
 
-/**
- * Routes to be added here later
- */
+import { institutions, departments } from "./routes/v1/"
 
 /**
- * You will create the routes for institutions and departments later
+ * An object holding all the routes available in the API
  */
- import { institutions, departments } from "./routes/v1/"
- const routes = { institutions, departments }
+const routes = { institutions, departments }
 
 dotenv.config()
 
