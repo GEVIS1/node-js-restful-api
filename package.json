@@ -19,7 +19,11 @@
   },
   "homepage": "https://github.com/otago-polytechnic-bit-courses/playground-GEVIS1#readme",
   "dependencies": {
+    "@prisma/client": "^4.0.0",
     "dotenv": "^16.0.1",
     "express": "^4.18.1"
+  },
+  "devDependencies": {
+    "prisma": "^4.0.0"
   }
 }
