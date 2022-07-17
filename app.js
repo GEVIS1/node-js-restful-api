@@ -31,6 +31,9 @@ const PORT = process.env.PORT
 app.use(urlencoded({ extended: false }))
 app.use(json())
 
+/**
+ * Iterate over the routes and add them to the express app
+ */
 for (const [routeName, route] of Object.entries(routes)) {
     app.use(`/${BASE_URL}/${CURRENT_VERSION}/${routeName}`, route)
 }
