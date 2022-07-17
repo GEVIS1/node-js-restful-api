@@ -12,8 +12,7 @@ import express, { urlencoded, json } from 'express'
 /**
  * You will create the routes for institutions and departments later
  */
- import institutions from "./routes/v1/institutions.js";
- import departments from "./routes/v1/departments.js";
+ import { institutions, departments } from "./routes/v1/"
 
 dotenv.config()
 
