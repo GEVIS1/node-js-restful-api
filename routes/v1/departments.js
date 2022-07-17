@@ -1,5 +1,5 @@
-import { Router } from "express";
-const router = Router();
+import { Router } from 'express'
+const router = Router()
 
 import {
   getDepartment,
@@ -7,13 +7,13 @@ import {
   createDepartment,
   updateDepartment,
   deleteDepartment,
-} from "../../controllers/v1/";
+} from '../../controllers/v1/'
 
-router.route("/").get(getDepartments).post(createDepartment);
+router.route('/').get(getDepartments).post(createDepartment)
 router
-  .route("/:id")
+  .route('/:id')
   .get(getDepartment)
   .put(updateDepartment)
-  .delete(deleteDepartment);
+  .delete(deleteDepartment)
 
-export default router;
+export default router

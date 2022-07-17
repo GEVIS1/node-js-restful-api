@@ -1,0 +1,14 @@
+# Ignore directories:
+.vscode/
+doc/
+node_modules/
+.hooks/
+.git/
+
+# Ignore files:
+example.env
+LICENSE
+package-lock.json
+package.json
+Procfile
+README.md
