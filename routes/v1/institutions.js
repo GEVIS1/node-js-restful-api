@@ -7,7 +7,7 @@ import {
   createInstitution,
   updateInstitution,
   deleteInstitution,
-} from "../../controllers/v1/institutions.js";
+} from "../../controllers/v1/";
 
 router.route("/").get(getInstitutions).post(createInstitution);
 router

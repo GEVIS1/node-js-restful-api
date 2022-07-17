@@ -7,7 +7,7 @@ import {
   createDepartment,
   updateDepartment,
   deleteDepartment,
-} from "../../controllers/v1/departments.js";
+} from "../../controllers/v1/";
 
 router.route("/").get(getDepartments).post(createDepartment);
 router
