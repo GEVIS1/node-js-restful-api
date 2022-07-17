@@ -13,6 +13,7 @@ import express, { urlencoded, json } from 'express'
  * You will create the routes for institutions and departments later
  */
  import { institutions, departments } from "./routes/v1/"
+ const routes = { institutions, departments }
 
 dotenv.config()
 
@@ -33,8 +34,8 @@ const PORT = process.env.PORT
 app.use(urlencoded({ extended: false }))
 app.use(json())
 
-//app.use(`/${BASE_URL}/${CURRENT_VERSION}/TODO`, TODO)
-app.use(`/${BASE_URL}/${CURRENT_VERSION}/institutions`, institutions)
-app.use(`/${BASE_URL}/${CURRENT_VERSION}/departments`, departments)
+for (const [routeName, route] of Object.entries(routes)) {
+    app.use(`/${BASE_URL}/${CURRENT_VERSION}/${routeName}`, route)
+}
 
 app.listen(PORT, () => console.log(`Server is listening on port ${PORT}`))
