@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node --experimental-specifier-resolution=node app.js",
+    "start": "nodemon --experimental-specifier-resolution=node app.js",
     "prettier:install": "[ -d .git/hooks ] && cp .hooks/pre-commit .git/hooks && chmod +x .git/hooks/pre-commit"
   },
   "repository": {
@@ -25,6 +25,7 @@
     "express": "^4.18.1"
   },
   "devDependencies": {
+    "nodemon": "^2.0.19",
     "prettier": "^2.7.1",
     "prisma": "^4.0.0"
   }
