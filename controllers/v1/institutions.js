@@ -1,31 +1,17 @@
-import prisma from '../../utils/prisma.js'
-import { getDocument } from './base.js'
-const institution = prisma.institution
+import prisma, { Institution } from '../../utils/prisma.js'
+import { getDocument, getDocuments } from './base.js'
+import { institutionRelations } from '../../prisma/relations'
 
-const getInstitution = getDocument(institution)
-
-const getInstitutions = async (req, res) => {
-  try {
-    /**
-     * The findMany function returns all records
-     */
-    const institutions = await prisma.institution.findMany({
-      include: {
-        departments: true,
-      },
-    })
-
-    if (institutions.length === 0) {
-      return res.status(200).json({ msg: 'No institutions found' })
-    }
-
-    return res.json({ data: institutions })
-  } catch (err) {
-    return res.status(500).json({
-      msg: err.message,
-    })
-  }
-}
+const getInstitution = getDocument(
+  Institution,
+  institutionRelations,
+  'institution'
+)
+const getInstitutions = getDocuments(
+  Institution,
+  institutionRelations,
+  'institution'
+)
 
 const createInstitution = async (req, res) => {
   try {

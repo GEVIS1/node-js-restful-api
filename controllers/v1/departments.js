@@ -1,24 +1,13 @@
-import prisma from '../../utils/prisma.js'
-import { getDocument } from './base'
-const department = prisma.department
+import prisma, { Department } from '../../utils/prisma.js'
+import { getDocument, getDocuments } from './base'
+import { departmentRelations } from '../../prisma/relations'
 
-const getDepartment = getDocument(department)
-
-const getDepartments = async (req, res) => {
-  try {
-    const departments = await prisma.department.findMany()
-
-    if (departments.length === 0) {
-      return res.status(200).json({ msg: 'No departments found' })
-    }
-
-    return res.json({ data: departments })
-  } catch (err) {
-    return res.status(500).json({
-      msg: err.message,
-    })
-  }
-}
+const getDepartment = getDocument(Department, departmentRelations, 'department')
+const getDepartments = getDocuments(
+  Department,
+  departmentRelations,
+  'department'
+)
 
 const createDepartment = async (req, res) => {
   try {
