@@ -14,6 +14,14 @@ const routes = { institutions, departments }
 
 dotenv.config()
 
+/**
+ * End execution if required environment variables are undefined
+ */
+if (!process.env.PORT) {
+  console.log("Missing .env or missing variable in .env")
+  process.exit(0)
+}
+
 const app = express()
 
 const BASE_URL = 'api'
