@@ -2,13 +2,15 @@ import prisma from '../../utils/prisma'
 import { getDocument, getDocuments } from './base'
 import { institutionRelations } from '../../prisma/relations'
 
+const Institution = prisma.institution
+
 const getInstitution = getDocument(
-  prisma.institution,
+  Institution,
   institutionRelations,
   'institution'
 )
 const getInstitutions = getDocuments(
-  prisma.institution,
+  Institution,
   institutionRelations,
   'institution'
 )
@@ -21,7 +23,7 @@ const createInstitution = async (req, res) => {
      * The create function creates a new record using the required fields,
      * i.e., name, region and country
      */
-    await prisma.institution.create({
+    await Institution.create({
       data: { name, region, country },
     })
 
@@ -36,6 +38,7 @@ const createInstitution = async (req, res) => {
       data: newInstitutions,
     })
   } catch (err) {
+    console.log(err)
     return res.status(500).json({
       msg: err.message,
     })

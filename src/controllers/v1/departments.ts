@@ -2,7 +2,9 @@ import prisma from '../../utils/prisma'
 import { getDocument, getDocuments } from './base'
 import { departmentRelations } from '../../prisma/relations'
 
-const getDepartment = getDocument(prisma.department, departmentRelations, 'department')
+const Department = prisma.department
+
+const getDepartment = getDocument(Department, departmentRelations, 'department')
 const getDepartments = getDocuments(
   prisma.department,
   departmentRelations,
