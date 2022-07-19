@@ -3,9 +3,8 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "type": "module",
   "scripts": {
-    "start": "nodemon --experimental-specifier-resolution=node app.js",
+    "start": "nodemon --experimental-specifier-resolution=node src/app.ts",
     "prettier:install": "[ -d .git/hooks ] && cp .hooks/pre-commit .git/hooks && chmod +x .git/hooks/pre-commit"
   },
   "repository": {
@@ -25,8 +24,11 @@
     "express": "^4.18.1"
   },
   "devDependencies": {
+    "@types/express": "^4.17.13",
     "nodemon": "^2.0.19",
     "prettier": "^2.7.1",
-    "prisma": "^4.0.0"
+    "prisma": "^4.0.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.7.4"
   }
 }

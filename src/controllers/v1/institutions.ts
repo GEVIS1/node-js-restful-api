@@ -1,14 +1,14 @@
-import prisma, { Institution } from '../../utils/prisma.js'
-import { getDocument, getDocuments } from './base.js'
+import prisma from '../../utils/prisma'
+import { getDocument, getDocuments } from './base'
 import { institutionRelations } from '../../prisma/relations'
 
 const getInstitution = getDocument(
-  Institution,
+  prisma.institution,
   institutionRelations,
   'institution'
 )
 const getInstitutions = getDocuments(
-  Institution,
+  prisma.institution,
   institutionRelations,
   'institution'
 )
