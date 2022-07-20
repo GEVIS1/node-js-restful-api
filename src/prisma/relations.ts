@@ -5,5 +5,5 @@
 export type Relation = {
     include: {}
 }
-export const institutionRelations: Relation = { include: { }}
+export const institutionRelations: Partial<Relation> = {}
 export const departmentRelations: Relation = { include: { institution: true } }

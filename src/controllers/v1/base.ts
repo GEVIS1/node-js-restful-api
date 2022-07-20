@@ -1,7 +1,7 @@
 import { Relation } from "../../prisma/relations"
 import { Prisma, PrismaClient } from "@prisma/client"
 
-const getDocument = (model: any, modelName: String, relations: Relation) => async (req, res) => {
+const getDocument = (model: any, modelName: String, relations: Relation | Partial<Relation>) => async (req, res) => {
   try {
     const { id } = req.params
 
@@ -24,7 +24,7 @@ const getDocument = (model: any, modelName: String, relations: Relation) => asyn
   }
 }
 
-const getDocuments = (model: any, modelName: String, relations: Relation) => async (req, res) => {
+const getDocuments = (model: any, modelName: String, relations: Relation | Partial<Relation>) => async (req, res) => {
   try {
     /**
      * The findMany function returns all records
@@ -45,7 +45,7 @@ const getDocuments = (model: any, modelName: String, relations: Relation) => asy
   }
 }
 
-const createDocument = (model: any, modelName: String, relations: Relation, modelType: Prisma.InstitutionCreateInput | Prisma.DepartmentCreateInput) => async (req, res) => {
+const createDocument = (model: any, modelName: String, relations: Relation | Partial<Relation>, modelType: Prisma.InstitutionCreateInput | Prisma.DepartmentCreateInput) => async (req, res) => {
   try {
     // Extract the required keys for the type
     const properties = {}
