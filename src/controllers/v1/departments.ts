@@ -1,14 +1,19 @@
 import prisma from '../../utils/prisma'
 import { getDocument, getDocuments } from './base'
 import { departmentRelations } from '../../prisma/relations'
+import { departmentType } from '../../prisma/modelTypes'
 
 const Department = prisma.department
 
-const getDepartment = getDocument(Department, departmentRelations, 'department')
+const getDepartment = getDocument(
+  Department,
+  'department',
+  departmentRelations,
+  )
 const getDepartments = getDocuments(
   prisma.department,
+  'department',
   departmentRelations,
-  'department'
 )
 
 const createDepartment = async (req, res) => {
