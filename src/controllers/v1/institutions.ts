@@ -1,49 +1,56 @@
 import prisma from '../../utils/prisma'
-import { getDocument, getDocuments } from './base'
+import { createDocument, getDocument, getDocuments } from './base'
 import { institutionRelations } from '../../prisma/relations'
+import { institutionType } from '../../prisma/modelTypes'
 
 const Institution = prisma.institution
 
 const getInstitution = getDocument(
   Institution,
+  'institution',
   institutionRelations,
-  'institution'
 )
 const getInstitutions = getDocuments(
   Institution,
+  'institution',
   institutionRelations,
-  'institution'
 )
 
-const createInstitution = async (req, res) => {
-  try {
-    const { name, region, country } = req.body
+const createInstitution = createDocument(
+  Institution,
+  'institution',
+  institutionRelations,
+  institutionType
+)
+// const createInstitution = async (req, res) => {
+//   try {
+//     const { name, region, country } = req.body
 
-    /**
-     * The create function creates a new record using the required fields,
-     * i.e., name, region and country
-     */
-    await Institution.create({
-      data: { name, region, country },
-    })
+//     /**
+//      * The create function creates a new record using the required fields,
+//      * i.e., name, region and country
+//      */
+//     await Institution.create({
+//       data:  { name, region, country },
+//     })
 
-    const newInstitutions = await prisma.institution.findMany({
-      include: {
-        departments: true,
-      },
-    })
+//     const newInstitutions = await prisma.institution.findMany({
+//       include: {
+//         departments: true,
+//       },
+//     })
 
-    return res.status(201).json({
-      msg: 'Institution successfully created',
-      data: newInstitutions,
-    })
-  } catch (err) {
-    console.log(err)
-    return res.status(500).json({
-      msg: err.message,
-    })
-  }
-}
+//     return res.status(201).json({
+//       msg: 'Institution successfully created',
+//       data: newInstitutions,
+//     })
+//   } catch (err) {
+//     console.log(err)
+//     return res.status(500).json({
+//       msg: err.message,
+//     })
+//   }
+// }
 
 const updateInstitution = async (req, res) => {
   try {
