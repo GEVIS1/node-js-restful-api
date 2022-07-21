@@ -1,6 +1,8 @@
 import { Relation } from "../../prisma/relations"
 import { Prisma, PrismaClient } from "@prisma/client"
 
+type InstitutionCreateInput = Prisma.InstitutionCreateInput
+
 const getDocument = (model: any, modelName: String, relations: Relation | Partial<Relation>) => async (req, res) => {
   try {
     const { id } = req.params
@@ -66,6 +68,7 @@ const createDocument = (model: any, modelName: String, relations: Relation | Par
       data: newDocuments,
     })
   } catch (err) {
+    console.log('err', err)
     return res.status(500).json({
       msg: err.message,
     })
