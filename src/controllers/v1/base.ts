@@ -59,7 +59,7 @@ const createDocument = (model: any, modelName: String, relations: Relation | Par
       data
     })
 
-    const newDocuments = await model.findMany()
+    const newDocuments = await model.findMany(relations)
 
     return res.status(201).json({
       msg: `${modelName} successfully created`,
