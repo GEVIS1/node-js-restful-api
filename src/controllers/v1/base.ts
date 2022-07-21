@@ -45,7 +45,7 @@ const getDocuments = (model: any, modelName: String, relations: Relation | Parti
   }
 }
 
-const createDocument = (model: any, modelName: String, relations: Relation | Partial<Relation>, modelType: Prisma.InstitutionCreateInput | Prisma.DepartmentCreateInput) => async (req, res) => {
+const createDocument = (model: any, modelName: String, relations: Relation | Partial<Relation>, modelType: Prisma.InstitutionUncheckedCreateInput | Prisma.DepartmentUncheckedCreateInput) => async (req, res) => {
   try {
     // Extract the required keys for the type
     const properties = {}
