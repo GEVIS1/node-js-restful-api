@@ -47,7 +47,7 @@ const getDocuments = (model: any, modelName: String, relations: Relation | Parti
 
 const createDocument = (model: any, modelName: String, relations: Relation | Partial<Relation>, modelType: Prisma.InstitutionUncheckedCreateInput | Prisma.DepartmentUncheckedCreateInput) => async (req, res) => {
   try {
-    if (properties === {})
+    if (Object.keys(req.body).length === 0)
       throw Error("Received empty body")
     
     // Extract the required keys for the type
