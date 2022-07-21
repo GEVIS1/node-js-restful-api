@@ -1,5 +1,5 @@
 import prisma from '../../utils/prisma'
-import { getDocument, getDocuments } from './base'
+import { getDocument, getDocuments, createDocument } from './base'
 import { departmentRelations } from '../../prisma/relations'
 import { departmentType } from '../../prisma/modelTypes'
 
@@ -11,31 +11,17 @@ const getDepartment = getDocument(
   departmentRelations,
   )
 const getDepartments = getDocuments(
-  prisma.department,
+  Department,
   'department',
   departmentRelations,
 )
 
-const createDepartment = async (req, res) => {
-  try {
-    const { name, institutionId } = req.body
-
-    await prisma.department.create({
-      data: { name, institutionId },
-    })
-
-    const newDepartments = await prisma.department.findMany()
-
-    return res.status(201).json({
-      msg: 'Department successfully created',
-      data: newDepartments,
-    })
-  } catch (err) {
-    return res.status(500).json({
-      msg: err.message,
-    })
-  }
-}
+const createDepartment = createDocument(
+  prisma.department,
+  'department',
+  departmentRelations,
+  departmentType,
+)
 
 const updateDepartment = async (req, res) => {
   try {
