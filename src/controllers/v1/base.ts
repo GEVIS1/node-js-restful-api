@@ -1,6 +1,8 @@
 import { Relation } from "../../prisma/relations"
 import { Prisma, PrismaClient } from "@prisma/client"
 
+type InstitutionCreateInput = Prisma.InstitutionCreateInput
+
 const getDocument = (model: any, modelName: String, relations: Relation | Partial<Relation>) => async (req, res) => {
   try {
     const { id } = req.params
@@ -47,23 +49,11 @@ const getDocuments = (model: any, modelName: String, relations: Relation | Parti
 
 const createDocument = (model: any, modelName: String, relations: Relation | Partial<Relation>, modelType: Prisma.InstitutionCreateInput | Prisma.DepartmentCreateInput) => async (req, res) => {
   try {
-    // Extract the required keys for the type
-    const properties = {}
-
-    for (const [key, value] of Object.entries(res.body)) {
-      if (key in modelType) {
-        properties[key] = value
-      }
-    }
-    // This should be replaced with an include
-    //     const newInstitutions = await prisma.institution.findMany({
-    //       include: {
-    //         departments: true,
-    //       },
-    //     })
-
-    if (properties === {})
+    if (req.body === {})
       throw Error("Received empty body")
+    
+    // Extract the required keys for the type
+    const properties = extractProperties(req, modelType)
 
     const data = {...properties}
 
@@ -71,19 +61,28 @@ const createDocument = (model: any, modelName: String, relations: Relation | Par
       data
     })
 
-    const newDocuments = await model.findMany()
+    const newDocuments = await model.findMany(relations)
 
     return res.status(201).json({
       msg: `${modelName} successfully created`,
       data: newDocuments,
     })
   } catch (err) {
+    console.log('err', err)
     return res.status(500).json({
       msg: err.message,
     })
   }
 }
 
-
+function extractProperties(req: any, modelType: Prisma.InstitutionCreateInput | Prisma.DepartmentCreateInput) {
+  const properties = {}
+  for (const [key, value] of Object.entries(req.body)) {
+    if (key in modelType) {
+      properties[key] = value
+    }
+  }
+  return properties
+}
 
 export { getDocument, getDocuments, createDocument }

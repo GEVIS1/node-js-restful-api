@@ -22,35 +22,6 @@ const createInstitution = createDocument(
   institutionRelations,
   institutionType
 )
-// const createInstitution = async (req, res) => {
-//   try {
-//     const { name, region, country } = req.body
-
-//     /**
-//      * The create function creates a new record using the required fields,
-//      * i.e., name, region and country
-//      */
-//     await Institution.create({
-//       data:  { name, region, country },
-//     })
-
-//     const newInstitutions = await prisma.institution.findMany({
-//       include: {
-//         departments: true,
-//       },
-//     })
-
-//     return res.status(201).json({
-//       msg: 'Institution successfully created',
-//       data: newInstitutions,
-//     })
-//   } catch (err) {
-//     console.log(err)
-//     return res.status(500).json({
-//       msg: err.message,
-//     })
-//   }
-// }
 
 const updateInstitution = async (req, res) => {
   try {
