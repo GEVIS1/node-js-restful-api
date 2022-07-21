@@ -47,25 +47,13 @@ const getDocuments = (model: any, modelName: String, relations: Relation | Parti
 
 const createDocument = (model: any, modelName: String, relations: Relation | Partial<Relation>, modelType: Prisma.InstitutionUncheckedCreateInput | Prisma.DepartmentUncheckedCreateInput) => async (req, res) => {
   try {
-    // Extract the required keys for the type
-    const properties = {}
-
-    for (const [key, value] of Object.entries(res.body)) {
-      if (key in modelType) {
-        properties[key] = value
-      }
-    }
-    // This should be replaced with an include
-    //     const newInstitutions = await prisma.institution.findMany({
-    //       include: {
-    //         departments: true,
-    //       },
-    //     })
-
     if (properties === {})
       throw Error("Received empty body")
+    
+    // Extract the required keys for the type
+    const properties = extractProperties(req.body, modelType)
 
-    const data = {...properties}
+    const data = { ...properties }
 
     await model.create({
       data
@@ -84,6 +72,14 @@ const createDocument = (model: any, modelName: String, relations: Relation | Par
   }
 }
 
-
+function extractProperties(body: any, modelType: Prisma.InstitutionUncheckedCreateInput | Prisma.DepartmentUncheckedCreateInput) {
+  const properties = {}
+  for (const [key, value] of Object.entries(body)) {
+    if (key in modelType) {
+      properties[key] = value
+    }
+  }
+  return properties
+}
 
 export { getDocument, getDocuments, createDocument }
