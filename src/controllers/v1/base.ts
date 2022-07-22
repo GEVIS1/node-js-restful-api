@@ -1,6 +1,13 @@
 import { Relation } from "../../prisma/relations"
 import { Prisma } from "@prisma/client"
 
+/**
+ * Function taking in information about a model, returning a function able to fetch a document from the given model
+ * @param model Prisma Model Delegate
+ * @param modelName The name of the model
+ * @param relations An instance of the Relation type. Used for populating the relations in the returned data.
+ * @returns Function with the correct model set for use in the routes
+ */
 const getDocument = (model: any, modelName: String, relations: Relation | Partial<Relation>) => async (req, res) => {
   try {
     const { id } = req.params
@@ -24,6 +31,13 @@ const getDocument = (model: any, modelName: String, relations: Relation | Partia
   }
 }
 
+/**
+ * Function taking in information about a model, returning a function able to fetch all documents from the given model
+ * @param model Prisma Model Delegate
+ * @param modelName The name of the model
+ * @param relations An instance of the Relation type. Used for populating the relations in the returned data.
+ * @returns Function with the correct model set for use in the routes
+ */
 const getDocuments = (model: any, modelName: String, relations: Relation | Partial<Relation>) => async (req, res) => {
   try {
     /**
@@ -45,6 +59,14 @@ const getDocuments = (model: any, modelName: String, relations: Relation | Parti
   }
 }
 
+/**
+ * Function taking in information about a model, returning a function able to insert a document into the given model
+ * @param model Prisma Model Delegate
+ * @param modelName The name of the model
+ * @param relations An instance of the Relation type. Used for populating the relations in the returned data.
+ * @param modelType An instance of the UncheckedCreateInput type for the model. Used to verify input data before insertion.
+ * @returns Function with the correct model set for use in the routes
+ */
 const createDocument = (model: any, modelName: String, relations: Relation | Partial<Relation>, modelType: Prisma.InstitutionUncheckedCreateInput | Prisma.DepartmentUncheckedCreateInput) => async (req, res) => {
   try {
     if (Object.keys(req.body).length === 0)
@@ -73,6 +95,12 @@ const createDocument = (model: any, modelName: String, relations: Relation | Par
   }
 }
 
+/**
+ * Uses body and modelType to return an object with all the properties of that modelType found in the body.
+ * @param body The data sent in a request.
+ * @param modelType An instance of the UncheckedCreateInput type for the model.
+ * @returns 
+ */
 function extractProperties(body: any, modelType: Prisma.InstitutionUncheckedCreateInput | Prisma.DepartmentUncheckedCreateInput) {
   const properties = {}
   for (const [key, value] of Object.entries(body)) {
