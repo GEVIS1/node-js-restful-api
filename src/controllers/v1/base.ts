@@ -1,7 +1,5 @@
 import { Relation } from "../../prisma/relations"
-import { Prisma, PrismaClient } from "@prisma/client"
-
-type InstitutionCreateInput = Prisma.InstitutionCreateInput
+import { Prisma } from "@prisma/client"
 
 const getDocument = (model: any, modelName: String, relations: Relation | Partial<Relation>) => async (req, res) => {
   try {
