@@ -7,7 +7,7 @@ const getDocument = (model: any, modelName: String, relations: Relation | Partia
   try {
     const { id } = req.params
 
-    const document = await model.findUnique({
+    const document: Prisma.DepartmentSelect | Prisma.InstitutionSelect = await model.findUnique({
       ...relations,
       where: { id: Number(id) },
     })
@@ -31,7 +31,7 @@ const getDocuments = (model: any, modelName: String, relations: Relation | Parti
     /**
      * The findMany function returns all records
      */
-    const documents = await model.findMany({
+    const documents: Prisma.DepartmentSelect[] | Prisma.InstitutionSelect[] = await model.findMany({
       ...relations,
     })
 
@@ -61,7 +61,7 @@ const createDocument = (model: any, modelName: String, relations: Relation | Par
       data
     })
 
-    const newDocuments = await model.findMany(relations)
+    const newDocuments: Prisma.DepartmentSelect[] | Prisma.InstitutionSelect[]  = await model.findMany(relations)
 
     return res.status(201).json({
       msg: `${modelName} successfully created`,
