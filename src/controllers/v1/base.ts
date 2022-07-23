@@ -8,7 +8,7 @@ import { Prisma } from "@prisma/client"
  * @param relations An instance of the Relation type. Used for populating the relations in the returned data.
  * @returns Function with the correct model set for use in the routes
  */
-const getDocument = (model: any, modelName: String, relations: Relation | Partial<Relation>) => async (req, res) => {
+const getDocument = (model: any, modelName: string, relations: Relation | Partial<Relation>) => async (req, res) => {
   try {
     const { id } = req.params
 
@@ -38,7 +38,7 @@ const getDocument = (model: any, modelName: String, relations: Relation | Partia
  * @param relations An instance of the Relation type. Used for populating the relations in the returned data.
  * @returns Function with the correct model set for use in the routes
  */
-const getDocuments = (model: any, modelName: String, relations: Relation | Partial<Relation>) => async (req, res) => {
+const getDocuments = (model: any, modelName: string, relations: Relation | Partial<Relation>) => async (req, res) => {
   try {
     /**
      * The findMany function returns all records
@@ -68,7 +68,7 @@ const getDocuments = (model: any, modelName: String, relations: Relation | Parti
  * @param modelType An instance of the UncheckedCreateInput type for the model. Used to verify input data before insertion.
  * @returns Function with the correct model set for use in the routes
  */
-const createDocument = (model: any, modelName: String, relations: Relation | Partial<Relation>, modelType: Prisma.InstitutionUncheckedCreateInput | Prisma.DepartmentUncheckedCreateInput) => async (req, res) => {
+const createDocument = (model: any, modelName: string, relations: Relation | Partial<Relation>, modelType: Prisma.InstitutionUncheckedCreateInput | Prisma.DepartmentUncheckedCreateInput) => async (req, res) => {
   try {    
     // Extract the required keys for the type
     const properties = extractProperties(req.body, modelType)
@@ -93,7 +93,7 @@ const createDocument = (model: any, modelName: String, relations: Relation | Par
   }
 }
 
-const updateDocument = (model: any, modelName: String, modelType: Prisma.InstitutionUncheckedCreateInput | Prisma.DepartmentUncheckedCreateInput) => async (req, res) => {
+const updateDocument = (model: any, modelName: string, modelType: Prisma.InstitutionUncheckedCreateInput | Prisma.DepartmentUncheckedCreateInput) => async (req, res) => {
   try {
     const { id } = req.params
     const properties = extractProperties(req.body, modelType)
