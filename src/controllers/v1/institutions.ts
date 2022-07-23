@@ -1,5 +1,5 @@
 import prisma from '../../utils/prisma'
-import { createDocument, getDocument, getDocuments } from './base'
+import { createDocument, getDocument, getDocuments, updateDocument } from './base'
 import { institutionRelations } from '../../prisma/relations'
 import { institutionType } from '../../prisma/modelTypes'
 
@@ -23,40 +23,11 @@ const createInstitution = createDocument(
   institutionType
 )
 
-const updateInstitution = async (req, res) => {
-  try {
-    const { id } = req.params
-    const { name, region, country } = req.body
-
-    let institution = await prisma.institution.findUnique({
-      where: { id: Number(id) },
-    })
-
-    if (!institution) {
-      return res
-        .status(200)
-        .json({ msg: `No institution with the id: ${id} found` })
-    }
-
-    /**
-     * The update function updates a single record using an
-     * id or unique identifier
-     */
-    institution = await prisma.institution.update({
-      where: { id: Number(id) },
-      data: { name, region, country },
-    })
-
-    return res.json({
-      msg: `Institution with the id: ${id} successfully updated`,
-      data: institution,
-    })
-  } catch (err) {
-    return res.status(500).json({
-      msg: err.message,
-    })
-  }
-}
+const updateInstitution = updateDocument(
+  Institution,
+  'institution',
+  institutionType
+)
 
 const deleteInstitution = async (req, res) => {
   try {
