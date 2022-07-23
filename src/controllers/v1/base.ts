@@ -44,6 +44,7 @@ const getDocuments = (model: any, modelName: String, relations: Relation | Parti
      * The findMany function returns all records
      */
     const documents: Prisma.DepartmentSelect[] | Prisma.InstitutionSelect[] = await model.findMany({
+      orderBy: {id: "asc"},
       ...relations,
     })
 
