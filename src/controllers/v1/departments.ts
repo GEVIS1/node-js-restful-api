@@ -1,5 +1,5 @@
 import prisma from '../../utils/prisma'
-import { getDocument, getDocuments, createDocument } from './base'
+import { getDocument, getDocuments, createDocument, updateDocument } from './base'
 import { departmentRelations } from '../../prisma/relations'
 import { departmentType } from '../../prisma/modelTypes'
 
@@ -23,36 +23,11 @@ const createDepartment = createDocument(
   departmentType,
 )
 
-const updateDepartment = async (req, res) => {
-  try {
-    const { id } = req.params
-    const { name, institutionId } = req.body
-
-    let department = await prisma.department.findUnique({
-      where: { id: Number(id) },
-    })
-
-    if (!department) {
-      return res
-        .status(200)
-        .json({ msg: `No department with the id: ${id} found` })
-    }
-
-    department = await prisma.department.update({
-      where: { id: Number(id) },
-      data: { name, institutionId },
-    })
-
-    return res.json({
-      msg: `Department with the id: ${id} successfully updated`,
-      data: department,
-    })
-  } catch (err) {
-    return res.status(500).json({
-      msg: err.message,
-    })
-  }
-}
+const updateDepartment = updateDocument(
+  Department,
+  'department',
+  departmentType,
+)
 
 const deleteDepartment = async (req, res) => {
   try {
