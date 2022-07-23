@@ -4,7 +4,7 @@ import {
   createDepartment,
   updateDepartment,
   deleteDepartment,
-} from './departments'
+} from './departments';
 
 import {
   getInstitution,
@@ -12,7 +12,7 @@ import {
   createInstitution,
   updateInstitution,
   deleteInstitution,
-} from './institutions'
+} from './institutions';
 
 export {
   getDepartment,
@@ -25,4 +25,4 @@ export {
   createInstitution,
   updateInstitution,
   deleteInstitution,
-}
+};

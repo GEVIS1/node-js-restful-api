@@ -1,42 +1,42 @@
 import prisma, {
   institutionRelations,
   institutionType,
-} from '../../utils/prisma'
+} from '../../utils/prisma';
 import {
   createDocument,
   deleteDocument,
   getDocument,
   getDocuments,
   updateDocument,
-} from './base'
+} from './base';
 
-const Institution = prisma.institution
+const Institution = prisma.institution;
 
 const getInstitution = getDocument(
   Institution,
   'institution',
-  institutionRelations
-)
+  institutionRelations,
+);
 const getInstitutions = getDocuments(
   Institution,
   'institution',
-  institutionRelations
-)
+  institutionRelations,
+);
 
 const createInstitution = createDocument(
   Institution,
   'institution',
   institutionRelations,
-  institutionType
-)
+  institutionType,
+);
 
 const updateInstitution = updateDocument(
   Institution,
   'institution',
-  institutionType
-)
+  institutionType,
+);
 
-const deleteInstitution = deleteDocument(Institution, 'institution')
+const deleteInstitution = deleteDocument(Institution, 'institution');
 
 export {
   getInstitution,
@@ -44,4 +44,4 @@ export {
   createInstitution,
   updateInstitution,
   deleteInstitution,
-}
+};

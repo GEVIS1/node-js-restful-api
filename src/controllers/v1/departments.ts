@@ -1,35 +1,35 @@
-import prisma, { departmentRelations, departmentType } from '../../utils/prisma'
+import prisma, { departmentRelations, departmentType } from '../../utils/prisma';
 import {
   getDocument,
   getDocuments,
   createDocument,
   updateDocument,
   deleteDocument,
-} from './base'
+} from './base';
 
-const Department = prisma.department
+const Department = prisma.department;
 
-const getDepartment = getDocument(Department, 'department', departmentRelations)
+const getDepartment = getDocument(Department, 'department', departmentRelations);
 const getDepartments = getDocuments(
   Department,
   'department',
-  departmentRelations
-)
+  departmentRelations,
+);
 
 const createDepartment = createDocument(
   prisma.department,
   'department',
   departmentRelations,
-  departmentType
-)
+  departmentType,
+);
 
 const updateDepartment = updateDocument(
   Department,
   'department',
-  departmentType
-)
+  departmentType,
+);
 
-const deleteDepartment = deleteDocument(Department, 'department')
+const deleteDepartment = deleteDocument(Department, 'department');
 
 export {
   getDepartment,
@@ -37,4 +37,4 @@ export {
   createDepartment,
   updateDepartment,
   deleteDepartment,
-}
+};

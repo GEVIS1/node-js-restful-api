@@ -1,5 +1,4 @@
-import { Router } from 'express'
-const router = Router()
+import { Router } from 'express';
 
 import {
   getInstitution,
@@ -7,13 +6,15 @@ import {
   createInstitution,
   updateInstitution,
   deleteInstitution,
-} from '../../controllers/v1/'
+} from '../../controllers/v1';
 
-router.route('/').get(getInstitutions).post(createInstitution)
+const router = Router();
+
+router.route('/').get(getInstitutions).post(createInstitution);
 router
   .route('/:id')
   .get(getInstitution)
   .put(updateInstitution)
-  .delete(deleteInstitution)
+  .delete(deleteInstitution);
 
-export default router
+export default router;
