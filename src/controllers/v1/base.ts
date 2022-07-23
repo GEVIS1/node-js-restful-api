@@ -79,7 +79,7 @@ const createDocument = (model: any, modelName: String, relations: Relation | Par
       data
     })
 
-    const newDocuments: Prisma.DepartmentSelect[] | Prisma.InstitutionSelect[]  = await model.findMany(relations)
+    const newDocuments: Prisma.DepartmentSelect[] | Prisma.InstitutionSelect[] = await model.findMany({ orderBy: {id: "asc"}, ...relations })
 
     return res.status(201).json({
       msg: `${modelName} successfully created`,
