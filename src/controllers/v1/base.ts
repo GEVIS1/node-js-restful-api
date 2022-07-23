@@ -128,6 +128,38 @@ const updateDocument = (model: any, modelName: string, modelType: Prisma.Institu
   }
 }
 
+const deleteDocument = (model: any, modelName: string) => async (req, res) => {
+  try {
+    const { id } = req.params
+
+    const document = await model.findUnique({
+      where: { id: Number(id) },
+    })
+
+    if (!document) {
+      return res
+        .status(200)
+        .json({ msg: `No ${modelName} with the id: ${id} found` })
+    }
+
+    /**
+     * The delete function deletes a single record using an
+     * id or unique identifier
+     */
+    await model.delete({
+      where: { id: Number(id) },
+    })
+
+    return res.json({
+      msg: `${capitalize(modelName)} with the id: ${id} successfully deleted`,
+    })
+  } catch (err) {
+    return res.status(500).json({
+      msg: err.message,
+    })
+  }
+}
+
 /**
  * Uses body and modelType to return an object with all the properties of that modelType found in the body.
  * @param body The data sent in a request.
@@ -151,4 +183,4 @@ function extractProperties(body: any, modelType: Prisma.InstitutionUncheckedCrea
  */
 const capitalize = (word: string): string => word[0].toUpperCase() + word.substring(1)
 
-export { getDocument, getDocuments, createDocument, updateDocument }
+export { getDocument, getDocuments, createDocument, updateDocument, deleteDocument }
