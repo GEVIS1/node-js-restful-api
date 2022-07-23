@@ -82,7 +82,7 @@ const createDocument = (model: any, modelName: string, relations: Relation | Par
     const newDocuments: Prisma.DepartmentSelect[] | Prisma.InstitutionSelect[] = await model.findMany({ orderBy: {id: "asc"}, ...relations })
 
     return res.status(201).json({
-      msg: `${modelName} successfully created`,
+      msg: `${capitalize(modelName)} successfully created`,
       data: newDocuments,
     })
   } catch (err) {
@@ -118,7 +118,7 @@ const updateDocument = (model: any, modelName: string, modelType: Prisma.Institu
     })
 
     return res.json({
-      msg: `${modelName} with the id: ${id} successfully updated`,
+      msg: `${capitalize(modelName)} with the id: ${id} successfully updated`,
       data: document,
     })
   } catch (err) {
@@ -143,5 +143,12 @@ function extractProperties(body: any, modelType: Prisma.InstitutionUncheckedCrea
   }
   return properties
 }
+
+/**
+ * Capitalize an input string so the first letter is capitalized
+ * @param word input word to be capitalized
+ * @returns the capitalized word
+ */
+const capitalize = (word: string): string => word[0].toUpperCase() + word.substring(1)
 
 export { getDocument, getDocuments, createDocument, updateDocument }
