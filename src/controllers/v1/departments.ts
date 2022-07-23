@@ -1,7 +1,5 @@
-import prisma from '../../utils/prisma'
+import prisma, { departmentRelations, departmentType } from '../../utils/prisma'
 import { getDocument, getDocuments, createDocument, updateDocument, deleteDocument } from './base'
-import { departmentRelations } from '../../prisma/relations'
-import { departmentType } from '../../prisma/modelTypes'
 
 const Department = prisma.department
 
