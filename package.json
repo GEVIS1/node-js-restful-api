@@ -7,7 +7,8 @@
     "start": "nodemon --experimental-specifier-resolution=node src/app.ts",
     "prisma:migrate": "npx prisma migrate dev",
     "prisma:studio": "npx prisma studio",
-    "prettier:install": "[ -d .git/hooks ] && cp .hooks/pre-commit .git/hooks && chmod +x .git/hooks/pre-commit"
+    "prettier:fix": "npx prettier --write .",
+    "prettier:check": "npx prettier --check ."
   },
   "repository": {
     "type": "git",
