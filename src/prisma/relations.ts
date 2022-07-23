@@ -3,7 +3,7 @@
  */
 
 export type Relation = {
-    include: {}
+  include: {}
 }
 export const institutionRelations: Partial<Relation> = {}
 export const departmentRelations: Relation = { include: { institution: true } }
