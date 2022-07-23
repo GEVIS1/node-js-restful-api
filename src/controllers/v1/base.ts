@@ -93,6 +93,41 @@ const createDocument = (model: any, modelName: String, relations: Relation | Par
   }
 }
 
+const updateDocument = (model: any, modelName: String, modelType: Prisma.InstitutionUncheckedCreateInput | Prisma.DepartmentUncheckedCreateInput) => async (req, res) => {
+  try {
+    const { id } = req.params
+    const properties = extractProperties(req.body, modelType)
+
+    let document = await model.findUnique({
+      where: { id: Number(id) },
+    })
+
+    if (!document) {
+      return res
+        .status(200)
+        .json({ msg: `No ${modelName} with the id: ${id} found` })
+    }
+
+    /**
+     * The update function updates a single record using an
+     * id or unique identifier
+     */
+    document = await model.update({
+      where: { id: Number(id) },
+      data: properties,
+    })
+
+    return res.json({
+      msg: `${modelName} with the id: ${id} successfully updated`,
+      data: document,
+    })
+  } catch (err) {
+    return res.status(500).json({
+      msg: err.message,
+    })
+  }
+}
+
 /**
  * Uses body and modelType to return an object with all the properties of that modelType found in the body.
  * @param body The data sent in a request.
@@ -109,4 +144,4 @@ function extractProperties(body: any, modelType: Prisma.InstitutionUncheckedCrea
   return properties
 }
 
-export { getDocument, getDocuments, createDocument }
+export { getDocument, getDocuments, createDocument, updateDocument }
