@@ -1,5 +1,6 @@
 import { Prisma } from '@prisma/client';
 import { Relation } from '../../prisma/relations';
+import { Request, Response } from 'express';
 
 /**
  * Uses body and modelType to return an object with all the properties of that modelType found in the body.
@@ -224,10 +225,25 @@ const deleteDocument = (
   }
 };
 
+const seedData = (
+  /* eslint-disable */
+  model: any,
+  /* eslint-enable */
+  modelName: string,
+  relations: Relation | Partial<Relation>,
+  modelType:
+  | Prisma.InstitutionUncheckedCreateInput
+  | Prisma.DepartmentUncheckedCreateInput,
+  inputData: URL,
+) => async (req: Request, res: Response) => {
+  // TODO
+}
+
 export {
   getDocument,
   getDocuments,
   createDocument,
   updateDocument,
   deleteDocument,
+  seedData,
 };
