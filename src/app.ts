@@ -4,6 +4,7 @@
 
 import dotenv from 'dotenv';
 import express, { urlencoded, json } from 'express';
+import cors from 'cors';
 
 import { institutions, departments } from './routes/v1';
 
@@ -48,6 +49,7 @@ const { PORT } = process.env;
 
 app.use(urlencoded({ extended: false }));
 app.use(json());
+app.use(cors());
 
 /**
  * Iterate over the routes and add them to the express app
