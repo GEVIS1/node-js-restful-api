@@ -7,9 +7,9 @@
     "start": "nodemon --experimental-specifier-resolution=node src/app.ts",
     "prisma:migrate": "npx prisma migrate dev",
     "prisma:studio": "npx prisma studio",
-    "prettier:fix": "npx prettier --write .",
-    "prettier:check": "npx prettier --check .",
-    "lint:fix": "npx eslint --fix ."
+    "prettier:fix": "npx prettier --write",
+    "prettier:check": "npx prettier --check",
+    "lint:fix": "npx eslint --fix"
   },
   "repository": {
     "type": "git",
