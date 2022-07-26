@@ -1,36 +1,33 @@
 {
-    "env": {
-        "browser": true,
-        "es2021": true
-    },
-    "extends": [
-        "airbnb-typescript/base",
-        "plugin:@typescript-eslint/recommended"
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "extends": [
+    "airbnb-typescript/base",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module",
+    "project": "./tsconfig.json"
+  },
+  "plugins": ["@typescript-eslint", "import"],
+  "rules": {
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "js": "always",
+        "ts": "never"
+      }
     ],
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-        "ecmaVersion": "latest",
-        "sourceType": "module",
-        "project": "./tsconfig.json"
-    },
-    "plugins": [
-        "@typescript-eslint",
-        "import"
-    ],
-    "rules": {
-        "import/extensions": [
-            "error",
-            "ignorePackages",
-            {
-                "js": "always",
-                "ts": "never"
-            }
-        ],
-        "no-multiple-empty-lines": "error",
-        "no-multi-spaces": "error",
-        "no-mixed-spaces-and-tabs": "error",
-        "no-extra-parens": "error",
-        "no-trailing-spaces": "error",
-        "no-unused-vars": "error"
-    }
+    "no-multiple-empty-lines": "error",
+    "no-multi-spaces": "error",
+    "no-mixed-spaces-and-tabs": "error",
+    "no-extra-parens": "error",
+    "no-trailing-spaces": "error",
+    "no-unused-vars": "error"
+  }
 }
