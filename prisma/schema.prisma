@@ -25,5 +25,5 @@ model Department {
   name          String
   institutionId Int
   createdAt     DateTime    @default(now())
-  institution   Institution @relation(fields: [institutionId], references: [id])
+  institution   Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
 }
