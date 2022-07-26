@@ -1,3 +1,4 @@
+import { institutionsURL } from '../../db/seeder/data';
 import prisma, {
   institutionRelations,
   institutionType,
@@ -7,6 +8,7 @@ import {
   deleteDocument,
   getDocument,
   getDocuments,
+  seedData,
   updateDocument,
 } from './base';
 
@@ -15,28 +17,36 @@ const Institution = prisma.institution;
 const getInstitution = getDocument(
   Institution,
   'institution',
-  institutionRelations,
+  institutionRelations
 );
 const getInstitutions = getDocuments(
   Institution,
   'institution',
-  institutionRelations,
+  institutionRelations
 );
 
 const createInstitution = createDocument(
   Institution,
   'institution',
   institutionRelations,
-  institutionType,
+  institutionType
 );
 
 const updateInstitution = updateDocument(
   Institution,
   'institution',
-  institutionType,
+  institutionType
 );
 
 const deleteInstitution = deleteDocument(Institution, 'institution');
+
+const seedInstitution = seedData(
+  Institution,
+  'institution',
+  institutionRelations,
+  institutionType,
+  institutionsURL
+);
 
 export {
   getInstitution,
@@ -44,4 +54,5 @@ export {
   createInstitution,
   updateInstitution,
   deleteInstitution,
+  seedInstitution,
 };
