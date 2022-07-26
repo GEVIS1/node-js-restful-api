@@ -7,6 +7,7 @@ import {
   updateDepartment,
   deleteDepartment,
 } from '../../controllers/v1';
+import { seedDepartment } from '../../controllers/v1/departments';
 
 const router = Router();
 
@@ -16,5 +17,6 @@ router
   .get(getDepartment)
   .put(updateDepartment)
   .delete(deleteDepartment);
+router.route('/seed').post(seedDepartment);
 
 export default router;
