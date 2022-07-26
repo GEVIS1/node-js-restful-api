@@ -20,9 +20,9 @@ dotenv.config();
  * End execution if required environment variables are undefined
  */
 if (
-  !process.env.PORT
-  || !process.env.SHADOW_DATABASE_URL
-  || !process.env.DATABASE_URL
+  !process.env.PORT ||
+  !process.env.SHADOW_DATABASE_URL ||
+  !process.env.DATABASE_URL
 ) {
   /* eslint-disable */
   console.log('Missing .env or missing variable in .env');
