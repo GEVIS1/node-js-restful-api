@@ -5,7 +5,7 @@
     "es2021": true
   },
   "extends": [
-    "prettier",
+    // "prettier",
     "airbnb-typescript/base",
     "plugin:@typescript-eslint/recommended"
   ],
@@ -15,9 +15,11 @@
     "sourceType": "module",
     "project": "./tsconfig.json"
   },
-  "plugins": ["prettier", "@typescript-eslint", "import"],
+  "plugins": [
+    // "prettier", 
+    "@typescript-eslint", "import"],
   "rules": {
-    "prettier/prettier": "warn",
+    // "prettier/prettier": "warn",
     "import/extensions": [
       "error",
       "ignorePackages",
