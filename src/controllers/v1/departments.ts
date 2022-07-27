@@ -1,4 +1,4 @@
-import { departmentsURL } from '../../db/seeder/data';
+// import { departmentsURL } from '../../db/seeder/data';
 import prisma, {
   departmentRelations,
   departmentType,
@@ -9,7 +9,7 @@ import {
   createDocument,
   updateDocument,
   deleteDocument,
-  seedData,
+  // seedData,
 } from './base';
 
 const Department = prisma.department;
@@ -26,7 +26,7 @@ const getDepartments = getDocuments(
 );
 
 const createDepartment = createDocument(
-  prisma.department,
+  Department,
   'department',
   departmentRelations,
   departmentType
@@ -40,13 +40,12 @@ const updateDepartment = updateDocument(
 
 const deleteDepartment = deleteDocument(Department, 'department');
 
-const seedDepartment = seedData(
-  prisma.department,
-  'department',
-  departmentRelations,
-  departmentType,
-  departmentsURL
-);
+// const seedDepartment = seedData(
+//   Department,
+//   'department',
+//   departmentRelations,
+//   departmentsURL
+// );
 
 export {
   getDepartment,
@@ -54,5 +53,5 @@ export {
   createDepartment,
   updateDepartment,
   deleteDepartment,
-  seedDepartment,
+  // seedDepartment,
 };
