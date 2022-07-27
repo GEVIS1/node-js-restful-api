@@ -5,9 +5,9 @@
     "es2021": true
   },
   "extends": [
-    // "prettier",
     "airbnb-typescript/base",
-    "plugin:@typescript-eslint/recommended"
+    "plugin:@typescript-eslint/recommended",
+    "prettier"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -15,11 +15,13 @@
     "sourceType": "module",
     "project": "./tsconfig.json"
   },
-  "plugins": [
-    // "prettier", 
-    "@typescript-eslint", "import"],
   "rules": {
-    // "prettier/prettier": "warn",
+    "prettier/prettier": [
+      "error",
+      {
+        "tabWidth": 2
+      }
+    ],
     "import/extensions": [
       "error",
       "ignorePackages",
@@ -34,5 +36,10 @@
     "no-extra-parens": "error",
     "no-trailing-spaces": "error",
     "no-unused-vars": "error"
-  }
+  },
+  "plugins": [
+    "@typescript-eslint",
+    "import",
+    "prettier" 
+  ]
 }
