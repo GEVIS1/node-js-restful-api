@@ -250,9 +250,6 @@ const seedData =
     /* eslint-enable */
     modelName: string,
     relations: Relation | Partial<Relation>,
-    modelType:
-      | Prisma.InstitutionUncheckedCreateInput
-      | Prisma.DepartmentUncheckedCreateInput,
     inputData: string
   ) =>
   async (req: Request, res: Response) => {
@@ -271,8 +268,8 @@ const seedData =
       await model.deleteMany({});
 
       // Check if it's an array or a single object to use the correct create method
-      if (Array.isArray(data)) await model.createMany({ ...data });
-      else await model.create({ ...data });
+      if (Array.isArray(data)) await model.createMany(data);
+      else await model.create(data);
 
       // Fetch the newly created documents
       const documents: Prisma.DepartmentSelect[] | Prisma.InstitutionSelect[] =
