@@ -44,7 +44,6 @@ const seedInstitution = seedData(
   Institution,
   'institution',
   institutionRelations,
-  institutionType,
   institutionsURL
 );
 
