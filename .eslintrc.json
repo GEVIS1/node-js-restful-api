@@ -16,12 +16,6 @@
     "project": "./tsconfig.json"
   },
   "rules": {
-    "prettier/prettier": [
-      "error",
-      {
-        "tabWidth": 2
-      }
-    ],
     "import/extensions": [
       "error",
       "ignorePackages",
