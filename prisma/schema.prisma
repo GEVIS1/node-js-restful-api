@@ -17,8 +17,6 @@ model Institution {
   region      String
   country     String
   departments Department[]
-  creatorId   Int?
-  createdBy   User?         @relation(fields: [creatorId], references: [id])
   createdAt   DateTime     @default(now())
 }
 
@@ -27,17 +25,6 @@ model Department {
   name          String
   institutionId Int
   institution   Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
-  creatorId     Int?
-  createdBy     User?       @relation(fields: [creatorId], references: [id])
   createdAt     DateTime    @default(now())
 }
 
-model User {
-  id           Int           @id @default(autoincrement())
-  email        String        @unique
-  name         String
-  password     String
-  institutions Institution[]
-  departments  Department[]
-  createdAt    DateTime      @default(now())
-}
