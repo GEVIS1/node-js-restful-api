@@ -8,6 +8,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 
 import { institutions, departments } from './routes/v1';
+import { checkEnv } from './utils/env';
 
 /**
  * An object holding all the routes available in the API
@@ -19,20 +20,7 @@ dotenv.config();
 /**
  * End execution if required environment variables are undefined
  */
-if (
-  !process.env.PORT ||
-  !process.env.SHADOW_DATABASE_URL ||
-  !process.env.DATABASE_URL
-) {
-  /* eslint-disable */
-  console.log('Missing .env or missing variable in .env');
-  console.log('Missing variables:');
-  !process.env.PORT && console.log('PORT=');
-  !process.env.SHADOW_DATABASE_URL && console.log('SHADOW_DATABASE_URL=');
-  !process.env.DATABASE_URL && console.log('DATABASE_URL=');
-  process.exit(0);
-  /* eslint-enable */
-}
+checkEnv();
 
 const app = express();
 
