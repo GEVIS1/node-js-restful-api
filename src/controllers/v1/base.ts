@@ -275,8 +275,7 @@ const seedData =
 
         // Check if it's an array or a single object to use the correct create method
         if (Array.isArray(data))
-          await model.createMany({ data: data, skipDuplicates: true });
-        //if (Array.isArray(data)) await model.createMany({ data, skipDuplicates: true });
+          await model.createMany({ data, skipDuplicates: true });
         else await model.create({ data });
 
         // Fetch the newly created documents
