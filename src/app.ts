@@ -8,7 +8,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 
 import { institutions, departments, auth } from './routes/v1';
-import authRoute from './middleware/authRoute';
+import authRoute from './middleware/authorization/authRoute';
 import { checkEnv } from './utils/env';
 
 /**

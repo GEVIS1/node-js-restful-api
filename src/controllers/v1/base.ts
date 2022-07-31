@@ -1,8 +1,10 @@
 import { Prisma } from '@prisma/client';
-import { Relation } from '../../utils/prisma/relations';
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
+
+import { Relation } from '../../utils/prisma/relations';
 import axios from '../../utils/axiosInstance';
+import checkAuthorization from '../../middleware/authorization/checkAuthorization';
 
 /**
  * Uses body and modelType to return an object with all the properties of that modelType found in the body.
@@ -140,14 +142,19 @@ const createDocument =
     async (req: CreateRequest, res: Response) => {
       try {
       /**
-       * Extract the required keys for the type
-       */
-        const properties = extractProperties(req.body, modelType);
-
-        /**
        * Extract the authenticated user's id from the request
        */
         const { id } = req.user;
+
+        /**
+       * Check if the user is authorized to create a document
+       */
+        checkAuthorization(id, res);
+
+        /**
+       * Extract the required keys for the type
+       */
+        const properties = extractProperties(req.body, modelType);
 
         const data = { ...properties, creatorId: id };
 
