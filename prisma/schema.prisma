@@ -32,12 +32,18 @@ model Department {
   createdAt     DateTime    @default(now())
 }
 
+enum Role {
+  BASIC_USER
+  ADMIN_USER
+}
+
 model User {
   id           Int           @id @default(autoincrement())
   email        String        @unique
   name         String
   username     String        @unique
   password     String
+  role         Role          @default(BASIC_USER)
   institutions Institution[]
   departments  Department[]
   createdAt    DateTime      @default(now())
