@@ -1,8 +1,8 @@
 import { Prisma } from '@prisma/client';
 import { Relation } from '../../utils/prisma/relations';
 import { Request, Response } from 'express';
-import Axios from 'axios';
 import { StatusCodes } from 'http-status-codes';
+import axios from '../../utils/axiosInstance';
 
 /**
  * Uses body and modelType to return an object with all the properties of that modelType found in the body.
@@ -266,7 +266,7 @@ const seedData =
   ) =>
     async (req: Request, res: Response) => {
       try {
-        const response = await Axios.get(inputData);
+        const response = await axios.get(inputData);
         const { data } = response;
 
         // Fail gracefully if the server doesn't reply 200 or the data is undefined
