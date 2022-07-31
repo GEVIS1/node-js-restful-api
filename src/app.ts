@@ -7,7 +7,8 @@ import express, { urlencoded, json } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 
-import { institutions, departments } from './routes/v1';
+import { institutions, departments, auth } from './routes/v1';
+import authRoute from './middleware/authRoute';
 import { checkEnv } from './utils/env';
 
 /**
@@ -45,7 +46,18 @@ app.use(helmet());
  * Iterate over the routes and add them to the express app
  */
 for (const [routeName, route] of Object.entries(routes)) {
-  app.use(`/${BASE_URL}/${CURRENT_VERSION}/${routeName}`, route);
+  app.use(`/${BASE_URL}/${CURRENT_VERSION}/${routeName}`, authRoute, route);
 }
 
-app.listen(PORT, () => console.log(`Server is listening on port ${PORT}`));
+/**
+ * Separately use for the User model since it does not use the authRoute middleware
+ */
+app.use(`/${BASE_URL}/${CURRENT_VERSION}/auth`, auth);
+
+app.listen(PORT, () =>
+  console.log(
+    process.env.NODE_ENV !== 'production'
+      ? `Server is listening on http://localhost:${PORT}`
+      : 'Server started in production mode'
+  )
+);
