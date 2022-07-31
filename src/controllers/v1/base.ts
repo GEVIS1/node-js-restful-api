@@ -178,6 +178,10 @@ const createDocument =
       }
     };
 
+interface UpdateRequest extends Request {
+  user: { creatorId: string };
+}
+
 const updateDocument =
   (
     /* eslint-disable */
@@ -188,10 +192,24 @@ const updateDocument =
       | Prisma.InstitutionUncheckedCreateInput
       | Prisma.DepartmentUncheckedCreateInput
   ) =>
-    async (req, res) => {
+    async (req: UpdateRequest, res: Response) => {
       try {
+      /**
+       * Document id
+       */
         const { id } = req.params;
+        /**
+       * User id
+       */
+        const { creatorId } = req.user;
+
+        /**
+       * Check if the user is authorized to create a document
+       */
+        checkAuthorization(creatorId, res);
+
         const properties = extractProperties(req.body, modelType);
+        const data = { ...properties, creatorId };
 
         let document = await model.findUnique({
           where: { id: Number(id) },
@@ -209,7 +227,7 @@ const updateDocument =
        */
         document = await model.update({
           where: { id: Number(id) },
-          data: properties,
+          data,
         });
 
         return res.json({
