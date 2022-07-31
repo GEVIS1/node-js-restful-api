@@ -6,6 +6,7 @@ import prisma from '../../utils/prisma/prisma';
 import { StatusCodes } from 'http-status-codes';
 
 interface RegisterBody {
+  username: string;
   name: string;
   email: string;
   password: string;
@@ -17,7 +18,7 @@ interface RegisterRequest extends Request {
 
 const register = async (req: RegisterRequest, res: Response) => {
   try {
-    const { name, email, password } = req.body;
+    const { username, name, email, password } = req.body;
 
     let user = await prisma.user.findUnique({ where: { email } });
 
@@ -45,7 +46,7 @@ const register = async (req: RegisterRequest, res: Response) => {
      * Create the new user
      */
     user = await prisma.user.create({
-      data: { name, email, password: hashedPassword },
+      data: { username, name, email, password: hashedPassword },
     });
 
     /**
