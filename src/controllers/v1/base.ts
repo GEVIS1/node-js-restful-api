@@ -2,6 +2,7 @@ import { Prisma } from '@prisma/client';
 import { Relation } from '../../utils/prisma/relations';
 import { Request, Response } from 'express';
 import Axios from 'axios';
+import { StatusCodes } from 'http-status-codes';
 
 /**
  * Uses body and modelType to return an object with all the properties of that modelType found in the body.
@@ -111,6 +112,12 @@ const getDocuments =
       }
     };
 
+interface CreateRequest extends Request {
+  user: { id: string };
+}
+
+type ModelSelect = Prisma.DepartmentSelect[] | Prisma.InstitutionSelect[];
+
 /**
  * Function taking in information about a model, returning a function able to insert a document into the given model
  * @param model Prisma Model Delegate
@@ -130,30 +137,35 @@ const createDocument =
       | Prisma.InstitutionUncheckedCreateInput
       | Prisma.DepartmentUncheckedCreateInput
   ) =>
-    async (req, res) => {
+    async (req: CreateRequest, res: Response) => {
       try {
-      // Extract the required keys for the type
+      /**
+       * Extract the required keys for the type
+       */
         const properties = extractProperties(req.body, modelType);
 
-        const data = { ...properties };
+        /**
+       * Extract the authenticated user's id from the request
+       */
+        const { id } = req.user;
+
+        const data = { ...properties, userId: id };
 
         await model.create({
           data,
         });
 
-        const newDocuments:
-        | Prisma.DepartmentSelect[]
-        | Prisma.InstitutionSelect[] = await model.findMany({
+        const newDocuments: ModelSelect = await model.findMany({
           orderBy: { id: 'asc' },
           ...relations,
         });
 
-        return res.status(201).json({
+        return res.status(StatusCodes.CREATED).json({
           msg: `${capitalize(modelName)} successfully created`,
           data: newDocuments,
         });
       } catch (err) {
-        return res.status(500).json({
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
           msg: err.message,
         });
       }
