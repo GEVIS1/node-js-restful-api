@@ -1,9 +1,10 @@
 import bcryptjs from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { Request, Response } from 'express';
+import { Prisma } from '@prisma/client';
+import { StatusCodes } from 'http-status-codes';
 
 import prisma from '../../utils/prisma/prisma';
-import { StatusCodes } from 'http-status-codes';
 
 interface RegisterBody {
   username: string;
@@ -67,20 +68,35 @@ const register = async (req: RegisterRequest, res: Response) => {
   }
 };
 
-interface LoginBody {
+interface LoginBodyEmail {
   email: string;
   password: string;
 }
 
+interface LoginBodyUsername {
+  username: string;
+  password: string;
+}
+
+/**
+ * XOR the interfaces to avoid having the optional username and email
+ */
 interface LoginRequest extends Request {
-  body: LoginBody;
+  body: Prisma.XOR<LoginBodyEmail, LoginBodyUsername>;
 }
 
 const login = async (req: LoginRequest, res: Response) => {
   try {
-    const { email, password } = req.body;
+    const { username, email, password } = req.body;
 
-    const user = await prisma.user.findUnique({ where: { email } });
+    /**
+     * By default log in with email, but if email is not supplied
+     * we will attempt to log in with the username
+     */
+    const user =
+      email !== undefined
+        ? await prisma.user.findUnique({ where: { email } })
+        : await prisma.user.findUnique({ where: { username } });
 
     if (!user) {
       return res
