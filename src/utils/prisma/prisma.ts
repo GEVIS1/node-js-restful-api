@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
-import { departmentType, institutionType } from '../prisma/modelTypes';
-import { departmentRelations, institutionRelations } from '../prisma/relations';
+import { departmentType, institutionType } from './modelTypes';
+import { departmentRelations, institutionRelations } from './relations';
 
 export default new PrismaClient();
 export {

@@ -2,7 +2,7 @@ import { institutionsURL } from '../../db/seeder/data';
 import prisma, {
   institutionRelations,
   institutionType,
-} from '../../utils/prisma';
+} from '../../utils/prisma/prisma';
 import {
   createDocument,
   deleteDocument,

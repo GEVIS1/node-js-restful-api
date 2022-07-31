@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client';
-import { Relation } from '../../prisma/relations';
+import { Relation } from '../../utils/prisma/relations';
 import { Request, Response } from 'express';
 import Axios from 'axios';
 

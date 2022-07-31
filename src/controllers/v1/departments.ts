@@ -2,7 +2,7 @@ import { departmentsURL } from '../../db/seeder/data';
 import prisma, {
   departmentRelations,
   departmentType,
-} from '../../utils/prisma';
+} from '../../utils/prisma/prisma';
 import {
   getDocument,
   getDocuments,
