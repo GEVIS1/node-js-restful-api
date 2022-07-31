@@ -1,7 +1,7 @@
 import bcryptjs from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { Request, Response } from 'express';
-import { Prisma } from '@prisma/client';
+import { Prisma, Role } from '@prisma/client';
 import { StatusCodes } from 'http-status-codes';
 
 import prisma from '../../utils/prisma/prisma';
@@ -11,6 +11,7 @@ interface RegisterBody {
   name: string;
   email: string;
   password: string;
+  role: Role;
 }
 
 interface RegisterRequest extends Request {
@@ -19,7 +20,7 @@ interface RegisterRequest extends Request {
 
 const register = async (req: RegisterRequest, res: Response) => {
   try {
-    const { username, name, email, password } = req.body;
+    const { username, name, email, password, role } = req.body;
 
     let user = await prisma.user.findUnique({ where: { email } });
 
@@ -47,7 +48,7 @@ const register = async (req: RegisterRequest, res: Response) => {
      * Create the new user
      */
     user = await prisma.user.create({
-      data: { username, name, email, password: hashedPassword },
+      data: { username, name, email, password: hashedPassword, role },
     });
 
     /**
