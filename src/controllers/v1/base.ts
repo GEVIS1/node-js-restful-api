@@ -149,7 +149,7 @@ const createDocument =
        */
         const { id } = req.user;
 
-        const data = { ...properties, userId: id };
+        const data = { ...properties, creatorId: id };
 
         await model.create({
           data,
