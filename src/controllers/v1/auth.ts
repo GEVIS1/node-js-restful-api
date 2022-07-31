@@ -22,7 +22,9 @@ const register = async (req: RegisterRequest, res: Response) => {
     let user = await prisma.user.findUnique({ where: { email } });
 
     if (user) {
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR);
+      return res.status(StatusCodes.CONFLICT).json({
+        msg: 'User already exists',
+      });
     }
 
     /**
