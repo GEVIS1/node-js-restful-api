@@ -94,10 +94,11 @@ const login = async (req: LoginRequest, res: Response) => {
      * By default log in with email, but if email is not supplied
      * we will attempt to log in with the username
      */
-    const user =
-      email !== undefined
-        ? await prisma.user.findUnique({ where: { email } })
-        : await prisma.user.findUnique({ where: { username } });
+    const user = await prisma.user.findFirst({
+      where: {
+        OR: [{ email }, { username }],
+      },
+    });
 
     if (!user) {
       return res
