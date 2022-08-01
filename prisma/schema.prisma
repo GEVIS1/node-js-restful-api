@@ -35,6 +35,7 @@ model Department {
 enum Role {
   BASIC_USER
   ADMIN_USER
+  SUPER_ADMIN_USER
 }
 
 model User {
