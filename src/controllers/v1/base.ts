@@ -149,7 +149,13 @@ const createDocument =
         /**
        * Check if the user is authorized to create a document
        */
-        checkAuthorization(id, res);
+        const authorized = await checkAuthorization(id);
+
+        if (!authorized) {
+          return res.status(StatusCodes.FORBIDDEN).json({
+            msg: 'Not authorized to access this route',
+          });
+        }
 
         /**
        * Extract the required keys for the type
@@ -179,7 +185,7 @@ const createDocument =
     };
 
 interface UpdateRequest extends Request {
-  user: { creatorId: string };
+  user: { id: string };
 }
 
 const updateDocument =
@@ -201,12 +207,18 @@ const updateDocument =
         /**
        * User id
        */
-        const { creatorId } = req.user;
+        const { id: creatorId } = req.user;
 
         /**
-       * Check if the user is authorized to create a document
+       * Check if the user is authorized to update a document
        */
-        checkAuthorization(creatorId, res);
+        const authorized = await checkAuthorization(creatorId);
+
+        if (!authorized) {
+          return res.status(StatusCodes.FORBIDDEN).json({
+            msg: 'Not authorized to access this route',
+          });
+        }
 
         const properties = extractProperties(req.body, modelType);
         const data = { ...properties, creatorId };
@@ -241,6 +253,10 @@ const updateDocument =
       }
     };
 
+interface DeleteRequest extends Request {
+  user: { id: string };
+}
+
 const deleteDocument =
   (
     /* eslint-disable */
@@ -248,9 +264,24 @@ const deleteDocument =
     /* eslint-enable */
     modelName: string
   ) =>
-    async (req, res) => {
+    async (req: DeleteRequest, res: Response) => {
       try {
         const { id } = req.params;
+
+        /**
+       * User id
+       */
+        const { id: creatorId } = req.user;
+
+        /**
+       * Check if the user is authorized to delete a document
+       */
+        const authorized = await checkAuthorization(creatorId);
+        if (!authorized) {
+          return res.status(StatusCodes.FORBIDDEN).json({
+            msg: 'Not authorized to access this route',
+          });
+        }
 
         const document = await model.findUnique({
           where: { id: Number(id) },
@@ -280,6 +311,10 @@ const deleteDocument =
       }
     };
 
+interface SeedRequest extends Request {
+  user: { id: string };
+}
+
 const seedData =
   (
     /* eslint-disable */
@@ -289,10 +324,25 @@ const seedData =
     relations: Relation | Partial<Relation>,
     inputData: string
   ) =>
-    async (req: Request, res: Response) => {
+    async (req: SeedRequest, res: Response) => {
       try {
         const response = await axios.get(inputData);
         const { data } = response;
+
+        /**
+       * Extract the authenticated user's id from the request
+       */
+        const { id } = req.user;
+
+        /**
+       * Check if the user is authorized to seed the database
+       */
+        const authorized = await checkAuthorization(id);
+        if (!authorized) {
+          return res.status(StatusCodes.FORBIDDEN).json({
+            msg: 'Not authorized to access this route',
+          });
+        }
 
         // Fail gracefully if the server doesn't reply 200 or the data is undefined
         if (response.status !== 200 || !data) {
