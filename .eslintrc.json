@@ -30,7 +30,8 @@
     "no-mixed-spaces-and-tabs": "error",
     "no-extra-parens": "error",
     "no-trailing-spaces": "error",
-    "no-unused-vars": "error"
+    "no-unused-vars": "error",
+    "no-console": "error"
   },
   "plugins": [
     "@typescript-eslint",

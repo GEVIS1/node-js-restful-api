@@ -55,6 +55,7 @@ for (const [routeName, route] of Object.entries(routes)) {
 app.use(`/${BASE_URL}/${CURRENT_VERSION}/auth`, auth);
 
 app.listen(PORT, () =>
+  // eslint-disable-next-line no-console
   console.log(
     process.env.NODE_ENV !== 'production'
       ? `Server is listening on http://localhost:${PORT}`
