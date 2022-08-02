@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "start": "nodemon --experimental-specifier-resolution=node src/app.ts",
     "prisma:migrate": "npx prisma migrate dev",
