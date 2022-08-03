@@ -22,7 +22,15 @@ const register = async (req: RegisterRequest, res: Response) => {
   try {
     const { username, name, email, password, role } = req.body;
 
-    let user = await prisma.user.findUnique({ where: { email } });
+    /**
+     * Check that both the email address and the user name are
+     * unique entries in the database, otherwise refuse
+     */
+    let user = await prisma.user.findFirst({
+      where: {
+        OR: [{ email }, { username }],
+      },
+    });
 
     if (user) {
       return res.status(StatusCodes.CONFLICT).json({
