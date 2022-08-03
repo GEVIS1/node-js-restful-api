@@ -62,3 +62,5 @@ app.listen(PORT, () =>
       : 'Server started in production mode'
   )
 );
+
+export default app;
