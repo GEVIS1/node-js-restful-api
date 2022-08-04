@@ -3,7 +3,7 @@ import chai from 'chai';
 import { user, adminUser, superAdminUser } from './../misc/userdata';
 import institutions from './../misc/institutiondata';
 //import departments from './../misc/departmentdata';
-import { agent } from './00-setup.test';
+import { agent, closeAgent } from './00-setup.test';
 
 describe('It should manipulate institutions', async () => {
   it('should fail to create an institution as a user', async (done) => {
@@ -106,4 +106,8 @@ describe('It should manipulate institutions', async () => {
           });
       });
   });
+});
+
+after(() => {
+  closeAgent();
 });
