@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "esnext",
     "esModuleInterop": true,
-    "target": "es6",
+    "target": "ES2017",
     "moduleResolution": "node",
     "sourceMap": true,
     "outDir": "dist"
@@ -10,5 +10,10 @@
   "ts-node": {
     "esm": true
   },
-  "lib": ["es2015"]
+  "lib": ["es2015"],
+  "exclude": [
+    "./node_modules/",
+    "./dist/",
+    "./test/"
+  ],
 }

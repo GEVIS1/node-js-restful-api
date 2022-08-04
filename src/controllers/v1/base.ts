@@ -4,7 +4,10 @@ import { StatusCodes } from 'http-status-codes';
 
 import { Relation } from '../../utils/prisma/relations';
 import axios from '../../utils/axiosInstance';
-import checkAuthorization from '../../middleware/authorization/checkAuthorization';
+import {
+  checkAuthorization,
+  checkSuperAuthorization,
+} from '../../middleware/authorization/checkAuthorization';
 
 /**
  * Uses body and modelType to return an object with all the properties of that modelType found in the body.
@@ -52,29 +55,29 @@ const getDocument =
     modelName: string,
     relations: Relation | Partial<Relation>
   ) =>
-    async (req, res) => {
-      try {
-        const { id } = req.params;
+  async (req, res) => {
+    try {
+      const { id } = req.params;
 
-        const document: Prisma.DepartmentSelect | Prisma.InstitutionSelect =
+      const document: Prisma.DepartmentSelect | Prisma.InstitutionSelect =
         await model.findUnique({
           ...relations,
           where: { id: Number(id) },
         });
 
-        if (!document) {
-          return res
-            .status(200)
-            .json({ msg: `No ${modelName} with the id: ${id} found` });
-        }
-
-        return res.json({ data: document });
-      } catch (err) {
-        return res.status(500).json({
-          msg: err.message,
-        });
+      if (!document) {
+        return res
+          .status(200)
+          .json({ msg: `No ${modelName} with the id: ${id} found` });
       }
-    };
+
+      return res.json({ data: document });
+    } catch (err) {
+      return res.status(500).json({
+        msg: err.message,
+      });
+    }
+  };
 
 /**
  * Function taking in information about a model, returning a function able to fetch all documents from the given model
@@ -91,28 +94,28 @@ const getDocuments =
     modelName: string,
     relations: Relation | Partial<Relation>
   ) =>
-    async (req, res) => {
-      try {
+  async (req, res) => {
+    try {
       /**
        * The findMany function returns all records
        */
-        const documents: Prisma.DepartmentSelect[] | Prisma.InstitutionSelect[] =
+      const documents: Prisma.DepartmentSelect[] | Prisma.InstitutionSelect[] =
         await model.findMany({
           orderBy: { id: 'asc' },
           ...relations,
         });
 
-        if (documents.length === 0) {
-          return res.status(200).json({ msg: `No ${modelName} found` });
-        }
-
-        return res.json({ data: documents });
-      } catch (err) {
-        return res.status(500).json({
-          msg: err.message,
-        });
+      if (documents.length === 0) {
+        return res.status(200).json({ msg: `No ${modelName} found` });
       }
-    };
+
+      return res.json({ data: documents });
+    } catch (err) {
+      return res.status(500).json({
+        msg: err.message,
+      });
+    }
+  };
 
 interface CreateRequest extends Request {
   user: { id: string };
@@ -139,50 +142,50 @@ const createDocument =
       | Prisma.InstitutionUncheckedCreateInput
       | Prisma.DepartmentUncheckedCreateInput
   ) =>
-    async (req: CreateRequest, res: Response) => {
-      try {
+  async (req: CreateRequest, res: Response) => {
+    try {
       /**
        * Extract the authenticated user's id from the request
        */
-        const { id } = req.user;
+      const { id } = req.user;
 
-        /**
+      /**
        * Check if the user is authorized to create a document
        */
-        const authorized = await checkAuthorization(id);
+      const authorized = await checkAuthorization(id);
 
-        if (!authorized) {
-          return res.status(StatusCodes.FORBIDDEN).json({
-            msg: 'Not authorized to access this route',
-          });
-        }
-
-        /**
-       * Extract the required keys for the type
-       */
-        const properties = extractProperties(req.body, modelType);
-
-        const data = { ...properties, creatorId: id };
-
-        await model.create({
-          data,
-        });
-
-        const newDocuments: ModelSelect = await model.findMany({
-          orderBy: { id: 'asc' },
-          ...relations,
-        });
-
-        return res.status(StatusCodes.CREATED).json({
-          msg: `${capitalize(modelName)} successfully created`,
-          data: newDocuments,
-        });
-      } catch (err) {
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-          msg: err.message,
+      if (!authorized) {
+        return res.status(StatusCodes.FORBIDDEN).json({
+          msg: 'Not authorized to access this route',
         });
       }
-    };
+
+      /**
+       * Extract the required keys for the type
+       */
+      const properties = extractProperties(req.body, modelType);
+
+      const data = { ...properties, creatorId: id };
+
+      await model.create({
+        data,
+      });
+
+      const newDocuments: ModelSelect = await model.findMany({
+        orderBy: { id: 'asc' },
+        ...relations,
+      });
+
+      return res.status(StatusCodes.CREATED).json({
+        msg: `${capitalize(modelName)} successfully created`,
+        data: newDocuments,
+      });
+    } catch (err) {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        msg: err.message,
+      });
+    }
+  };
 
 interface UpdateRequest extends Request {
   user: { id: string };
@@ -198,60 +201,60 @@ const updateDocument =
       | Prisma.InstitutionUncheckedCreateInput
       | Prisma.DepartmentUncheckedCreateInput
   ) =>
-    async (req: UpdateRequest, res: Response) => {
-      try {
+  async (req: UpdateRequest, res: Response) => {
+    try {
       /**
        * Document id
        */
-        const { id } = req.params;
-        /**
+      const { id } = req.params;
+      /**
        * User id
        */
-        const { id: creatorId } = req.user;
+      const { id: creatorId } = req.user;
 
-        /**
+      /**
        * Check if the user is authorized to update a document
        */
-        const authorized = await checkAuthorization(creatorId);
+      const authorized = await checkAuthorization(creatorId);
 
-        if (!authorized) {
-          return res.status(StatusCodes.FORBIDDEN).json({
-            msg: 'Not authorized to access this route',
-          });
-        }
-
-        const properties = extractProperties(req.body, modelType);
-        const data = { ...properties, creatorId };
-
-        let document = await model.findUnique({
-          where: { id: Number(id) },
+      if (!authorized) {
+        return res.status(StatusCodes.FORBIDDEN).json({
+          msg: 'Not authorized to access this route',
         });
+      }
 
-        if (!document) {
-          return res
-            .status(200)
-            .json({ msg: `No ${modelName} with the id: ${id} found` });
-        }
+      const properties = extractProperties(req.body, modelType);
+      const data = { ...properties, creatorId };
 
-        /**
+      let document = await model.findUnique({
+        where: { id: Number(id) },
+      });
+
+      if (!document) {
+        return res
+          .status(200)
+          .json({ msg: `No ${modelName} with the id: ${id} found` });
+      }
+
+      /**
        * The update function updates a single record using an
        * id or unique identifier
        */
-        document = await model.update({
-          where: { id: Number(id) },
-          data,
-        });
+      document = await model.update({
+        where: { id: Number(id) },
+        data,
+      });
 
-        return res.json({
-          msg: `${capitalize(modelName)} with the id: ${id} successfully updated`,
-          data: document,
-        });
-      } catch (err) {
-        return res.status(500).json({
-          msg: err.message,
-        });
-      }
-    };
+      return res.json({
+        msg: `${capitalize(modelName)} with the id: ${id} successfully updated`,
+        data: document,
+      });
+    } catch (err) {
+      return res.status(500).json({
+        msg: err.message,
+      });
+    }
+  };
 
 interface DeleteRequest extends Request {
   user: { id: string };
@@ -264,52 +267,53 @@ const deleteDocument =
     /* eslint-enable */
     modelName: string
   ) =>
-    async (req: DeleteRequest, res: Response) => {
-      try {
-        const { id } = req.params;
+  async (req: DeleteRequest, res: Response) => {
+    try {
+      const { id } = req.params;
 
-        /**
+      /**
        * User id
        */
-        const { id: creatorId } = req.user;
+      const { id: creatorId } = req.user;
 
-        /**
+      /**
        * Check if the user is authorized to delete a document
        */
-        const authorized = await checkAuthorization(creatorId);
-        if (!authorized) {
-          return res.status(StatusCodes.FORBIDDEN).json({
-            msg: 'Not authorized to access this route',
-          });
-        }
+      const authorized = await checkSuperAuthorization(creatorId);
 
-        const document = await model.findUnique({
-          where: { id: Number(id) },
+      if (!authorized) {
+        return res.status(StatusCodes.FORBIDDEN).json({
+          msg: 'Not authorized to access this route',
         });
+      }
 
-        if (!document) {
-          return res
-            .status(200)
-            .json({ msg: `No ${modelName} with the id: ${id} found` });
-        }
+      const document = await model.findUnique({
+        where: { id: Number(id) },
+      });
 
-        /**
+      if (!document) {
+        return res
+          .status(200)
+          .json({ msg: `No ${modelName} with the id: ${id} found` });
+      }
+
+      /**
        * The delete function deletes a single record using an
        * id or unique identifier
        */
-        await model.delete({
-          where: { id: Number(id) },
-        });
+      await model.delete({
+        where: { id: Number(id) },
+      });
 
-        return res.json({
-          msg: `${capitalize(modelName)} with the id: ${id} successfully deleted`,
-        });
-      } catch (err) {
-        return res.status(500).json({
-          msg: err.message,
-        });
-      }
-    };
+      return res.json({
+        msg: `${capitalize(modelName)} with the id: ${id} successfully deleted`,
+      });
+    } catch (err) {
+      return res.status(500).json({
+        msg: err.message,
+      });
+    }
+  };
 
 interface SeedRequest extends Request {
   user: { id: string };
@@ -324,65 +328,64 @@ const seedData =
     relations: Relation | Partial<Relation>,
     inputData: string
   ) =>
-    async (req: SeedRequest, res: Response) => {
-      try {
-        const response = await axios.get(inputData);
-        const { data } = response;
+  async (req: SeedRequest, res: Response) => {
+    try {
+      const response = await axios.get(inputData);
+      const { data } = response;
 
-        /**
+      /**
        * Extract the authenticated user's id from the request
        */
-        const { id } = req.user;
+      const { id } = req.user;
 
-        /**
+      /**
        * Check if the user is authorized to seed the database
        */
-        const authorized = await checkAuthorization(id);
-        if (!authorized) {
-          return res.status(StatusCodes.FORBIDDEN).json({
-            msg: 'Not authorized to access this route',
-          });
-        }
+      const authorized = await checkSuperAuthorization(id);
+      if (!authorized) {
+        return res.status(StatusCodes.FORBIDDEN).json({
+          msg: 'Not authorized to access this route',
+        });
+      }
 
-        // Fail gracefully if the server doesn't reply 200 or the data is undefined
-        if (response.status !== 200 || !data) {
-          return res
-            .status(500)
-            .json({ msg: `Unable to get seeding data from '${inputData}'` });
-        }
+      // Fail gracefully if the server doesn't reply 200 or the data is undefined
+      if (response.status !== 200 || !data) {
+        return res
+          .status(500)
+          .json({ msg: `Unable to get seeding data from '${inputData}'` });
+      }
 
-        // Clear the old data
-        await model.deleteMany({});
+      // Clear the old data
+      await model.deleteMany({});
 
-        // Test for mangled json data by typechecking with a string
-        if (typeof data === typeof String)
-          throw Error(
-            'Could not read JSON data. Possibly malformed JSON formatting.'
-          );
+      // Test for mangled json data by typechecking with a string
+      if (typeof data === typeof String)
+        throw Error(
+          'Could not read JSON data. Possibly malformed JSON formatting.'
+        );
 
-        // Check if it's an array or a single object to use the correct create method
-        if (Array.isArray(data))
-          await model.createMany({ data, skipDuplicates: true });
-        else await model.create({ data });
+      // Check if it's an array or a single object to use the correct create method
+      if (Array.isArray(data))
+        await model.createMany({ data, skipDuplicates: true });
+      else await model.create({ data });
 
-        // Fetch the newly created documents
-        const documents: Prisma.DepartmentSelect[] | Prisma.InstitutionSelect[] =
+      // Fetch the newly created documents
+      const documents: Prisma.DepartmentSelect[] | Prisma.InstitutionSelect[] =
         await model.findMany({
           orderBy: { id: 'asc' },
           ...relations,
         });
 
-        return res.status(201).json({
-          msg: `Successfully seeded ${modelName} with data from ${inputData}.`,
-          data: documents,
-        });
-      } catch (err) {
-        console.log(err);
-        return res.status(500).json({
-          msg: err.message,
-        });
-      }
-    };
+      return res.status(201).json({
+        msg: `Successfully seeded ${modelName} with data from ${inputData}.`,
+        data: documents,
+      });
+    } catch (err) {
+      return res.status(500).json({
+        msg: err.message,
+      });
+    }
+  };
 
 export {
   getDocument,
