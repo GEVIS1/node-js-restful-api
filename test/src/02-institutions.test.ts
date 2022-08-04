@@ -5,8 +5,8 @@ import institutions from './../misc/institutiondata';
 //import departments from './../misc/departmentdata';
 import { agent, closeAgent } from './00-setup.test';
 
-describe('It should manipulate institutions', async () => {
-  it('should fail to create an institution as a user', async (done) => {
+describe('It should manipulate institutions', () => {
+  it('should fail to create an institution as a user', (done) => {
     /**
      * Log back in as the user to fetch the token
      */
@@ -31,7 +31,7 @@ describe('It should manipulate institutions', async () => {
       });
   });
 
-  it('should create an institution as an admin user', async (done) => {
+  it('should create an institution as an admin user', (done) => {
     /**
      * Log back in as the user to fetch the token
      */
@@ -57,7 +57,7 @@ describe('It should manipulate institutions', async () => {
       });
   });
 
-  it('should fail to delete an institution as an admin user', async (done) => {
+  it('should fail to delete an institution as an admin user', (done) => {
     /**
      * Log back in as the user to fetch the token
      */
@@ -82,7 +82,7 @@ describe('It should manipulate institutions', async () => {
       });
   });
 
-  it('should not fail to delete an institution as a super admin user', async (done) => {
+  it('should not fail to delete an institution as a super admin user', (done) => {
     /**
      * Log back in as the user to fetch the token
      */
