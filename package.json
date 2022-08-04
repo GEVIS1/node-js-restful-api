@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "nodemon --experimental-specifier-resolution=node src/app.ts",
-    "test": "npx mocha",
+    "test": "npx mocha --exit",
     "prisma:migrate": "npx prisma migrate dev",
     "prisma:studio": "npx prisma studio",
     "prettier:fix": "npx prettier --write",
