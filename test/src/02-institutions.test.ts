@@ -41,9 +41,9 @@ after((done) => {
           chai
           .expect(res.body.msg)
           .to.be.equal('Not authorized to access this route');
+          done();
         });
       });
-    done();
   });
 
   it('should create an institution as an admin user', async (done) => {
@@ -68,9 +68,9 @@ after((done) => {
               .expect(res.body.msg)
               .to.be.equal('Institution successfully created');
             chai.expect(res.body.data).to.contain({ ...institutions[0] });
+            done();
           });
       });
-    done();
   });
 
   it('should fail to delete an institution as an admin user', async (done) => {
@@ -94,9 +94,9 @@ after((done) => {
           chai
           .expect(res.body.msg)
           .to.be.equal('Not authorized to access this route');
+          done();
         });
       });
-    done();
   });
 
   it('should not fail to delete an institution as a super admin user', async (done) => {
@@ -120,8 +120,8 @@ after((done) => {
           chai
           .expect(res.body.msg)
           .to.be.equal('Not authorized to access this route');
+          done();
         });
       });
-    done();
   });
 });

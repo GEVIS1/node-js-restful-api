@@ -13,10 +13,10 @@ describe('It should register users', () => {
     done();
   });
 
-after((done) => {
+  after((done) => {
     agent.close();
     done();
-  });
+    });
 
 
   it('should register a user', (done) => {
@@ -28,9 +28,8 @@ after((done) => {
         chai.expect(res.body).to.be.an('object');
         chai.expect(res.body.msg).to.be.equal('User successfully registered');
         chai.expect(res.body.data).to.contain(user);
-        console.log('res.body', res.body)
+        done();
       });
-    done();
   });
 
   it('should register an admin user', (done) => {
@@ -42,8 +41,8 @@ after((done) => {
         chai.expect(res.body).to.be.an('object');
         chai.expect(res.body.msg).to.be.equal('User successfully registered');
         chai.expect(res.body.data).to.contain(adminUser);
+        done();
       });
-    done();
   });
 
   it('should register a super admin user', (done) => {
@@ -55,8 +54,8 @@ after((done) => {
         chai.expect(res.body).to.be.an('object');
         chai.expect(res.body.msg).to.be.equal('User successfully registered');
         chai.expect(res.body.data).to.contain(superAdminUser);
+        done();
       });
-    done();
   });
 });
 
@@ -84,8 +83,8 @@ after((done) => {
         chai.expect(res.body).to.be.an('object');
         chai.expect(res.body.msg).to.be.equal('User successfully logged in');
         chai.expect(res.body).to.have.property('token');
+        done();
       });
-    done();
   });
 
   it('should login a user with their username', (done) => {
@@ -100,8 +99,8 @@ after((done) => {
         chai.expect(res.body.msg).to.be.equal('User successfully logged in');
         chai.expect(res.body).to.have.property('token');
         chai.expect(typeof res.body.token).to.be.equal(typeof String);
+        done();
       });
-    done();
   });
 
   it('should login an admin user with their email', (done) => {
@@ -116,8 +115,8 @@ after((done) => {
         chai.expect(res.body.msg).to.be.equal('User successfully logged in');
         chai.expect(res.body).to.have.property('token');
         chai.expect(typeof res.body.token).to.be.equal(typeof String);
+        done();
       });
-    done();
   });
 
   it('should login an admin user with their username', (done) => {
@@ -131,8 +130,8 @@ after((done) => {
         chai.expect(res.body).to.be.an('object');
         chai.expect(res.body.msg).to.be.equal('User successfully logged in');
         chai.expect(res.body).to.have.property('token');
+        done();
       });
-    done();
   });
 
   it('should login a super admin user with their email', (done) => {
@@ -145,8 +144,8 @@ after((done) => {
         chai.expect(res.body).to.be.an('object');
         chai.expect(res.body.msg).to.be.equal('User successfully logged in');
         chai.expect(res.body).to.have.property('token');
+        done();
       });
-    done();
   });
 
   it('should login a super admin user with their username', (done) => {
@@ -160,7 +159,7 @@ after((done) => {
         chai.expect(res.body).to.be.an('object');
         chai.expect(res.body.msg).to.be.equal('User successfully logged in');
         chai.expect(res.body).to.have.property('token');
+        done();
       });
-    done();
   });
 });
