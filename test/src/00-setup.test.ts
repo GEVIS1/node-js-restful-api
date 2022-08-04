@@ -11,12 +11,12 @@ const DELAY = 5 * SECOND;
 chai.use(chaiHttp);
 
 export const agent = chai.request.agent(app);
+export const closeAgent = () => agent.close();
 
 /**
  * Add delay after initializing the agent so that it is ready before we start testing
  */
 await setTimeout(DELAY);
-
 
 /**
  * Delete all rows in all the models.
@@ -30,10 +30,9 @@ export async function deleteResources() {
   await prisma.department.deleteMany({});
   process.stdout.write('.');
   await prisma.user.deleteMany({});
-  process.stdout.write(".Deleted!\n\n");
+  process.stdout.write('.Deleted!\n\n');
 }
 
 before(async function () {
   await deleteResources();
 });
-
