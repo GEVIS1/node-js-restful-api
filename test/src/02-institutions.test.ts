@@ -11,24 +11,23 @@ describe('It should manipulate institutions', async () => {
      * Log back in as the user to fetch the token
      */
     const { username, password } = user;
-    let token: string;
     agent
       .post('/api/v1/auth/login')
       .send({ username, password })
-      .then((res) => {
-        const {token} = res.body.data;
+      .then((authRes) => {
+        const { token } = authRes.body.data;
         agent
-        .post('/api/v1/institutions')
-        .auth(token, { type: 'bearer' })
-        .send(institutions[0])
-        .end((_, res) => {
-          chai.expect(res.status).to.be.equal(403);
-          chai.expect(res.body).to.be.an('object');
-          chai
-          .expect(res.body.msg)
-          .to.be.equal('Not authorized to access this route');
-          done();
-        });
+          .post('/api/v1/institutions')
+          .auth(token, { type: 'bearer' })
+          .send(institutions[0])
+          .end((_, res) => {
+            chai.expect(res.status).to.be.equal(403);
+            chai.expect(res.body).to.be.an('object');
+            chai
+              .expect(res.body.msg)
+              .to.be.equal('Not authorized to access this route');
+            done();
+          });
       });
   });
 
@@ -40,14 +39,13 @@ describe('It should manipulate institutions', async () => {
     agent
       .post('/api/v1/auth/login')
       .send({ username, password })
-      .then((res) => {
-        const {token} = res.body.data;
-        console.log('token', token)
+      .then((authRes) => {
+        const { token } = authRes.body.data;
         agent
           .post('/api/v1/institutions')
           .auth(token, { type: 'bearer' })
           .send(institutions[0])
-          .end((err, res) => {
+          .end((_, res) => {
             chai.expect(res.status).to.be.equal(403);
             chai.expect(res.body).to.be.an('object');
             chai
@@ -64,24 +62,23 @@ describe('It should manipulate institutions', async () => {
      * Log back in as the user to fetch the token
      */
     const { username, password } = adminUser;
-    let token: string;
     agent
       .post('/api/v1/auth/login')
       .send({ username, password })
-      .then((res) => {
-        const {token} = res.body.data;
+      .then((authRes) => {
+        const { token } = authRes.body.data;
         agent
-        .delete('/api/v1/institutions/1')
-        .auth(token, { type: 'bearer' })
-        .send()
-        .end((_, res) => {
-          chai.expect(res.status).to.be.equal(403);
-          chai.expect(res.body).to.be.an('object');
-          chai
-          .expect(res.body.msg)
-          .to.be.equal('Not authorized to access this route');
-          done();
-        });
+          .delete('/api/v1/institutions/1')
+          .auth(token, { type: 'bearer' })
+          .send()
+          .end((_, res) => {
+            chai.expect(res.status).to.be.equal(403);
+            chai.expect(res.body).to.be.an('object');
+            chai
+              .expect(res.body.msg)
+              .to.be.equal('Not authorized to access this route');
+            done();
+          });
       });
   });
 
@@ -90,24 +87,23 @@ describe('It should manipulate institutions', async () => {
      * Log back in as the user to fetch the token
      */
     const { username, password } = superAdminUser;
-    let token: string;
     agent
       .post('/api/v1/auth/login')
       .send({ username, password })
-      .then((res) => {
-        const {token} = res.body.data;
+      .then((authRes) => {
+        const { token } = authRes.body.data;
         agent
-        .delete('/api/v1/institutions/1')
-        .auth(token, { type: 'bearer' })
-        .send()
-        .end((_, res) => {
-          chai.expect(res.status).to.be.equal(403);
-          chai.expect(res.body).to.be.an('object');
-          chai
-          .expect(res.body.msg)
-          .to.be.equal('Not authorized to access this route');
-          done();
-        });
+          .delete('/api/v1/institutions/1')
+          .auth(token, { type: 'bearer' })
+          .send()
+          .end((_, res) => {
+            chai.expect(res.status).to.be.equal(403);
+            chai.expect(res.body).to.be.an('object');
+            chai
+              .expect(res.body.msg)
+              .to.be.equal('Not authorized to access this route');
+            done();
+          });
       });
   });
 });
