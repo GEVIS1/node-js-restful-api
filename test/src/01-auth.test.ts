@@ -1,24 +1,9 @@
 import chai from 'chai';
 
-import prisma from '../../src/utils/prisma/prisma'
 import { user, adminUser, superAdminUser } from './../misc/userdata';
-import app from '../../src/app';
-
-let agent: ChaiHttp.Agent;
+import { agent } from './00-setup.test';
 
 describe('It should register users', () => {
-  before((done) => {
-    agent = chai.request.agent(app);
-    prisma.user.deleteMany({});
-    done();
-  });
-
-  after((done) => {
-    agent.close();
-    done();
-    });
-
-
   it('should register a user', (done) => {
     agent
       .post('/api/v1/auth/register')

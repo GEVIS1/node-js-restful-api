@@ -2,24 +2,10 @@ import chai from 'chai';
 
 import { user, adminUser, superAdminUser } from './../misc/userdata';
 import institutions from './../misc/institutiondata';
-import prisma from '../../src/utils/prisma/prisma';
 //import departments from './../misc/departmentdata';
-import app from '../../src/app';
-
-let agent: ChaiHttp.Agent;
+import { agent } from './00-setup.test';
 
 describe('It should manipulate institutions', async () => {
-  before((done) => {
-    agent = chai.request.agent(app);
-    prisma.user.deleteMany({});
-    done();
-  });
-
-after((done) => {
-    agent.close();
-    done();
-  });
-
   it('should fail to create an institution as a user', async (done) => {
     /**
      * Log back in as the user to fetch the token
