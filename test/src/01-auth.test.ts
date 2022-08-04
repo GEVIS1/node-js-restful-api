@@ -1,7 +1,7 @@
 import chai from 'chai';
 
 import { user, adminUser, superAdminUser } from './../misc/userdata';
-import { agent } from './00-setup.test';
+import { agent, closeAgent } from './00-setup.test';
 
 describe('It should register users', () => {
   it('should register a user', (done) => {
@@ -77,7 +77,6 @@ describe('It should log users in', () => {
         chai.expect(res.body).to.be.an('object');
         chai.expect(res.body.msg).to.be.equal('User successfully logged in');
         chai.expect(res.body).to.have.property('token');
-        chai.expect(typeof res.body.token).to.be.equal(typeof String);
         done();
       });
   });
@@ -93,7 +92,6 @@ describe('It should log users in', () => {
         chai.expect(res.body).to.be.an('object');
         chai.expect(res.body.msg).to.be.equal('User successfully logged in');
         chai.expect(res.body).to.have.property('token');
-        chai.expect(typeof res.body.token).to.be.equal(typeof String);
         done();
       });
   });
@@ -141,4 +139,8 @@ describe('It should log users in', () => {
         done();
       });
   });
+});
+
+after(() => {
+  closeAgent();
 });
