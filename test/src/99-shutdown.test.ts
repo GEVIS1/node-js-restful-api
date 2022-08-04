@@ -1,4 +1,5 @@
-import { agent } from './00-setup.test';
+import { closeAgent } from './00-setup.test';
 after(() => {
-  agent.close();
+  // It is unsure if this does anything
+  closeAgent();
 });
