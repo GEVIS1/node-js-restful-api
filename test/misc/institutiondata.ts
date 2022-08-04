@@ -2,11 +2,13 @@ export default [
   {
     id: 1,
     name: 'Otago Polytechnic',
-    institutionId: 1,
+    region: 'Otago',
+    country: 'New Zealand',
   },
   {
     id: 2,
     name: 'Canterbury University',
-    institutionId: 2,
+    region: 'Canterbury',
+    country: 'New Zealand',
   },
 ];
