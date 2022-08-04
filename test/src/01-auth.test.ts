@@ -5,6 +5,8 @@ import { agent } from './00-setup.test';
 
 describe('It should register users', () => {
   it('should register a user', (done) => {
+    const userNoPass = structuredClone(user);
+    delete userNoPass.password;
     agent
       .post('/api/v1/auth/register')
       .send(user)
@@ -12,12 +14,14 @@ describe('It should register users', () => {
         chai.expect(res.status).to.be.equal(201);
         chai.expect(res.body).to.be.an('object');
         chai.expect(res.body.msg).to.be.equal('User successfully registered');
-        chai.expect(res.body.data).to.contain(user);
+        chai.expect(res.body.data).to.contain(userNoPass);
         done();
       });
   });
 
   it('should register an admin user', (done) => {
+    const adminUserNoPass = structuredClone(adminUser);
+    delete adminUserNoPass.password;
     agent
       .post('/api/v1/auth/register')
       .send(adminUser)
@@ -25,12 +29,14 @@ describe('It should register users', () => {
         chai.expect(res.status).to.be.equal(201);
         chai.expect(res.body).to.be.an('object');
         chai.expect(res.body.msg).to.be.equal('User successfully registered');
-        chai.expect(res.body.data).to.contain(adminUser);
+        chai.expect(res.body.data).to.contain(adminUserNoPass);
         done();
       });
   });
 
   it('should register a super admin user', (done) => {
+    const superAdminUserNoPass = structuredClone(superAdminUser);
+    delete superAdminUserNoPass.password;
     agent
       .post('/api/v1/auth/register')
       .send(superAdminUser)
@@ -38,24 +44,13 @@ describe('It should register users', () => {
         chai.expect(res.status).to.be.equal(201);
         chai.expect(res.body).to.be.an('object');
         chai.expect(res.body.msg).to.be.equal('User successfully registered');
-        chai.expect(res.body.data).to.contain(superAdminUser);
+        chai.expect(res.body.data).to.contain(superAdminUserNoPass);
         done();
       });
   });
 });
 
 describe('It should log users in', () => {
-  before((done) => {
-    agent = chai.request.agent(app);
-    prisma.user.deleteMany({});
-    done();
-  });
-
-after((done) => {
-    agent.close();
-    done();
-  });
-
   it('should login a user with their email', (done) => {
     const { email, password } = user;
 
@@ -63,7 +58,6 @@ after((done) => {
       .post('/api/v1/auth/login')
       .send({ email, password })
       .end((_, res) => {
-        console.log('res.body', res.body)
         chai.expect(res.status).to.be.equal(200);
         chai.expect(res.body).to.be.an('object');
         chai.expect(res.body.msg).to.be.equal('User successfully logged in');
