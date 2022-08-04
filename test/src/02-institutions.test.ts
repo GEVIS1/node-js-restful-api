@@ -51,7 +51,7 @@ describe('It should manipulate institutions', () => {
             chai
               .expect(res.body.msg)
               .to.be.equal('Institution successfully created');
-            chai.expect(res.body.data).to.contain({ ...institutions[0] });
+            chai.expect(res.body.data[0]).to.contain({ ...institutions[0] });
             done();
           });
       });
