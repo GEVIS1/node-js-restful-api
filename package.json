@@ -11,7 +11,8 @@
     "prisma:studio": "npx prisma studio",
     "prettier:fix": "npx prettier --write",
     "prettier:check": "npx prettier --check",
-    "lint:fix": "npx eslint --fix"
+    "lint:fix": "npx eslint --fix",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
