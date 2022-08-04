@@ -8,5 +8,5 @@
     "experimental-specifier-resolution=node",
     "loader=ts-node/esm"
   ],
-  "timeout": "60s"
+  "timeout": "10s"
 }
