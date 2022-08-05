@@ -39,7 +39,10 @@ const resetIdIncrementor = async (table: Prisma.ModelName) => {
 };
 
 export const clearDataAndResetIds = async () => {
-  await resetIdIncrementor('User');
-  await resetIdIncrementor('Department');
-  await resetIdIncrementor('Institution');
+  for (const model in Prisma.ModelName) {
+    if (Object.prototype.hasOwnProperty.call(Prisma.ModelName, model)) {
+      const table = Prisma.ModelName[model];
+      await resetIdIncrementor(table);
+    }
+  }
 };
