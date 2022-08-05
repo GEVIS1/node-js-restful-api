@@ -2,8 +2,8 @@ import { setTimeout } from 'timers/promises';
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 
-import prisma from '../../src/utils/prisma/prisma';
 import app from '../../src/app';
+import { clearDataAndResetIds } from '../misc/resetIds';
 
 export const SECOND = 1000;
 const DELAY = 5 * SECOND;
@@ -18,21 +18,8 @@ export const closeAgent = () => agent.close();
  */
 await setTimeout(DELAY);
 
-/**
- * Delete all rows in all the models.
- * This function definitely doesn't go overboard by manipulating text in the TTY.
- */
-export async function deleteResources() {
-  const deleteString = '  Deleting data..';
-  process.stdout.write(deleteString);
-  await prisma.institution.deleteMany({});
-  process.stdout.write('.');
-  await prisma.department.deleteMany({});
-  process.stdout.write('.');
-  await prisma.user.deleteMany({});
-  process.stdout.write('.Deleted!\n\n');
-}
-
 before(async function () {
-  await deleteResources();
+  await clearDataAndResetIds();
+  // eslint-disable-next-line no-console
+  console.log();
 });
