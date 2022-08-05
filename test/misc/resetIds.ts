@@ -29,7 +29,7 @@ const resetIdIncrementor = async (table: Prisma.ModelName) => {
    * Destructure the returned array since there should only be one result
    * and we only care about the first entry if there were many.
    */
-  const [newSequence] = await prisma.$queryRawUnsafe<[{ last_value: 1n }]>(
+  const [newSequence] = await prisma.$queryRawUnsafe<[{ last_value: bigint }]>(
     `SELECT last_value FROM "${table}_id_seq";`
   );
 
