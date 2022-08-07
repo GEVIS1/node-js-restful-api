@@ -3,9 +3,10 @@
  */
 
 import dotenv from 'dotenv';
-import express, { urlencoded, json } from 'express';
+import express, { urlencoded, json, Request, Response } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import compression from 'compression';
 
 import { institutions, departments, auth } from './routes/v1';
 import authRoute from './middleware/authorization/authRoute';
@@ -53,6 +54,28 @@ for (const [routeName, route] of Object.entries(routes)) {
  * Separately use for the User model since it does not use the authRoute middleware
  */
 app.use(`/${BASE_URL}/${CURRENT_VERSION}/auth`, auth);
+
+/**
+ * Compression test routes
+ */
+app.get(
+  `/${BASE_URL}/${CURRENT_VERSION}/optimization/without`,
+  (_req: Request, res: Response) => {
+    const text = 'Hade på badet, din gamle sjokolade!';
+    res.json({ msg: text.repeat(1000) });
+  }
+);
+
+const compMiddleware = compression();
+
+app.get(
+  `/${BASE_URL}/${CURRENT_VERSION}/optimization/with`,
+  compMiddleware,
+  (_req: Request, res: Response) => {
+    const text = 'Hade på badet, din gamle sjokolade!';
+    res.json({ msg: text.repeat(1000) });
+  }
+);
 
 app.listen(PORT, () =>
   // eslint-disable-next-line no-console
