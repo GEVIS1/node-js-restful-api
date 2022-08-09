@@ -12,6 +12,7 @@ import { institutions, departments, auth } from './routes/v1';
 import authRoute from './middleware/authorization/authRoute';
 import { checkEnv } from './utils/env';
 import compressionFilter from './middleware/compression/filter';
+import cacheRoute from './middleware/caching/cacheRoute';
 
 /**
  * An object holding all the routes available in the API
@@ -44,6 +45,7 @@ app.use(json());
 app.use(cors());
 app.use(helmet());
 app.use(compression({ filter: compressionFilter }));
+app.use(cacheRoute);
 
 /**
  * Iterate over the routes and add them to the express app
