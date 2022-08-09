@@ -11,6 +11,7 @@ import compression from 'compression';
 import { institutions, departments, auth } from './routes/v1';
 import authRoute from './middleware/authorization/authRoute';
 import { checkEnv } from './utils/env';
+import compressionFilter from './middleware/compression/filter';
 
 /**
  * An object holding all the routes available in the API
@@ -42,6 +43,7 @@ app.use(urlencoded({ extended: false }));
 app.use(json());
 app.use(cors());
 app.use(helmet());
+app.use(compression({ filter: compressionFilter }));
 
 /**
  * Iterate over the routes and add them to the express app
@@ -66,11 +68,8 @@ app.get(
   }
 );
 
-const compMiddleware = compression();
-
 app.get(
   `/${BASE_URL}/${CURRENT_VERSION}/optimization/with`,
-  compMiddleware,
   (_req: Request, res: Response) => {
     const text = 'Hade på badet, din gamle sjokolade!';
     res.json({ msg: text.repeat(1000) });
