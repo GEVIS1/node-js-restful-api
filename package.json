@@ -1,5 +1,5 @@
 {
-  "name": "playground-gevis1",
+  "name": "assessment-1-node-js-restful-api",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -16,15 +16,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/otago-polytechnic-bit-courses/playground-GEVIS1.git"
+    "url": "git+https://github.com/otago-polytechnic-bit-courses/assessment-1-node-js-restful-api-GEVIS1.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/otago-polytechnic-bit-courses/playground-GEVIS1/issues"
+    "url": "https://github.com/otago-polytechnic-bit-courses/assessment-1-node-js-restful-api-GEVIS1/issues"
   },
-  "homepage": "https://github.com/otago-polytechnic-bit-courses/playground-GEVIS1#readme",
+  "homepage": "https://github.com/otago-polytechnic-bit-courses/assessment-1-node-js-restful-api-GEVIS1#readme",
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
