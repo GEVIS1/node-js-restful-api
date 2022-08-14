@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { Prisma } from '@prisma/client';
-import prisma from '../../src/utils/prisma/prisma';
+import prisma from '../../../src/utils/v1/prisma/prisma';
 
 export const findAllIncrementors = () =>
   prisma.$queryRaw<

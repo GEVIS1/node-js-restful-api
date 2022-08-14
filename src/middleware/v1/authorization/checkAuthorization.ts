@@ -1,5 +1,5 @@
 import { Role } from '@prisma/client';
-import PrismaClient from '../../utils/prisma/prisma';
+import PrismaClient from '../../../utils/v1/prisma/prisma';
 
 const AuthorizedRoles: Role[] = ['ADMIN_USER', 'SUPER_ADMIN_USER'];
 const SuperAuthorizedRole = 'SUPER_ADMIN_USER';

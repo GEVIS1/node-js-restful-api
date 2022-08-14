@@ -2,12 +2,12 @@ import { Prisma } from '@prisma/client';
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
-import { Relation } from '../../utils/prisma/relations';
-import axios from '../../utils/axiosInstance';
+import { Relation } from '../../utils/v1/prisma/relations';
+import axios from '../../utils/v1/axiosInstance';
 import {
   checkAuthorization,
   checkSuperAuthorization,
-} from '../../middleware/authorization/checkAuthorization';
+} from '../../middleware/v1/authorization/checkAuthorization';
 
 /**
  * Uses body and modelType to return an object with all the properties of that modelType found in the body.

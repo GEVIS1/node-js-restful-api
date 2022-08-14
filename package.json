@@ -38,6 +38,9 @@
       "npm run lint:fix"
     ]
   },
+  "prisma": {
+    "schema": "prisma/v2/schema.prisma"
+  },
   "dependencies": {
     "@prisma/client": "^4.0.0",
     "axios": "^0.27.2",

@@ -1,8 +1,8 @@
-import { departmentsURL } from '../../db/seeder/data';
+import { departmentsURL } from '../../db/v1/seeder/data';
 import prisma, {
   departmentRelations,
   departmentType,
-} from '../../utils/prisma/prisma';
+} from '../../utils/v1/prisma/prisma';
 import {
   getDocument,
   getDocuments,

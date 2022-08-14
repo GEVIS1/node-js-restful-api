@@ -2,7 +2,7 @@ import { setTimeout } from 'timers/promises';
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 
-import app from '../../src/app';
+import app from '../../../src/app';
 import { clearDataAndResetIds } from '../misc/resetIds';
 
 export const SECOND = 1000;

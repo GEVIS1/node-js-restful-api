@@ -4,7 +4,7 @@ import { Request, Response } from 'express';
 import { Prisma, Role } from '@prisma/client';
 import { StatusCodes } from 'http-status-codes';
 
-import prisma from '../../utils/prisma/prisma';
+import prisma from '../../utils/v1/prisma/prisma';
 
 interface RegisterBody {
   username: string;

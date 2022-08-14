@@ -41,17 +41,17 @@ const cacheRoute = (
     cache.del(key);
     return next();
   } else if (cachedRes) {
-  /**
-   * Else if we have cached data on this endpoint return it.
-   */
+    /**
+     * Else if we have cached data on this endpoint return it.
+     */
     return res.json(cachedRes);
   } else {
-  /**
-   * Else we need to cache the data by storing the response body.
-   * We do this by storing the res.json function in the res.originalSend property
-   * and overriding res.json to use res.originalSend to send the response and then storing
-   * the response body in the cache.
-   */
+    /**
+     * Else we need to cache the data by storing the response body.
+     * We do this by storing the res.json function in the res.originalSend property
+     * and overriding res.json to use res.originalSend to send the response and then storing
+     * the response body in the cache.
+     */
     res.originalSend = res.json;
     res.json = (body) => {
       res.originalSend(body);
