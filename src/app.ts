@@ -8,16 +8,14 @@ import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
 
-import { institutions, departments, auth } from './routes/v1';
-import authRoute from './middleware/v1/authorization/authRoute';
+// import authRoute from './middleware/v1/authorization/authRoute';
 import { checkEnv } from './utils/v1/env';
-import compressionFilter from './middleware/v1/compression/filter';
-import cacheRoute from './middleware/v1/caching/cacheRoute';
+// import cacheRoute from './middleware/v1/caching/cacheRoute';
 
 /**
  * An object holding all the routes available in the API
  */
-const routes = { institutions, departments };
+// const routes = { institutions, departments };
 
 dotenv.config();
 
@@ -44,20 +42,20 @@ app.use(urlencoded({ extended: false }));
 app.use(json());
 app.use(cors());
 app.use(helmet());
-app.use(compression({ filter: compressionFilter }));
-app.use(cacheRoute);
+//app.use(compression({ filter: compressionFilter }));
+//app.use(cacheRoute);
 
 /**
  * Iterate over the routes and add them to the express app
  */
-for (const [routeName, route] of Object.entries(routes)) {
-  app.use(`/${BASE_URL}/${CURRENT_VERSION}/${routeName}`, authRoute, route);
-}
+//for (const [routeName, route] of Object.entries(routes)) {
+//  app.use(`/${BASE_URL}/${CURRENT_VERSION}/${routeName}`, authRoute, route);
+//}
 
 /**
  * Separately use for the User model since it does not use the authRoute middleware
  */
-app.use(`/${BASE_URL}/${CURRENT_VERSION}/auth`, auth);
+//app.use(`/${BASE_URL}/${CURRENT_VERSION}/auth`, auth);
 
 /**
  * Compression test routes
