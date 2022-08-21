@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { gistURL } from '../db/seeder/data';
+import { gistURL } from '../../db/v1/seeder/data';
 
 const axiosInstance = axios.create({
   baseURL: gistURL,

@@ -9,10 +9,10 @@ import helmet from 'helmet';
 import compression from 'compression';
 
 import { institutions, departments, auth } from './routes/v1';
-import authRoute from './middleware/authorization/authRoute';
-import { checkEnv } from './utils/env';
-import compressionFilter from './middleware/compression/filter';
-import cacheRoute from './middleware/caching/cacheRoute';
+import authRoute from './middleware/v1/authorization/authRoute';
+import { checkEnv } from './utils/v1/env';
+import compressionFilter from './middleware/v1/compression/filter';
+import cacheRoute from './middleware/v1/caching/cacheRoute';
 
 /**
  * An object holding all the routes available in the API

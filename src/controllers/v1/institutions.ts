@@ -1,8 +1,8 @@
-import { institutionsURL } from '../../db/seeder/data';
+import { institutionsURL } from '../../db/v1/seeder/data';
 import prisma, {
   institutionRelations,
   institutionType,
-} from '../../utils/prisma/prisma';
+} from '../../utils/v1/prisma/prisma';
 import {
   createDocument,
   deleteDocument,
