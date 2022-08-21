@@ -7,7 +7,7 @@
 2. `npm start`
 
 ## Entity Relationship Diagram
-![](./prisma/ERD.png)
+![](./prisma/v2/ERD.png)
 
 ## Postman documentation:
 ~~[Here](https://documenter.getpostman.com/view/17480349/UzXKWJp2)~~
