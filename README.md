@@ -6,5 +6,8 @@
 1. Copy `example.env` to `.env` and fill out the missing variables
 2. `npm start`
 
+## Entity Relationship Diagram
+![](./prisma/ERD.png)
+
 ## Postman documentation:
 ~~[Here](https://documenter.getpostman.com/view/17480349/UzXKWJp2)~~
