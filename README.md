@@ -6,6 +6,8 @@
 1. Copy `example.env` to `.env` and fill out the missing variables
 2. `npm start`
 
+This project uses the [Zod](https://zod.dev/) validation library.
+
 ## Entity Relationship Diagram
 ![](./prisma/v2/ERD.png)
 
