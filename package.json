@@ -46,7 +46,7 @@
     "schema": "prisma/v2/schema.prisma"
   },
   "dependencies": {
-    "@prisma/client": "^4.0.0",
+    "@prisma/client": "^4.2.1",
     "axios": "^0.27.2",
     "bcryptjs": "^2.4.3",
     "compression": "^1.7.4",
@@ -86,7 +86,7 @@
     "mocha": "^10.0.0",
     "nodemon": "^2.0.19",
     "prettier": "^2.7.1",
-    "prisma": "^4.0.0",
+    "prisma": "^4.2.1",
     "prisma-erd-generator": "^1.0.2",
     "ts-mocha": "^10.0.0",
     "ts-node": "^10.9.1",
