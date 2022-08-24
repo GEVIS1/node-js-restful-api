@@ -20,3 +20,6 @@ To see the current data in the database:
 
 ## Postman documentation:
 ~~[Here](https://documenter.getpostman.com/view/17480349/UzXKWJp2)~~
+
+## References:
+Prisma Data, Inc. (2022, June 21). Best practice for instantiating PrismaClient with Next.js. Prisma. Retrieved August 24, 2022, from https://www.prisma.io/docs/guides/database/troubleshooting-orm/help-articles/nextjs-prisma-client-dev-practices
