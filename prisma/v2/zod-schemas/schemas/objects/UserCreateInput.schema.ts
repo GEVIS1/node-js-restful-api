@@ -10,6 +10,7 @@ const Schema: z.ZodType<Prisma.UserCreateInput> = z
     username: z.string(),
     email: z.string(),
     password: z.string(),
+    avatar: z.string(),
     role: z.lazy(() => RoleSchema).optional(),
     createdAt: z.date().optional(),
   })

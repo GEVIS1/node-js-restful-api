@@ -11,6 +11,7 @@ const Schema: z.ZodType<Prisma.UserOrderByWithRelationInput> = z
     username: z.lazy(() => SortOrderSchema).optional(),
     email: z.lazy(() => SortOrderSchema).optional(),
     password: z.lazy(() => SortOrderSchema).optional(),
+    avatar: z.lazy(() => SortOrderSchema).optional(),
     role: z.lazy(() => SortOrderSchema).optional(),
     createdAt: z.lazy(() => SortOrderSchema).optional(),
   })
