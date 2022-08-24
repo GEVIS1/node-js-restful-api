@@ -1,0 +1,42 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native"]
+}
+
+generator erd {
+  provider = "prisma-erd-generator"
+  theme = "forest"
+  output = "./ERD.png"
+}
+
+generator zod {
+  provider = "prisma-zod-generator"
+  output = "./zod-schemas"
+}
+
+datasource db {
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+enum Role {
+  BASIC_USER
+  ADMIN_USER
+  SUPER_ADMIN_USER
+}
+
+model User {
+  id           Int           @id @default(autoincrement())
+  firstname    String                                       @db.VarChar(50)
+  lastname     String                                       @db.VarChar(50)
+  username     String        @unique                        @db.VarChar(10)
+  email        String        @unique
+  password     String                                       @db.VarChar(16)
+  avatar       String        
+  role         Role          @default(BASIC_USER)
+  createdAt    DateTime      @default(now())
+}
