@@ -9,36 +9,47 @@
 import { Request, Response } from 'express';
 import { v4 as uuid } from 'uuid';
 import { StatusCodes } from 'http-status-codes';
-//import { User } from '@prisma/client';
-//import { z } from 'zod';
+import { Prisma } from '@prisma/client';
 
-//import { UserCreateOneSchema } from '../../../prisma/v2/zod-schemas/schemas/createOneUser.schema'
-//import prisma from '../../utils/v2/prisma/prisma'
-import { UserSchema } from '../../validators/v2/user';
+import { createUserSchema } from '../../validators/v2/user';
 import { getAvatar } from '../../utils/v2/axios';
+import { UserCreateOneSchema } from '../../../prisma/v2/zod-schemas/schemas/createOneUser.schema';
+import { ZodError } from 'zod';
+
+// Extract user delegate for type information
+const user: Prisma.UserDelegate<Prisma.RejectPerModel> = prisma.user;
 
 const register = async (req: Request, res: Response) => {
   try {
-    // Check that passwords are identical
-    if (req.body.password !== req.body.confirm)
-      throw Error('Passwords do not match!');
-
     // Grab avatar
     const fetchedAvatar = await getAvatar(`${uuid()}.svg`);
+
+    /**
+     * zod does not have functionality to refer to another field from what I've found,
+     * so create the type dynamically and compare the password with the compare field
+     * by creating a RegEx string with the original password.
+     * I.E:
+     * {
+     *    compare: z.string().match(new Regex(`req.body.password`))
+     * }
+     */
+    const UserSchema = createUserSchema(req.body);
 
     // Validate extended rules
     UserSchema.parse({ ...req.body, avatar: fetchedAvatar });
 
     // Validate that the data fits the schema and save the return object
-    //const userData = UserCreateOneSchema.parse(req.body);
+    const userData = UserCreateOneSchema.parse(req.body);
 
-    //const regex = new RegExp(`^${req.body.username}@.*`)
-
-    if (!req.body.email.startsWith(req.body.username)) throw Error('derp');
-
-    // Confirm that the user portion of the email is identical to the username
+    await user.create(userData);
   } catch (err) {
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(err);
+    /**
+     * I considered using Bad Request (400) here, but I like Unprocessable Entity (422)
+     * https://tools.ietf.org/html/rfc2518#section-10.3
+     */
+    if (err instanceof ZodError)
+      return res.status(StatusCodes.UNPROCESSABLE_ENTITY);
+    else return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(err);
   }
 };
 
