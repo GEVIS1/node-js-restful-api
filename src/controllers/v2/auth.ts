@@ -16,6 +16,9 @@ import { getAvatar } from '../../utils/v2/axios';
 import { UserCreateOneSchema } from '../../../prisma/v2/zod-schemas/schemas/createOneUser.schema';
 import { ZodError } from 'zod';
 
+// Ensure prisma.user isn't undefined
+if (prisma?.user === undefined) throw Error('Prisma is undefined.');
+
 // Extract user delegate for type information
 const user: Prisma.UserDelegate<Prisma.RejectPerModel> = prisma.user;
 
