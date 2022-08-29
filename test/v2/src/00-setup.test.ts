@@ -3,7 +3,7 @@ import chai from 'chai';
 import chaiHttp from 'chai-http';
 
 import app from '../../../src/app';
-//import { clearDataAndResetIds } from '../misc/resetIds';
+import { clearDataAndResetIds } from '../misc/resetIds';
 
 export const SECOND = 1000;
 const DELAY = 5 * SECOND;
@@ -14,7 +14,7 @@ export const agent = chai.request.agent(app);
 export const closeAgent = () => agent.close();
 
 before(async function () {
-  //await clearDataAndResetIds();
+  await clearDataAndResetIds();
   // eslint-disable-next-line no-console
   console.log();
   /**
