@@ -29,7 +29,7 @@ const createUserSchema = (data: UserCreateInput) => {
       .string()
       .min(8)
       .max(16)
-      .regex(new RegExp(`${data.confirm}`), {
+      .regex(new RegExp(`${data.password}`), {
         message: 'Passwords did not match.',
       }),
     avatar: z.string().url(),
