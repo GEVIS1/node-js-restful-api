@@ -22,6 +22,9 @@ if (prisma?.user === undefined) throw Error('Prisma is undefined.');
 // Extract user delegate for type information
 const user: Prisma.UserDelegate<Prisma.RejectPerModel> = prisma.user;
 
+// Sending the password in the reply isn't desired
+type UserNoPassword = Optional<User, 'password'>;
+
 const register = async (req: Request, res: Response) => {
   try {
     // Grab avatar
@@ -39,10 +42,18 @@ const register = async (req: Request, res: Response) => {
     const UserSchema = createUserSchema(req.body);
 
     // Validate extended rules
-    UserSchema.parse({ ...req.body, avatar });
+    const validatedData: Prisma.UserCreateInput & { confirm?: string } =
+      UserSchema.parse({ ...req.body, avatar });
+
+    delete validatedData.confirm;
 
     // Validate that the data fits the schema and save the return object
-    const userData = UserCreateOneSchema.parse(req.body);
+    const userData = UserCreateOneSchema.parse({ data: { ...validatedData } });
+
+    const createdUser: UserNoPassword = await user.create(userData);
+
+    // Let's hide the password from the response
+    delete createdUser.password;
 
     await user.create(userData);
   } catch (err) {
