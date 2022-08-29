@@ -12,7 +12,7 @@ import { StatusCodes } from 'http-status-codes';
 import { Prisma } from '@prisma/client';
 
 import { createUserSchema } from '../../validators/v2/user';
-import { getAvatar } from '../../utils/v2/axios';
+import { baseURL } from '../../utils/v2/axios';
 import { UserCreateOneSchema } from '../../../prisma/v2/zod-schemas/schemas/createOneUser.schema';
 import { ZodError } from 'zod';
 
@@ -25,7 +25,7 @@ const user: Prisma.UserDelegate<Prisma.RejectPerModel> = prisma.user;
 const register = async (req: Request, res: Response) => {
   try {
     // Grab avatar
-    const fetchedAvatar = await getAvatar(`${uuid()}.svg`);
+    const avatar = `${baseURL}${uuid()}.svg`;
 
     /**
      * zod does not have functionality to refer to another field from what I've found,
@@ -39,7 +39,7 @@ const register = async (req: Request, res: Response) => {
     const UserSchema = createUserSchema(req.body);
 
     // Validate extended rules
-    UserSchema.parse({ ...req.body, avatar: fetchedAvatar });
+    UserSchema.parse({ ...req.body, avatar });
 
     // Validate that the data fits the schema and save the return object
     const userData = UserCreateOneSchema.parse(req.body);
