@@ -55,15 +55,22 @@ const register = async (req: Request, res: Response) => {
     // Let's hide the password from the response
     delete createdUser.password;
 
-    await user.create(userData);
+    return res
+      .status(StatusCodes.CREATED)
+      .json({ success: true, data: createdUser });
   } catch (err) {
     /**
      * I considered using Bad Request (400) here, but I like Unprocessable Entity (422)
      * https://tools.ietf.org/html/rfc2518#section-10.3
      */
     if (err instanceof ZodError)
-      return res.status(StatusCodes.UNPROCESSABLE_ENTITY);
-    else return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(err);
+      return res
+        .status(StatusCodes.UNPROCESSABLE_ENTITY)
+        .json({ success: false, err });
+    else
+      return res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .json({ success: false, err });
   }
 };
 
