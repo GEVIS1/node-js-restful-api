@@ -3,10 +3,10 @@
  */
 
 import dotenv from 'dotenv';
-import express, { urlencoded, json, Request, Response } from 'express';
+import express, { urlencoded, json /*Request, Response*/ } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import compression from 'compression';
+// import compression from 'compression';
 
 // import authRoute from './middleware/v1/authorization/authRoute';
 import { checkEnv } from './utils/v1/env';
@@ -15,7 +15,7 @@ import { checkEnv } from './utils/v1/env';
 /**
  * An object holding all the routes available in the API
  */
-// const routes = { institutions, departments };
+// const routes = { auth };
 
 dotenv.config();
 
@@ -26,12 +26,12 @@ checkEnv();
 
 const app = express();
 
-const BASE_URL = 'api';
+// const BASE_URL = 'api';
 
 /**
  * Current version of the API
  */
-const CURRENT_VERSION = 'v1';
+// const CURRENT_VERSION = 'v1';
 
 /**
  * The port the app will listen to
@@ -48,33 +48,14 @@ app.use(helmet());
 /**
  * Iterate over the routes and add them to the express app
  */
-//for (const [routeName, route] of Object.entries(routes)) {
+// for (const [routeName, route] of Object.entries(routes)) {
 //  app.use(`/${BASE_URL}/${CURRENT_VERSION}/${routeName}`, authRoute, route);
-//}
+// }
 
 /**
  * Separately use for the User model since it does not use the authRoute middleware
  */
 //app.use(`/${BASE_URL}/${CURRENT_VERSION}/auth`, auth);
-
-/**
- * Compression test routes
- */
-app.get(
-  `/${BASE_URL}/${CURRENT_VERSION}/optimization/without`,
-  (_req: Request, res: Response) => {
-    const text = 'Hade på badet, din gamle sjokolade!';
-    res.json({ msg: text.repeat(1000) });
-  }
-);
-
-app.get(
-  `/${BASE_URL}/${CURRENT_VERSION}/optimization/with`,
-  (_req: Request, res: Response) => {
-    const text = 'Hade på badet, din gamle sjokolade!';
-    res.json({ msg: text.repeat(1000) });
-  }
-);
 
 app.listen(PORT, () =>
   // eslint-disable-next-line no-console
