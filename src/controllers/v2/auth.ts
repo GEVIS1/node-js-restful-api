@@ -9,8 +9,10 @@
 import { Request, Response } from 'express';
 import { v4 as uuid } from 'uuid';
 import { StatusCodes } from 'http-status-codes';
-import { Prisma } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
+import { Optional } from 'utility-types';
 
+import { prisma } from '../../utils/v2/prisma/prisma';
 import { createUserSchema } from '../../validators/v2/user';
 import { baseURL } from '../../utils/v2/axios';
 import { UserCreateOneSchema } from '../../../prisma/v2/zod-schemas/schemas/createOneUser.schema';
