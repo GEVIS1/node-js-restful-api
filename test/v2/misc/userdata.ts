@@ -14,6 +14,13 @@ export type ReturnedUser = Optional<
   'password'
 >;
 
+const removePasswords = (userWithPass: UserCreateInputNoAvatarWithConfirm) => {
+  const newUser = structuredClone(userWithPass) as ReturnedUser;
+  delete newUser.password;
+  delete newUser.confirm;
+  return newUser;
+};
+
 export const user: UserCreateInputNoAvatarWithConfirm = {
   firstname: 'Steffen',
   lastname: 'Geving',
@@ -44,3 +51,4 @@ export const superAdminUser: UserCreateInputNoAvatarWithConfirm = {
 };
 
 export const users = [user, adminUser, superAdminUser];
+export { removePasswords };
