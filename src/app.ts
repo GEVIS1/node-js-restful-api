@@ -8,6 +8,8 @@ import cors from 'cors';
 import helmet from 'helmet';
 // import compression from 'compression';
 
+import auth from './routes/v2/auth';
+
 // import authRoute from './middleware/v1/authorization/authRoute';
 import { checkEnv } from './utils/v1/env';
 // import cacheRoute from './middleware/v1/caching/cacheRoute';
@@ -26,12 +28,12 @@ checkEnv();
 
 const app = express();
 
-// const BASE_URL = 'api';
+const BASE_URL = 'api';
 
 /**
  * Current version of the API
  */
-// const CURRENT_VERSION = 'v1';
+const CURRENT_VERSION = 'v1';
 
 /**
  * The port the app will listen to
@@ -55,7 +57,7 @@ app.use(helmet());
 /**
  * Separately use for the User model since it does not use the authRoute middleware
  */
-//app.use(`/${BASE_URL}/${CURRENT_VERSION}/auth`, auth);
+app.use(`/${BASE_URL}/${CURRENT_VERSION}/auth`, auth);
 
 app.listen(PORT, () =>
   // eslint-disable-next-line no-console
