@@ -33,7 +33,7 @@ const BASE_URL = 'api';
 /**
  * Current version of the API
  */
-const CURRENT_VERSION = 'v1';
+const CURRENT_VERSION = 'v2';
 
 /**
  * The port the app will listen to
