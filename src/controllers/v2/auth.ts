@@ -109,8 +109,8 @@ const register = async (req: RegisterRequest, res: Response) => {
     const salt = await bcryptjs.genSalt();
 
     /**
-     * Generate a hash for a given string. The first argument
-     * is a string to be hashed, in this case it's req.body.password
+     * Generate a hash for a the password. The first argument
+     * is a string to be hashed, in this case it's userData.data.password
      * and the salt, e.g., E1F53135E559C253.
      */
     userData.data.password = await bcryptjs.hash(userData.data.password, salt);
