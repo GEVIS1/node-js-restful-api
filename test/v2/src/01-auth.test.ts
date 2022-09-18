@@ -130,6 +130,27 @@ describe('It should register users', () => {
       });
   });
 
+  it('should fail to register a user where the last name has a non-alpha character', (done) => {
+    const userSpecialFirstName = structuredClone(user);
+    userSpecialFirstName.lastname = '6eving';
+    agent
+      .post('/api/v2/auth/register')
+      .send(userSpecialFirstName)
+      .end((_, res) => {
+        chai.expect(res.status).to.be.equal(422);
+        chai.expect(res.body).to.be.an('object');
+        chai
+          .expect(res.body.error.issues[0].code)
+          .to.be.equal('invalid_string');
+        chai
+          .expect(res.body.error.issues[0].message)
+          .to.be.equal('Only alpha characters allowed');
+        chai.expect(res.body.error.issues[0].path[0]).to.be.equal('lastname');
+        chai.expect(res.body.success).to.be.equal(false);
+        done();
+      });
+  });
+
   it('should fail to register a user where the email is not a valid email address', (done) => {
     const userShortFirstName = structuredClone(user);
     userShortFirstName.email = 'invalidemailaddress';
