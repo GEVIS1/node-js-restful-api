@@ -17,8 +17,8 @@ describe('It should register users', () => {
       .end((_, res) => {
         chai.expect(res.status).to.be.equal(422);
         chai.expect(res.body).to.be.an('object');
-        chai.expect(res.body.err.issues[0].code).to.be.equal('too_small');
-        chai.expect(res.body.err.issues[0].path[0]).to.be.equal('firstname');
+        chai.expect(res.body.error.issues[0].code).to.be.equal('too_small');
+        chai.expect(res.body.error.issues[0].path[0]).to.be.equal('firstname');
         chai.expect(res.body.success).to.be.equal(false);
         done();
       });
@@ -33,8 +33,8 @@ describe('It should register users', () => {
       .end((_, res) => {
         chai.expect(res.status).to.be.equal(422);
         chai.expect(res.body).to.be.an('object');
-        chai.expect(res.body.err.issues[0].code).to.be.equal('too_small');
-        chai.expect(res.body.err.issues[0].path[0]).to.be.equal('lastname');
+        chai.expect(res.body.error.issues[0].code).to.be.equal('too_small');
+        chai.expect(res.body.error.issues[0].path[0]).to.be.equal('lastname');
         chai.expect(res.body.success).to.be.equal(false);
         done();
       });
@@ -49,8 +49,8 @@ describe('It should register users', () => {
       .end((_, res) => {
         chai.expect(res.status).to.be.equal(422);
         chai.expect(res.body).to.be.an('object');
-        chai.expect(res.body.err.issues[0].code).to.be.equal('too_small');
-        chai.expect(res.body.err.issues[0].path[0]).to.be.equal('username');
+        chai.expect(res.body.error.issues[0].code).to.be.equal('too_small');
+        chai.expect(res.body.error.issues[0].path[0]).to.be.equal('username');
         chai.expect(res.body.success).to.be.equal(false);
         done();
       });
@@ -66,8 +66,8 @@ describe('It should register users', () => {
       .end((_, res) => {
         chai.expect(res.status).to.be.equal(422);
         chai.expect(res.body).to.be.an('object');
-        chai.expect(res.body.err.issues[0].code).to.be.equal('too_big');
-        chai.expect(res.body.err.issues[0].path[0]).to.be.equal('firstname');
+        chai.expect(res.body.error.issues[0].code).to.be.equal('too_big');
+        chai.expect(res.body.error.issues[0].path[0]).to.be.equal('firstname');
         chai.expect(res.body.success).to.be.equal(false);
         done();
       });
@@ -83,8 +83,8 @@ describe('It should register users', () => {
       .end((_, res) => {
         chai.expect(res.status).to.be.equal(422);
         chai.expect(res.body).to.be.an('object');
-        chai.expect(res.body.err.issues[0].code).to.be.equal('too_big');
-        chai.expect(res.body.err.issues[0].path[0]).to.be.equal('lastname');
+        chai.expect(res.body.error.issues[0].code).to.be.equal('too_big');
+        chai.expect(res.body.error.issues[0].path[0]).to.be.equal('lastname');
         chai.expect(res.body.success).to.be.equal(false);
         done();
       });
@@ -99,8 +99,8 @@ describe('It should register users', () => {
       .end((_, res) => {
         chai.expect(res.status).to.be.equal(422);
         chai.expect(res.body).to.be.an('object');
-        chai.expect(res.body.err.issues[0].code).to.be.equal('too_big');
-        chai.expect(res.body.err.issues[0].path[0]).to.be.equal('username');
+        chai.expect(res.body.error.issues[0].code).to.be.equal('too_big');
+        chai.expect(res.body.error.issues[0].path[0]).to.be.equal('username');
         chai.expect(res.body.success).to.be.equal(false);
         done();
       });
@@ -115,11 +115,13 @@ describe('It should register users', () => {
       .end((_, res) => {
         chai.expect(res.status).to.be.equal(422);
         chai.expect(res.body).to.be.an('object');
-        chai.expect(res.body.err.issues[0].code).to.be.equal('invalid_string');
         chai
-          .expect(res.body.err.issues[0].message)
+          .expect(res.body.error.issues[0].code)
+          .to.be.equal('invalid_string');
+        chai
+          .expect(res.body.error.issues[0].message)
           .to.be.equal('Invalid email');
-        chai.expect(res.body.err.issues[0].path[0]).to.be.equal('email');
+        chai.expect(res.body.error.issues[0].path[0]).to.be.equal('email');
         chai.expect(res.body.success).to.be.equal(false);
         done();
       });
@@ -134,18 +136,20 @@ describe('It should register users', () => {
       .end((_, res) => {
         chai.expect(res.status).to.be.equal(422);
         chai.expect(res.body).to.be.an('object');
-        chai.expect(res.body.err.issues[0].code).to.be.equal('invalid_string');
         chai
-          .expect(res.body.err.issues[0].validation.startsWith)
+          .expect(res.body.error.issues[0].code)
+          .to.be.equal('invalid_string');
+        chai
+          .expect(res.body.error.issues[0].validation.startsWith)
           .to.be.equal(userShortFirstName.username);
         chai
-          .expect(res.body.err.issues[0].message)
+          .expect(res.body.error.issues[0].message)
           .to.be.equal(
             `The Local-part of the email address must match username. I.E: ${
               userShortFirstName.username
             }@${userShortFirstName.email.split('@')[1]}`
           );
-        chai.expect(res.body.err.issues[0].path[0]).to.be.equal('email');
+        chai.expect(res.body.error.issues[0].path[0]).to.be.equal('email');
         chai.expect(res.body.success).to.be.equal(false);
         done();
       });
@@ -160,11 +164,11 @@ describe('It should register users', () => {
       .end((_, res) => {
         chai.expect(res.status).to.be.equal(422);
         chai.expect(res.body).to.be.an('object');
-        chai.expect(res.body.err.issues[0].code).to.be.equal('too_small');
+        chai.expect(res.body.error.issues[0].code).to.be.equal('too_small');
         chai
-          .expect(res.body.err.issues[0].message)
+          .expect(res.body.error.issues[0].message)
           .to.be.equal('String must contain at least 8 character(s)');
-        chai.expect(res.body.err.issues[0].path[0]).to.be.equal('password');
+        chai.expect(res.body.error.issues[0].path[0]).to.be.equal('password');
         chai.expect(res.body.success).to.be.equal(false);
         done();
       });
@@ -179,11 +183,11 @@ describe('It should register users', () => {
       .end((_, res) => {
         chai.expect(res.status).to.be.equal(422);
         chai.expect(res.body).to.be.an('object');
-        chai.expect(res.body.err.issues[0].code).to.be.equal('too_big');
+        chai.expect(res.body.error.issues[0].code).to.be.equal('too_big');
         chai
-          .expect(res.body.err.issues[0].message)
+          .expect(res.body.error.issues[0].message)
           .to.be.equal('String must contain at most 16 character(s)');
-        chai.expect(res.body.err.issues[0].path[0]).to.be.equal('password');
+        chai.expect(res.body.error.issues[0].path[0]).to.be.equal('password');
         chai.expect(res.body.success).to.be.equal(false);
         done();
       });
@@ -198,14 +202,16 @@ describe('It should register users', () => {
       .end((_, res) => {
         chai.expect(res.status).to.be.equal(422);
         chai.expect(res.body).to.be.an('object');
-        chai.expect(res.body.err.issues[0].validation).to.be.equal('regex');
-        chai.expect(res.body.err.issues[0].code).to.be.equal('invalid_string');
+        chai.expect(res.body.error.issues[0].validation).to.be.equal('regex');
         chai
-          .expect(res.body.err.issues[0].message)
+          .expect(res.body.error.issues[0].code)
+          .to.be.equal('invalid_string');
+        chai
+          .expect(res.body.error.issues[0].message)
           .to.be.equal(
             'The password must contain at least one letter and at least one number.'
           );
-        chai.expect(res.body.err.issues[0].path[0]).to.be.equal('password');
+        chai.expect(res.body.error.issues[0].path[0]).to.be.equal('password');
         chai.expect(res.body.success).to.be.equal(false);
         done();
       });
@@ -220,11 +226,11 @@ describe('It should register users', () => {
       .end((_, res) => {
         chai.expect(res.status).to.be.equal(422);
         chai.expect(res.body).to.be.an('object');
-        chai.expect(res.body.err.issues[0].code).to.be.equal('too_small');
+        chai.expect(res.body.error.issues[0].code).to.be.equal('too_small');
         chai
-          .expect(res.body.err.issues[0].message)
+          .expect(res.body.error.issues[0].message)
           .to.be.equal('String must contain at least 8 character(s)');
-        chai.expect(res.body.err.issues[0].path[0]).to.be.equal('confirm');
+        chai.expect(res.body.error.issues[0].path[0]).to.be.equal('confirm');
         chai.expect(res.body.success).to.be.equal(false);
         done();
       });
@@ -239,11 +245,11 @@ describe('It should register users', () => {
       .end((_, res) => {
         chai.expect(res.status).to.be.equal(422);
         chai.expect(res.body).to.be.an('object');
-        chai.expect(res.body.err.issues[0].code).to.be.equal('too_big');
+        chai.expect(res.body.error.issues[0].code).to.be.equal('too_big');
         chai
-          .expect(res.body.err.issues[0].message)
+          .expect(res.body.error.issues[0].message)
           .to.be.equal('String must contain at most 16 character(s)');
-        chai.expect(res.body.err.issues[0].path[0]).to.be.equal('confirm');
+        chai.expect(res.body.error.issues[0].path[0]).to.be.equal('confirm');
         chai.expect(res.body.success).to.be.equal(false);
         done();
       });
@@ -258,12 +264,14 @@ describe('It should register users', () => {
       .end((_, res) => {
         chai.expect(res.status).to.be.equal(422);
         chai.expect(res.body).to.be.an('object');
-        chai.expect(res.body.err.issues[0].validation).to.be.equal('regex');
-        chai.expect(res.body.err.issues[0].code).to.be.equal('invalid_string');
+        chai.expect(res.body.error.issues[0].validation).to.be.equal('regex');
         chai
-          .expect(res.body.err.issues[0].message)
+          .expect(res.body.error.issues[0].code)
+          .to.be.equal('invalid_string');
+        chai
+          .expect(res.body.error.issues[0].message)
           .to.be.equal('Passwords did not match.');
-        chai.expect(res.body.err.issues[0].path[0]).to.be.equal('confirm');
+        chai.expect(res.body.error.issues[0].path[0]).to.be.equal('confirm');
         chai.expect(res.body.success).to.be.equal(false);
         done();
       });
