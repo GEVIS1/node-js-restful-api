@@ -161,6 +161,7 @@ describe('It should register users', () => {
   it('should fail to register a user where the password is too short', (done) => {
     const userShortFirstName = structuredClone(user);
     userShortFirstName.password = 'Srtp4ss';
+    userShortFirstName.confirm = 'Srtp4ss';
     agent
       .post('/api/v2/auth/register')
       .send(userShortFirstName)
@@ -180,6 +181,7 @@ describe('It should register users', () => {
   it('should fail to register a user where the password is too long', (done) => {
     const userShortFirstName = structuredClone(user);
     userShortFirstName.password = 'ButMyP4ssWordIsStrong1DontWantItToBeWeak';
+    userShortFirstName.confirm = 'ButMyP4ssWordIsStrong1DontWantItToBeWeak';
     agent
       .post('/api/v2/auth/register')
       .send(userShortFirstName)
@@ -199,6 +201,7 @@ describe('It should register users', () => {
   it('should fail to register a user where the password does not contain both a number and a letter', (done) => {
     const userShortFirstName = structuredClone(user);
     userShortFirstName.password = 'aaaaaaaaa';
+    userShortFirstName.confirm = 'aaaaaaaaa';
     agent
       .post('/api/v2/auth/register')
       .send(userShortFirstName)
