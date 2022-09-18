@@ -194,11 +194,6 @@ const login = async (req: LoginRequest, res: Response) => {
       loginUser.password
     );
 
-    // console.log('password', password)
-    // console.log('loginUser.password', loginUser.password)
-    // console.log('isPasswordCorrect', isPasswordCorrect)
-    // user.createMany()
-
     if (!isPasswordCorrect) {
       return res
         .status(StatusCodes.UNAUTHORIZED)
