@@ -33,6 +33,7 @@ const createUserSchema = (data: UserCreateInput) => {
         message: 'Passwords did not match.',
       }),
     avatar: z.string().url(),
+    role: z.literal('BASIC_USER').optional(),
   });
 };
 
