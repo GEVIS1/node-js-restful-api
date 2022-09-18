@@ -84,6 +84,7 @@ const register = async (req: Request, res: Response) => {
       throw err;
     }
 
+    // Create the new user
     const createdUser: UserNoPassword = await user.create(userData);
 
     // Let's hide the password from the response
