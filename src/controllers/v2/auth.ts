@@ -2,10 +2,12 @@
  * The auth.ts file holds the functions for the authentication Controller.
  * These functions will be used in the auth Router sitting on the /auth endpoint.
  * The functions for creating, updating and deleting users are identical for all user types.
- * Only BASIC_USER type users can be created with the createUser function.
+ * Only BASIC_USER type users can be created with the register function.
  * ADMIN_USER and SUPER_ADMIN_USERs will be seeded through other means.
  */
 
+import bcryptjs from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 import { Request, Response } from 'express';
 import { v4 as uuid } from 'uuid';
 import { StatusCodes } from 'http-status-codes';
@@ -99,6 +101,20 @@ const register = async (req: RegisterRequest, res: Response) => {
       throw err;
     }
 
+    /**
+     * A salt is random bits added to a password before it is hashed. Salts
+     * create unique passwords even if two users have the same passwords.
+     * They also protect against rainbow table attacks, so they are very important.
+     */
+    const salt = await bcryptjs.genSalt();
+
+    /**
+     * Generate a hash for a given string. The first argument
+     * is a string to be hashed, in this case it's req.body.password
+     * and the salt, e.g., E1F53135E559C253.
+     */
+    userData.data.password = await bcryptjs.hash(userData.data.password, salt);
+
     // Create the new user
     const createdUser: UserNoPassword = await user.create(userData);
 
@@ -132,4 +148,91 @@ const register = async (req: RegisterRequest, res: Response) => {
   }
 };
 
-export { register };
+interface LoginBodyEmail {
+  email: string;
+  password: string;
+}
+
+interface LoginBodyUsername {
+  username: string;
+  password: string;
+}
+
+interface LoginRequest extends Request {
+  /**
+   * XOR the interfaces to avoid having the optional username and email
+   */
+  body: Prisma.XOR<LoginBodyEmail, LoginBodyUsername>;
+}
+
+const login = async (req: LoginRequest, res: Response) => {
+  try {
+    const { username, email, password } = req.body;
+
+    /**
+     * By default log in with email, but if email is not supplied
+     * we will attempt to log in with the username
+     */
+    const loginUser = await prisma.user.findFirst({
+      where: {
+        OR: [{ email }, { username }],
+      },
+    });
+
+    if (!loginUser) {
+      return res
+        .status(StatusCodes.UNAUTHORIZED)
+        .json({ msg: 'Invalid email or username' });
+    }
+
+    /**
+     * Compare the given string, req.body.password,
+     * with the given hash, the user's hashed password.
+     */
+    const isPasswordCorrect = await bcryptjs.compare(
+      password,
+      loginUser.password
+    );
+
+    // console.log('password', password)
+    // console.log('loginUser.password', loginUser.password)
+    // console.log('isPasswordCorrect', isPasswordCorrect)
+    // user.createMany()
+
+    if (!isPasswordCorrect) {
+      return res
+        .status(StatusCodes.UNAUTHORIZED)
+        .json({ msg: 'Invalid password' });
+    }
+
+    const { JWT_SECRET, JWT_LIFETIME } = process.env;
+
+    /**
+     * Return a JWT. The first argument is the payload, in this case an object containing
+     * the authenticated user's id, the second argument is the secret,
+     * our public/private key, and the third argument is the lifetime of the JWT.
+     */
+    const token = jwt.sign(
+      {
+        id: loginUser.id,
+      },
+      JWT_SECRET as jwt.Secret,
+      { expiresIn: JWT_LIFETIME }
+    );
+
+    return res.status(StatusCodes.OK).json({
+      msg: `${loginUser.username} has successfully logged in`,
+      token,
+    });
+  } catch (err) {
+    /**
+     * Don't return any software error information when a login fails for an unknown reason as this may expose
+     * sensitive information.
+     */
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      success: false,
+    });
+  }
+};
+
+export { register, login };
