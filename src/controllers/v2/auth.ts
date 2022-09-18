@@ -27,6 +27,11 @@ const user: Prisma.UserDelegate<Prisma.RejectPerModel> = prisma.user;
 // Sending the password in the reply isn't desired
 type UserNoPassword = Optional<Prisma.UserCreateInput, 'password'>;
 
+interface IUserCreateError extends Error {
+  message: string;
+  data: UserNoPassword;
+}
+
 const register = async (req: Request, res: Response) => {
   try {
     // Grab avatar
@@ -51,6 +56,33 @@ const register = async (req: Request, res: Response) => {
 
     // Validate that the data fits the schema and save the return object
     const userData = UserCreateOneSchema.parse({ data: { ...validatedData } });
+
+    // Check if the username or email already exists
+    const exists = await user.findFirst({
+      where: {
+        OR: [
+          {
+            username: userData.data.username,
+          },
+          {
+            email: userData.data.email,
+          },
+        ],
+      },
+    });
+
+    // Throw an IUserCreateError object if the user exists
+    if (exists) {
+      const data: UserNoPassword = { ...userData.data };
+      delete data.password;
+
+      const err: IUserCreateError = {
+        message: 'Could not create user, username or email taken',
+        data,
+        name: 'UserCreateError',
+      };
+      throw err;
+    }
 
     const createdUser: UserNoPassword = await user.create(userData);
 
