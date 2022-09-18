@@ -474,6 +474,33 @@ describe('It should log in users', () => {
         done();
       });
   });
+
+  it('should log in a basic user with their email', (done) => {
+    const { username, email, password } = user;
+    const loginUser = { email, password };
+    agent
+      .post('/api/v2/auth/login')
+      .send(loginUser)
+      .end((_, res) => {
+        chai.expect(res.status).to.be.equal(200);
+        chai.expect(res.body).to.be.an('object');
+        chai.expect(res.body.success).to.be.equal(true);
+        chai
+          .expect(res.body.msg)
+          .to.be.equal(`${username} has successfully logged in`);
+        chai.expect(res.body.token).to.be.a('string');
+
+        // Confirm that token is valid
+        const decodedToken = jwt.verify(
+          res.body.token,
+          JWT_SECRET as jwt.Secret
+        );
+        chai.expect(decodedToken).to.be.an('object');
+        chai.expect(decodedToken).to.have.property('id');
+
+        done();
+      });
+  });
 });
 
 after(() => {
