@@ -6,9 +6,27 @@ type UserCreateInput = Prisma.UserUncheckedCreateInput & { confirm: string };
 
 const createUserSchema = (data: UserCreateInput) => {
   return z.object({
-    firstname: z.string().min(2).max(50),
-    lastname: z.string().min(2).max(50),
-    username: z.string().min(5).max(10),
+    firstname: z
+      .string()
+      .min(2)
+      .max(50)
+      .regex(/^[a-zA-Z]*$/, {
+        message: 'Only alpha characters allowed',
+      }),
+    lastname: z
+      .string()
+      .min(2)
+      .max(50)
+      .regex(/^[a-zA-Z]*$/, {
+        message: 'Only alpha characters allowed',
+      }),
+    username: z
+      .string()
+      .min(5)
+      .max(10)
+      .regex(/^[a-zA-Z0-9]*$/, {
+        message: 'Only alphanumeric characters allowed',
+      }),
     email: z
       .string()
       .email()
