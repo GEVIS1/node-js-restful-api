@@ -4,6 +4,7 @@ import {
   user,
   /*adminUser, superAdminUser,*/
   removePasswords,
+  newUserOldUsernameEmail,
 } from './../misc/userdata';
 import { agent, closeAgent } from './00-setup.test';
 
@@ -305,6 +306,28 @@ describe('It should register users', () => {
           .to.be.equal('Could not create user, username or email taken');
         chai.expect(res.body.error.name).to.be.equal('UserCreateError');
         chai.expect(res.body.error.data).to.contain(userNoPass);
+        chai.expect(res.body.success).to.be.equal(false);
+        done();
+      });
+  });
+
+  it('should fail to register a new user with an already taken username', (done) => {
+    const newUserOldUsernameEmailNoPass = removePasswords(
+      newUserOldUsernameEmail
+    );
+    agent
+      .post('/api/v2/auth/register')
+      .send(newUserOldUsernameEmail)
+      .end((_, res) => {
+        chai.expect(res.status).to.be.equal(400);
+        chai.expect(res.body).to.be.an('object');
+        chai
+          .expect(res.body.error.message)
+          .to.be.equal('Could not create user, username or email taken');
+        chai.expect(res.body.error.name).to.be.equal('UserCreateError');
+        chai
+          .expect(res.body.error.data)
+          .to.contain(newUserOldUsernameEmailNoPass);
         chai.expect(res.body.success).to.be.equal(false);
         done();
       });
