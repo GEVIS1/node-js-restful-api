@@ -103,6 +103,12 @@ const register = async (req: Request, res: Response) => {
       return res
         .status(StatusCodes.UNPROCESSABLE_ENTITY)
         .json({ success: false, error: err });
+    // Eslint wants me to remove the parens here, but that breaks the syntax, so disabling for this case only
+    // eslint-disable-next-line no-extra-parens
+    else if ((err as IUserCreateError).name === 'UserCreateError')
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ success: false, error: err });
     else
       return res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
