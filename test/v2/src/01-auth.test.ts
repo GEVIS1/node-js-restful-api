@@ -10,7 +10,7 @@ import {
 } from './../misc/userdata';
 import { agent, closeAgent } from './00-setup.test';
 
-describe('It should register users', () => {
+describe('It should not register users with invalid requests', () => {
   it('should fail to register a user where the first name is too short', (done) => {
     const userShortFirstName = structuredClone(user);
     userShortFirstName.firstname = 'L';
@@ -22,38 +22,6 @@ describe('It should register users', () => {
         chai.expect(res.body).to.be.an('object');
         chai.expect(res.body.error.issues[0].code).to.be.equal('too_small');
         chai.expect(res.body.error.issues[0].path[0]).to.be.equal('firstname');
-        chai.expect(res.body.success).to.be.equal(false);
-        done();
-      });
-  });
-
-  it('should fail to register a user where the last name is too short', (done) => {
-    const userShortFirstName = structuredClone(user);
-    userShortFirstName.lastname = 'Q';
-    agent
-      .post('/api/v2/auth/register')
-      .send(userShortFirstName)
-      .end((_, res) => {
-        chai.expect(res.status).to.be.equal(422);
-        chai.expect(res.body).to.be.an('object');
-        chai.expect(res.body.error.issues[0].code).to.be.equal('too_small');
-        chai.expect(res.body.error.issues[0].path[0]).to.be.equal('lastname');
-        chai.expect(res.body.success).to.be.equal(false);
-        done();
-      });
-  });
-
-  it('should fail to register a user where the username is too short', (done) => {
-    const userShortFirstName = structuredClone(user);
-    userShortFirstName.username = 'Bob';
-    agent
-      .post('/api/v2/auth/register')
-      .send(userShortFirstName)
-      .end((_, res) => {
-        chai.expect(res.status).to.be.equal(422);
-        chai.expect(res.body).to.be.an('object');
-        chai.expect(res.body.error.issues[0].code).to.be.equal('too_small');
-        chai.expect(res.body.error.issues[0].path[0]).to.be.equal('username');
         chai.expect(res.body.success).to.be.equal(false);
         done();
       });
@@ -76,6 +44,43 @@ describe('It should register users', () => {
       });
   });
 
+  it('should fail to register a user where the first name has a non-alpha character', (done) => {
+    const userSpecialFirstName = structuredClone(user);
+    userSpecialFirstName.firstname = '5teffen';
+    agent
+      .post('/api/v2/auth/register')
+      .send(userSpecialFirstName)
+      .end((_, res) => {
+        chai.expect(res.status).to.be.equal(422);
+        chai.expect(res.body).to.be.an('object');
+        chai
+          .expect(res.body.error.issues[0].code)
+          .to.be.equal('invalid_string');
+        chai
+          .expect(res.body.error.issues[0].message)
+          .to.be.equal('Only alpha characters allowed');
+        chai.expect(res.body.error.issues[0].path[0]).to.be.equal('firstname');
+        chai.expect(res.body.success).to.be.equal(false);
+        done();
+      });
+  });
+
+  it('should fail to register a user where the last name is too short', (done) => {
+    const userShortFirstName = structuredClone(user);
+    userShortFirstName.lastname = 'Q';
+    agent
+      .post('/api/v2/auth/register')
+      .send(userShortFirstName)
+      .end((_, res) => {
+        chai.expect(res.status).to.be.equal(422);
+        chai.expect(res.body).to.be.an('object');
+        chai.expect(res.body.error.issues[0].code).to.be.equal('too_small');
+        chai.expect(res.body.error.issues[0].path[0]).to.be.equal('lastname');
+        chai.expect(res.body.success).to.be.equal(false);
+        done();
+      });
+  });
+
   it('should fail to register a user where the last name is too long', (done) => {
     const userShortFirstName = structuredClone(user);
     userShortFirstName.lastname =
@@ -88,6 +93,43 @@ describe('It should register users', () => {
         chai.expect(res.body).to.be.an('object');
         chai.expect(res.body.error.issues[0].code).to.be.equal('too_big');
         chai.expect(res.body.error.issues[0].path[0]).to.be.equal('lastname');
+        chai.expect(res.body.success).to.be.equal(false);
+        done();
+      });
+  });
+
+  it('should fail to register a user where the last name has a non-alpha character', (done) => {
+    const userSpecialFirstName = structuredClone(user);
+    userSpecialFirstName.lastname = '6eving';
+    agent
+      .post('/api/v2/auth/register')
+      .send(userSpecialFirstName)
+      .end((_, res) => {
+        chai.expect(res.status).to.be.equal(422);
+        chai.expect(res.body).to.be.an('object');
+        chai
+          .expect(res.body.error.issues[0].code)
+          .to.be.equal('invalid_string');
+        chai
+          .expect(res.body.error.issues[0].message)
+          .to.be.equal('Only alpha characters allowed');
+        chai.expect(res.body.error.issues[0].path[0]).to.be.equal('lastname');
+        chai.expect(res.body.success).to.be.equal(false);
+        done();
+      });
+  });
+
+  it('should fail to register a user where the username is too short', (done) => {
+    const userShortFirstName = structuredClone(user);
+    userShortFirstName.username = 'Bob';
+    agent
+      .post('/api/v2/auth/register')
+      .send(userShortFirstName)
+      .end((_, res) => {
+        chai.expect(res.status).to.be.equal(422);
+        chai.expect(res.body).to.be.an('object');
+        chai.expect(res.body.error.issues[0].code).to.be.equal('too_small');
+        chai.expect(res.body.error.issues[0].path[0]).to.be.equal('username');
         chai.expect(res.body.success).to.be.equal(false);
         done();
       });
@@ -125,48 +167,6 @@ describe('It should register users', () => {
         chai
           .expect(res.body.error.issues[0].message)
           .to.be.equal('Only alphanumeric characters allowed');
-        chai.expect(res.body.success).to.be.equal(false);
-        done();
-      });
-  });
-
-  it('should fail to register a user where the first name has a non-alpha character', (done) => {
-    const userSpecialFirstName = structuredClone(user);
-    userSpecialFirstName.firstname = '5teffen';
-    agent
-      .post('/api/v2/auth/register')
-      .send(userSpecialFirstName)
-      .end((_, res) => {
-        chai.expect(res.status).to.be.equal(422);
-        chai.expect(res.body).to.be.an('object');
-        chai
-          .expect(res.body.error.issues[0].code)
-          .to.be.equal('invalid_string');
-        chai
-          .expect(res.body.error.issues[0].message)
-          .to.be.equal('Only alpha characters allowed');
-        chai.expect(res.body.error.issues[0].path[0]).to.be.equal('firstname');
-        chai.expect(res.body.success).to.be.equal(false);
-        done();
-      });
-  });
-
-  it('should fail to register a user where the last name has a non-alpha character', (done) => {
-    const userSpecialFirstName = structuredClone(user);
-    userSpecialFirstName.lastname = '6eving';
-    agent
-      .post('/api/v2/auth/register')
-      .send(userSpecialFirstName)
-      .end((_, res) => {
-        chai.expect(res.status).to.be.equal(422);
-        chai.expect(res.body).to.be.an('object');
-        chai
-          .expect(res.body.error.issues[0].code)
-          .to.be.equal('invalid_string');
-        chai
-          .expect(res.body.error.issues[0].message)
-          .to.be.equal('Only alpha characters allowed');
-        chai.expect(res.body.error.issues[0].path[0]).to.be.equal('lastname');
         chai.expect(res.body.success).to.be.equal(false);
         done();
       });
@@ -324,7 +324,7 @@ describe('It should register users', () => {
       });
   });
 
-  it("should fail to register a user where the password confirm doesn't match", (done) => {
+  it("should fail to register a user where the password confirm doesn't match the password", (done) => {
     const userShortFirstName = structuredClone(user);
     userShortFirstName.confirm = 'NotMyP4ssWord';
     agent
@@ -346,6 +346,48 @@ describe('It should register users', () => {
       });
   });
 
+  it('should fail to register an admin user', (done) => {
+    agent
+      .post('/api/v2/auth/register')
+      .send(adminUser)
+      .end((_, res) => {
+        chai.expect(res.status).to.be.equal(422);
+        chai.expect(res.body).to.be.an('object');
+        chai
+          .expect(res.body.error.issues[0].message)
+          .to.be.equal('Invalid literal value, expected "BASIC_USER"');
+        chai
+          .expect(res.body.error.issues[0].expected)
+          .to.be.equal('BASIC_USER');
+        chai.expect(res.body.error.issues[0].path[0]).to.be.equal('role');
+        chai.expect(res.body.error.name).to.be.equal('ZodError');
+        chai.expect(res.body.success).to.be.equal(false);
+        done();
+      });
+  });
+
+  it('should fail to register a super admin user', (done) => {
+    agent
+      .post('/api/v2/auth/register')
+      .send(superAdminUser)
+      .end((_, res) => {
+        chai.expect(res.status).to.be.equal(422);
+        chai.expect(res.body).to.be.an('object');
+        chai
+          .expect(res.body.error.issues[0].message)
+          .to.be.equal('Invalid literal value, expected "BASIC_USER"');
+        chai
+          .expect(res.body.error.issues[0].expected)
+          .to.be.equal('BASIC_USER');
+        chai.expect(res.body.error.issues[0].path[0]).to.be.equal('role');
+        chai.expect(res.body.error.name).to.be.equal('ZodError');
+        chai.expect(res.body.success).to.be.equal(false);
+        done();
+      });
+  });
+});
+
+describe('It should register only unique new basic users', () => {
   it('should register a user', (done) => {
     const userNoPass = removePasswords(user);
     agent
@@ -396,46 +438,6 @@ describe('It should register users', () => {
         chai
           .expect(res.body.error.data)
           .to.contain(newUserOldUsernameEmailNoPass);
-        chai.expect(res.body.success).to.be.equal(false);
-        done();
-      });
-  });
-
-  it('should fail to register an admin user', (done) => {
-    agent
-      .post('/api/v2/auth/register')
-      .send(adminUser)
-      .end((_, res) => {
-        chai.expect(res.status).to.be.equal(422);
-        chai.expect(res.body).to.be.an('object');
-        chai
-          .expect(res.body.error.issues[0].message)
-          .to.be.equal('Invalid literal value, expected "BASIC_USER"');
-        chai
-          .expect(res.body.error.issues[0].expected)
-          .to.be.equal('BASIC_USER');
-        chai.expect(res.body.error.issues[0].path[0]).to.be.equal('role');
-        chai.expect(res.body.error.name).to.be.equal('ZodError');
-        chai.expect(res.body.success).to.be.equal(false);
-        done();
-      });
-  });
-
-  it('should fail to register a super admin user', (done) => {
-    agent
-      .post('/api/v2/auth/register')
-      .send(superAdminUser)
-      .end((_, res) => {
-        chai.expect(res.status).to.be.equal(422);
-        chai.expect(res.body).to.be.an('object');
-        chai
-          .expect(res.body.error.issues[0].message)
-          .to.be.equal('Invalid literal value, expected "BASIC_USER"');
-        chai
-          .expect(res.body.error.issues[0].expected)
-          .to.be.equal('BASIC_USER');
-        chai.expect(res.body.error.issues[0].path[0]).to.be.equal('role');
-        chai.expect(res.body.error.name).to.be.equal('ZodError');
         chai.expect(res.body.success).to.be.equal(false);
         done();
       });
