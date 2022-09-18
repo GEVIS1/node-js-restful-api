@@ -57,13 +57,11 @@ const register = async (req: Request, res: Response) => {
     // Let's hide the password from the response
     delete createdUser.password;
 
-    return res
-      .status(StatusCodes.CREATED)
-      .json({
-        success: true,
-        msg: 'User successfully registered',
-        data: createdUser,
-      });
+    return res.status(StatusCodes.CREATED).json({
+      success: true,
+      msg: 'User successfully registered',
+      data: createdUser,
+    });
   } catch (err) {
     /**
      * I considered using Bad Request (400) here, but I like Unprocessable Entity (422)
@@ -72,11 +70,11 @@ const register = async (req: Request, res: Response) => {
     if (err instanceof ZodError)
       return res
         .status(StatusCodes.UNPROCESSABLE_ENTITY)
-        .json({ success: false, err });
+        .json({ success: false, error: err });
     else
       return res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .json({ success: false, err });
+        .json({ success: false, error: err });
   }
 };
 
