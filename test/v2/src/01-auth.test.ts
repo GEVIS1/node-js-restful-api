@@ -1,4 +1,5 @@
 import chai from 'chai';
+import jwt from 'jsonwebtoken';
 
 import {
   user,
@@ -9,6 +10,8 @@ import {
   superAdminUser,
 } from './../misc/userdata';
 import { agent, closeAgent } from './00-setup.test';
+
+const { JWT_SECRET } = process.env;
 
 describe('It should not register users with invalid requests', () => {
   it('should fail to register a user where the first name is too short', (done) => {
@@ -439,6 +442,35 @@ describe('It should register only unique new basic users', () => {
           .expect(res.body.error.data)
           .to.contain(newUserOldUsernameEmailNoPass);
         chai.expect(res.body.success).to.be.equal(false);
+        done();
+      });
+  });
+});
+
+describe('It should log in users', () => {
+  it('should log in a basic user with their username', (done) => {
+    const { username, password } = user;
+    const loginUser = { username, password };
+    agent
+      .post('/api/v2/auth/login')
+      .send(loginUser)
+      .end((_, res) => {
+        chai.expect(res.status).to.be.equal(200);
+        chai.expect(res.body).to.be.an('object');
+        chai.expect(res.body.success).to.be.equal(true);
+        chai
+          .expect(res.body.msg)
+          .to.be.equal(`${loginUser.username} has successfully logged in`);
+        chai.expect(res.body.token).to.be.a('string');
+
+        // Confirm that token is valid
+        const decodedToken = jwt.verify(
+          res.body.token,
+          JWT_SECRET as jwt.Secret
+        );
+        chai.expect(decodedToken).to.be.an('object');
+        chai.expect(decodedToken).to.have.property('id');
+
         done();
       });
   });
