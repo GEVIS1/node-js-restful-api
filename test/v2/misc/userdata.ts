@@ -52,8 +52,8 @@ export const adminUser: UserCreateInputNoAvatarWithConfirm = {
 export const superAdminUser: UserCreateInputNoAvatarWithConfirm = {
   firstname: 'Sheev',
   lastname: 'Palpatine',
-  username: 'DarthSidious',
-  email: 'DarthSidious@the.sith',
+  username: 'DrthSdious',
+  email: 'DrthSdious@the.sith',
   password: 'Order 66',
   confirm: 'Order 66',
   role: 'SUPER_ADMIN_USER',
