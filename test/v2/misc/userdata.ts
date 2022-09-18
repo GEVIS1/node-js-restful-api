@@ -30,6 +30,15 @@ export const user: UserCreateInputNoAvatarWithConfirm = {
   confirm: 'SteffensPasswo1',
 };
 
+export const newUserOldUsernameEmail: UserCreateInputNoAvatarWithConfirm = {
+  firstname: 'Bob',
+  lastname: 'Builder, The',
+  username: 'FenFen',
+  email: 'FenFen@geving.com',
+  password: 'IcanBu1ldIt',
+  confirm: 'IcanBu1ldIt',
+};
+
 export const adminUser: UserCreateInputNoAvatarWithConfirm = {
   firstname: 'Neffets',
   lastname: 'Gniveg',
