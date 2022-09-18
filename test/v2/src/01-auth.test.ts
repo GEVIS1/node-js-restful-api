@@ -351,6 +351,7 @@ describe('It should register users', () => {
         chai
           .expect(res.body.error.issues[0].expected)
           .to.be.equal('BASIC_USER');
+        chai.expect(res.body.error.issues[0].path[0]).to.be.equal('role');
         chai.expect(res.body.error.name).to.be.equal('ZodError');
         chai.expect(res.body.success).to.be.equal(false);
         done();
@@ -370,6 +371,7 @@ describe('It should register users', () => {
         chai
           .expect(res.body.error.issues[0].expected)
           .to.be.equal('BASIC_USER');
+        chai.expect(res.body.error.issues[0].path[0]).to.be.equal('role');
         chai.expect(res.body.error.name).to.be.equal('ZodError');
         chai.expect(res.body.success).to.be.equal(false);
         done();
