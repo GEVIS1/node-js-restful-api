@@ -182,7 +182,7 @@ const login = async (req: LoginRequest, res: Response) => {
     if (!loginUser) {
       return res
         .status(StatusCodes.UNAUTHORIZED)
-        .json({ msg: 'Invalid email or username' });
+        .json({ success: false, msg: 'Invalid email or username' });
     }
 
     /**
@@ -197,7 +197,7 @@ const login = async (req: LoginRequest, res: Response) => {
     if (!isPasswordCorrect) {
       return res
         .status(StatusCodes.UNAUTHORIZED)
-        .json({ msg: 'Invalid password' });
+        .json({ success: false, msg: 'Invalid password' });
     }
 
     const { JWT_SECRET, JWT_LIFETIME } = process.env;
@@ -216,6 +216,7 @@ const login = async (req: LoginRequest, res: Response) => {
     );
 
     return res.status(StatusCodes.OK).json({
+      success: true,
       msg: `${loginUser.username} has successfully logged in`,
       token,
     });
