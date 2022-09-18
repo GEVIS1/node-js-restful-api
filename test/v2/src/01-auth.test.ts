@@ -291,6 +291,24 @@ describe('It should register users', () => {
         done();
       });
   });
+
+  it('should fail to register the same user twice', (done) => {
+    const userNoPass = removePasswords(user);
+    agent
+      .post('/api/v2/auth/register')
+      .send(user)
+      .end((_, res) => {
+        chai.expect(res.status).to.be.equal(400);
+        chai.expect(res.body).to.be.an('object');
+        chai
+          .expect(res.body.error.message)
+          .to.be.equal('Could not create user, username or email taken');
+        chai.expect(res.body.error.name).to.be.equal('UserCreateError');
+        chai.expect(res.body.error.data).to.contain(userNoPass);
+        chai.expect(res.body.success).to.be.equal(false);
+        done();
+      });
+  });
 });
 
 after(() => {
