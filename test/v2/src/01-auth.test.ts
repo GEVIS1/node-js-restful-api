@@ -5,6 +5,7 @@ import {
   /*adminUser, superAdminUser,*/
   removePasswords,
   newUserOldUsernameEmail,
+  adminUser,
 } from './../misc/userdata';
 import { agent, closeAgent } from './00-setup.test';
 
@@ -328,6 +329,25 @@ describe('It should register users', () => {
         chai
           .expect(res.body.error.data)
           .to.contain(newUserOldUsernameEmailNoPass);
+        chai.expect(res.body.success).to.be.equal(false);
+        done();
+      });
+  });
+
+  it('should fail to register an admin user', (done) => {
+    agent
+      .post('/api/v2/auth/register')
+      .send(adminUser)
+      .end((_, res) => {
+        chai.expect(res.status).to.be.equal(422);
+        chai.expect(res.body).to.be.an('object');
+        chai
+          .expect(res.body.error.issues[0].message)
+          .to.be.equal('Invalid literal value, expected "BASIC_USER"');
+        chai
+          .expect(res.body.error.issues[0].expected)
+          .to.be.equal('BASIC_USER');
+        chai.expect(res.body.error.name).to.be.equal('ZodError');
         chai.expect(res.body.success).to.be.equal(false);
         done();
       });
