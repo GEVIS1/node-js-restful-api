@@ -21,9 +21,9 @@ const createUserSchema = (data: UserCreateInput) => {
       .string()
       .min(8)
       .max(16)
-      .regex(/.*([a-z][0-9]|[0-9][a-z]).*/, {
+      .regex(/.*([^a-zA-Z0-9\t\n\r ].*[0-9]|[0-9].*[^a-zA-Z0-9\t\n\r ]).*/, {
         message:
-          'The password must contain at least one letter and at least one number.',
+          'The password must contain at least one number and at least one special character.',
       }),
     confirm: z
       .string()
