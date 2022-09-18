@@ -20,6 +20,9 @@ import { baseURL } from '../../utils/v2/axios';
 import { UserCreateOneSchema } from '../../../prisma/v2/zod-schemas/schemas/createOneUser.schema';
 import { ZodError } from 'zod';
 
+type JWTEnv = { JWT_SECRET: jwt.Secret; JWT_LIFETIME: string };
+const { JWT_SECRET, JWT_LIFETIME } = process.env as JWTEnv;
+
 // Ensure prisma.user isn't undefined
 if (prisma?.user === undefined) throw Error('Prisma is undefined.');
 
@@ -200,8 +203,6 @@ const login = async (req: LoginRequest, res: Response) => {
         .json({ success: false, msg: 'Invalid password' });
     }
 
-    const { JWT_SECRET, JWT_LIFETIME } = process.env;
-
     /**
      * Return a JWT. The first argument is the payload, in this case an object containing
      * the authenticated user's id, the second argument is the secret,
@@ -211,7 +212,7 @@ const login = async (req: LoginRequest, res: Response) => {
       {
         id: loginUser.id,
       },
-      JWT_SECRET as jwt.Secret,
+      JWT_SECRET,
       { expiresIn: JWT_LIFETIME }
     );
 
