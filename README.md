@@ -21,6 +21,9 @@ To see the current data in the database:
 ## Entity Relationship Diagram
 ![](./prisma/v2/ERD.png)
 
+## References:
+Prisma Data, Inc. (2022, June 21). Best practice for instantiating PrismaClient with Next.js. Prisma. Retrieved August 24, 2022, from https://www.prisma.io/docs/guides/database/troubleshooting-orm/help-articles/nextjs-prisma-client-dev-practices
+
 ## TODO:
 ### User:
 You will have three types of users:
@@ -120,4 +123,3 @@ in the RESTful API.
 - [ ] Formatting your code using Prettier.
 - [ ] Running API/integration tests using Mocha.
 - [ ] Running code coverage using c8 & Mocha.
-
