@@ -26,8 +26,8 @@ export const user: UserCreateInputNoAvatarWithConfirm = {
   lastname: 'Geving',
   username: 'FenFen',
   email: 'FenFen@geving.com',
-  password: 'SteffensPasswo1',
-  confirm: 'SteffensPasswo1',
+  password: 'SteffensP@sswo1',
+  confirm: 'SteffensP@sswo1',
 };
 
 export const newUserOldUsernameEmail: UserCreateInputNoAvatarWithConfirm = {
@@ -35,8 +35,8 @@ export const newUserOldUsernameEmail: UserCreateInputNoAvatarWithConfirm = {
   lastname: 'Builder, The',
   username: 'FenFen',
   email: 'FenFen@geving.com',
-  password: 'IcanBu1ldIt',
-  confirm: 'IcanBu1ldIt',
+  password: 'IcanBuildIt6,',
+  confirm: 'IcanBuildIt6,',
 };
 
 export const adminUser: UserCreateInputNoAvatarWithConfirm = {
@@ -44,8 +44,8 @@ export const adminUser: UserCreateInputNoAvatarWithConfirm = {
   lastname: 'Gniveg',
   username: 'EtsEts',
   email: 'EtsEts@gniveg.com',
-  password: 'NeffetsPassword1',
-  confirm: 'NeffetsPassword1',
+  password: 'Neff€tsPassword1',
+  confirm: 'Neff€tsPassword1',
   role: 'ADMIN_USER',
 };
 
@@ -54,8 +54,8 @@ export const superAdminUser: UserCreateInputNoAvatarWithConfirm = {
   lastname: 'Palpatine',
   username: 'DrthSdious',
   email: 'DrthSdious@the.sith',
-  password: 'Order 66',
-  confirm: 'Order 66',
+  password: 'Order 66!',
+  confirm: 'Order 66!',
   role: 'SUPER_ADMIN_USER',
 };
 
