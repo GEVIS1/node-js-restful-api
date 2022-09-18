@@ -198,7 +198,7 @@ describe('It should register users', () => {
       });
   });
 
-  it('should fail to register a user where the password does not contain both a number and a letter', (done) => {
+  it('should fail to register a user where the password does not contain both a number and a special character', (done) => {
     const userShortFirstName = structuredClone(user);
     userShortFirstName.password = 'aaaaaaaaa';
     userShortFirstName.confirm = 'aaaaaaaaa';
@@ -215,7 +215,7 @@ describe('It should register users', () => {
         chai
           .expect(res.body.error.issues[0].message)
           .to.be.equal(
-            'The password must contain at least one letter and at least one number.'
+            'The password must contain at least one number and at least one special character.'
           );
         chai.expect(res.body.error.issues[0].path[0]).to.be.equal('password');
         chai.expect(res.body.success).to.be.equal(false);
