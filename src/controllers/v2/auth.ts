@@ -32,6 +32,12 @@ const user: Prisma.UserDelegate<Prisma.RejectPerModel> = prisma.user;
 // Sending the password in the reply isn't desired
 type UserNoPassword = Optional<Prisma.UserCreateInput, 'password'>;
 
+interface JWT {
+  id: number;
+  iat: number;
+  exp: number;
+}
+
 interface IUserCreateError extends Error {
   message: string;
   data: UserNoPassword;
@@ -232,4 +238,36 @@ const login = async (req: LoginRequest, res: Response) => {
   }
 };
 
-export { register, login };
+/**
+ * The logout function
+ * @summary This function simply generates a new JWT with an immediate expiry to be written over the old JWT.
+ * This approach does not remove the old JWT as this is not possible without changing the JWT secret or caching the token
+ * somewhere and considering it valid only as long as it's cached. Neither of which are in the scope of this assignment.
+ * @param req Request object
+ * @param res Response object
+ */
+const logout = async (req: Request, res: Response) => {
+  try {
+    const { token } = req.body;
+
+    const decodedToken = jwt.verify(token, JWT_SECRET) as JWT;
+
+    const newToken = jwt.sign(
+      {
+        id: decodedToken.id,
+      },
+      JWT_SECRET,
+      { expiresIn: '1s' }
+    );
+
+    return res
+      .status(200)
+      .json({ success: true, token: newToken, msg: 'Logged Out' });
+  } catch (err) {
+    return res
+      .status(StatusCodes.UNAUTHORIZED)
+      .json({ success: false, msg: 'Not logged in' });
+  }
+};
+
+export { register, login, logout };
