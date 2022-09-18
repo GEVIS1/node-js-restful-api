@@ -32,7 +32,7 @@ export const user: UserCreateInputNoAvatarWithConfirm = {
 
 export const newUserOldUsernameEmail: UserCreateInputNoAvatarWithConfirm = {
   firstname: 'Bob',
-  lastname: 'Builder, The',
+  lastname: 'BuilderThe',
   username: 'FenFen',
   email: 'FenFen@geving.com',
   password: 'IcanBuildIt6,',
