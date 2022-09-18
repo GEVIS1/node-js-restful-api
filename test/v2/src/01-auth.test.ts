@@ -109,6 +109,27 @@ describe('It should register users', () => {
       });
   });
 
+  it('should fail to register a user where the username is non-alphanumeric', (done) => {
+    const userShortFirstName = structuredClone(user);
+    userShortFirstName.username = 'Cool Guy!';
+    agent
+      .post('/api/v2/auth/register')
+      .send(userShortFirstName)
+      .end((_, res) => {
+        chai.expect(res.status).to.be.equal(422);
+        chai.expect(res.body).to.be.an('object');
+        chai
+          .expect(res.body.error.issues[0].code)
+          .to.be.equal('invalid_string');
+        chai.expect(res.body.error.issues[0].path[0]).to.be.equal('username');
+        chai
+          .expect(res.body.error.issues[0].message)
+          .to.be.equal('Only alphanumeric characters allowed');
+        chai.expect(res.body.success).to.be.equal(false);
+        done();
+      });
+  });
+
   it('should fail to register a user where the first name has a non-alpha character', (done) => {
     const userSpecialFirstName = structuredClone(user);
     userSpecialFirstName.firstname = '5teffen';
