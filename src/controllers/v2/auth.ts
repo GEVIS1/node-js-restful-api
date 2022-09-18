@@ -9,7 +9,7 @@
 import { Request, Response } from 'express';
 import { v4 as uuid } from 'uuid';
 import { StatusCodes } from 'http-status-codes';
-import { Prisma } from '@prisma/client';
+import { Prisma, Role } from '@prisma/client';
 import { Optional } from 'utility-types';
 
 import { prisma } from '../../utils/v2/prisma/prisma';
@@ -32,7 +32,22 @@ interface IUserCreateError extends Error {
   data: UserNoPassword;
 }
 
-const register = async (req: Request, res: Response) => {
+interface RegisterBody {
+  firstname: string;
+  lastname: string;
+  username: string;
+  email: string;
+  password: string;
+  confirm: string;
+  avatar: string;
+  role: Role;
+}
+
+interface RegisterRequest extends Request {
+  body: RegisterBody;
+}
+
+const register = async (req: RegisterRequest, res: Response) => {
   try {
     // Grab avatar
     const avatar = `${baseURL}${uuid()}.svg`;
