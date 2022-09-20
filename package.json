@@ -9,6 +9,7 @@
     "test": "npx mocha --exit",
     "prisma:migrate": "npx prisma migrate dev",
     "prisma:studio": "npx prisma studio",
+    "prisma:generate": "npx prisma generate",
     "prettier:fix": "npx prettier --write",
     "prettier:check": "npx prettier --check",
     "lint:fix": "npx eslint --fix",
