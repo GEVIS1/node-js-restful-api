@@ -1,6 +1,8 @@
+import axios from 'axios';
 import chai from 'chai';
 import jwt from 'jsonwebtoken';
 
+import { UserNoPassword } from '../../../src/controllers/v2/auth';
 import {
   user,
   /*adminUser, superAdminUser,*/
@@ -11,7 +13,20 @@ import {
 } from './../misc/userdata';
 import { agent, closeAgent } from './00-setup.test';
 
-const { JWT_SECRET } = process.env;
+const { JWT_SECRET, ADMIN_USER_GIST } = process.env;
+let gistAdminUsers: UserNoPassword[];
+
+before((done) => {
+  if (!ADMIN_USER_GIST) {
+    throw Error(
+      'Can not get admin users from gist. Make sure ADMIN_USER_GIST is set.'
+    );
+  }
+  axios.get(ADMIN_USER_GIST).then((res) => {
+    gistAdminUsers = res.data;
+    done();
+  });
+});
 
 describe('It should not register users with invalid requests', () => {
   it('should fail to register a user where the first name is too short', (done) => {
@@ -447,6 +462,22 @@ describe('It should register only unique new basic users', () => {
   });
 });
 
+describe('It should seed users', () => {
+  it('it should seed admin users', (done) => {
+    const adminUsers = structuredClone(gistAdminUsers);
+    adminUsers.forEach((u) => {
+      delete u.password;
+    });
+    agent.post('/api/v2/seed').end((_, res) => {
+      chai.expect(res.status).to.be.equal(201);
+      chai.expect(res.body).to.be.an('object');
+      chai.expect(res.body.success).to.be.equal(true);
+      chai.expect(res.body.data).to.deep.equal(adminUsers);
+      done();
+    });
+  });
+});
+
 describe('It should log in users', () => {
   it('should log in a basic user with their username', (done) => {
     const { username, password } = user;
@@ -503,7 +534,7 @@ describe('It should log in users', () => {
   });
 
   it('should log in an admin user', (done) => {
-    const { username, password } = adminUser;
+    const { username, password } = gistAdminUsers[0];
     const adminUserLogin = { username, password };
     agent
       .post('/api/v2/auth/login')
