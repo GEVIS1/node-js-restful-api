@@ -55,7 +55,7 @@ app.use(helmet());
 // }
 
 /**
- * Separately use for the User model since it does not use the authRoute middleware
+ * Separately use for the auth router since it does not use the authRoute middleware
  */
 app.use(`/${BASE_URL}/${CURRENT_VERSION}/auth`, auth);
 
