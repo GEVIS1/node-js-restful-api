@@ -9,6 +9,7 @@ import helmet from 'helmet';
 // import compression from 'compression';
 
 import auth from './routes/v2/auth';
+import seed from './routes/v2/seed';
 
 // import authRoute from './middleware/v1/authorization/authRoute';
 import { checkEnv } from './utils/v1/env';
@@ -55,9 +56,14 @@ app.use(helmet());
 // }
 
 /**
- * Separately use for the User model since it does not use the authRoute middleware
+ * Separately use for the auth router since it does not use the authRoute middleware
  */
 app.use(`/${BASE_URL}/${CURRENT_VERSION}/auth`, auth);
+
+/**
+ * Temporary use for seed route until authorization is implemented
+ */
+app.use(`/${BASE_URL}/${CURRENT_VERSION}/seed`, seed);
 
 app.listen(PORT, () =>
   // eslint-disable-next-line no-console

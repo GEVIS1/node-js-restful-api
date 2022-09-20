@@ -1,10 +1,34 @@
-import { Prisma } from '@prisma/client';
+import { Prisma, Role } from '@prisma/client';
 import { z } from 'zod';
 
 // Input data with confirm, which doesn't exist in the prisma schema
-type UserCreateInput = Prisma.UserUncheckedCreateInput & { confirm: string };
+export type UserCreateInput = Prisma.UserUncheckedCreateInput & {
+  confirm: string;
+};
 
-const createUserSchema = (data: UserCreateInput) => {
+// Data with deletable confirm
+export type UserValidatedInput = Prisma.UserCreateInput & { confirm?: string };
+
+/**
+ * User passwords are allowed to use regex special characters, so we need to escape them.
+ * This function will replace all regex special characters and prefix them with a backslash.
+ * $& being the matched substring and \\ being a literal backslash '\'
+ * E.G: escapeRegex('super*man') => 'super\*man'
+ * Since * means match zero or any amount of the preceeding character, which we don't want.
+ * This would match "supeman" and "superrrrrrrrrrrrrrrrrrrman" and any amount of 'r's rather
+ * than the literal string super*man.
+ * Source: https://stackoverflow.com/a/3561711
+ */
+const escapeRegex = (string: string) =>
+  string.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+
+/**
+ * Creates a user schema fitting the user data input and the desired role
+ * @param data The user data to be verified
+ * @param userRole The desired role to lock this schema to
+ * @returns A user schema validator that can confirm passwords and roles dynamically
+ */
+const createUserSchema = (data: UserCreateInput, userRole: Role) => {
   return z.object({
     firstname: z
       .string()
@@ -47,11 +71,11 @@ const createUserSchema = (data: UserCreateInput) => {
       .string()
       .min(8)
       .max(16)
-      .regex(new RegExp(`${data.password}`), {
+      .regex(new RegExp(`${escapeRegex(data.password)}`), {
         message: 'Passwords did not match.',
       }),
     avatar: z.string().url(),
-    role: z.literal('BASIC_USER').optional(),
+    role: z.literal(userRole).optional(),
   });
 };
 
