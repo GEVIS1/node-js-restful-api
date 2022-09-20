@@ -2,7 +2,12 @@ import { Prisma } from '@prisma/client';
 import { z } from 'zod';
 
 // Input data with confirm, which doesn't exist in the prisma schema
-type UserCreateInput = Prisma.UserUncheckedCreateInput & { confirm: string };
+export type UserCreateInput = Prisma.UserUncheckedCreateInput & {
+  confirm: string;
+};
+
+// Data with deletable confirm
+export type UserValidatedInput = Prisma.UserCreateInput & { confirm?: string };
 
 const createUserSchema = (data: UserCreateInput) => {
   return z.object({

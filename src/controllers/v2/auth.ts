@@ -13,7 +13,7 @@ import { Prisma } from '@prisma/client';
 import { Optional } from 'utility-types';
 
 import { prisma } from '../../utils/v2/prisma/prisma';
-import { createUserSchema } from '../../validators/v2/user';
+import { createUserSchema, UserValidatedInput } from '../../validators/v2/user';
 import { baseURL } from '../../utils/v2/axios';
 import { UserCreateOneSchema } from '../../../prisma/v2/zod-schemas/schemas/createOneUser.schema';
 import { ZodError } from 'zod';
@@ -49,8 +49,10 @@ const register = async (req: Request, res: Response) => {
     const UserSchema = createUserSchema(req.body);
 
     // Validate extended rules
-    const validatedData: Prisma.UserCreateInput & { confirm?: string } =
-      UserSchema.parse({ ...req.body, avatar });
+    const validatedData: UserValidatedInput = UserSchema.parse({
+      ...req.body,
+      avatar,
+    });
 
     delete validatedData.confirm;
 
