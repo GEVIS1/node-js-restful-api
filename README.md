@@ -24,6 +24,10 @@ To see the current data in the database:
 ## References:
 Prisma Data, Inc. (2022, June 21). Best practice for instantiating PrismaClient with Next.js. Prisma. Retrieved August 24, 2022, from https://www.prisma.io/docs/guides/database/troubleshooting-orm/help-articles/nextjs-prisma-client-dev-practices
 
+Is there a RegExp.escape function in JavaScript? (2010, August 24). Stack Overflow. Retrieved September 20, 2022, from https://stackoverflow.com/a/3561711
+
+Typescript Error: Property “user” does not exist on type “Request.” (2017, June 6). Stack Overflow. Retrieved September 20, 2022, from https://stackoverflow.com/questions/44383387/typescript-error-property-user-does-not-exist-on-type-request
+
 ## TODO:
 ### User:
 You will have three types of users:
@@ -73,7 +77,7 @@ deleted”.
 super admin users’ data will be fetched from a local file & inserted into the User table using
 Prisma.
 
-- [ ] Five admin users are seeded via a super admin user. Only a super admin user can seed the five
+- [x] Five admin users are seeded via a super admin user. Only a super admin user can seed the five
 admin users. The admin users’ data will be fetched from a private GitHub Gist using Axios &
 inserted into the User table using Prisma.
 
