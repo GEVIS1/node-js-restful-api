@@ -1,15 +1,17 @@
-import { prisma } from '../../utils/v2/prisma/prisma';
+import axios from 'axios';
+import bcryptjs from 'bcryptjs';
+import { Optional } from 'utility-types';
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { JwtPayload } from 'jsonwebtoken';
-import axios from 'axios';
 import { Prisma } from '@prisma/client';
+
 import {
   createUserSchema,
   UserCreateInput,
   UserValidatedInput,
 } from '../../validators/v2/user';
-import { Optional } from 'utility-types';
+import { prisma } from '../../utils/v2/prisma/prisma';
 import { UserCreateOneSchema } from '../../../prisma/v2/zod-schemas/schemas/createOneUser.schema';
 
 //const authorizedRoles = ['SUPER_ADMIN_USER'];
@@ -63,11 +65,16 @@ const seed = async (req: AuthorizedRequest, res: Response) => {
       // Validate the data for our extended rules
       const validData: UserValidatedInput = AdminUserSchema.parse(admin);
 
+      // Async map functions are tricky, so generate passwords synchronously
+      const salt = bcryptjs.genSaltSync();
+      validData.password = bcryptjs.hashSync(validData.password, salt);
+
       // Delete confirm property
       delete validData.confirm;
 
       // Validate the prisma schema
       const schemaData = UserCreateOneSchema.parse({ data: validData });
+
       return schemaData;
     });
 
