@@ -46,7 +46,7 @@ const register = async (req: Request, res: Response) => {
      *    compare: z.string().match(new Regex(`req.body.password`))
      * }
      */
-    const UserSchema = createUserSchema(req.body);
+    const UserSchema = createUserSchema(req.body, 'BASIC_USER');
 
     // Validate extended rules
     const validatedData: UserValidatedInput = UserSchema.parse({
