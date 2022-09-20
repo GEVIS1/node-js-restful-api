@@ -12,7 +12,7 @@ import {
 import { Optional } from 'utility-types';
 import { UserCreateOneSchema } from '../../../prisma/v2/zod-schemas/schemas/createOneUser.schema';
 
-const authorizedRoles = ['SUPER_ADMIN_USER'];
+//const authorizedRoles = ['SUPER_ADMIN_USER'];
 
 export interface AuthorizedRequest extends Request {
   /**
@@ -30,22 +30,21 @@ export interface AuthorizedRequest extends Request {
 const seed = async (req: AuthorizedRequest, res: Response) => {
   try {
     //const token = req.user;
-    const token = { id: 1 };
 
-    if (token === undefined) {
-      throw Error('Unauthorized');
-    }
+    // if (token === undefined) {
+    //   throw Error('Unauthorized');
+    // }
 
-    // Get the user data to verify they have permission
-    const user = await prisma.user.findFirst({ where: { id: token.id } });
+    // // Get the user data to verify they have permission
+    // const user = await prisma.user.findFirst({ where: { id: token.id } });
 
-    // Fail if user is not found, or is not of authorized role
-    if (
-      user !== null && !authorizedRoles.includes(user.role) ||
-      user === null
-    ) {
-      throw Error('Unauthorized');
-    }
+    // // Fail if user is not found, or is not of authorized role
+    // if (
+    //   user !== null && !authorizedRoles.includes(user.role) ||
+    //   user === null
+    // ) {
+    //   throw Error('Unauthorized');
+    // }
 
     if (!process.env.ADMIN_USER_GIST) {
       throw Error('No ADMIN_USER_GIST url set in app environment');
