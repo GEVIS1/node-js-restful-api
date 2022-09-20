@@ -30,7 +30,7 @@ if (prisma?.user === undefined) throw Error('Prisma is undefined.');
 const user: Prisma.UserDelegate<Prisma.RejectPerModel> = prisma.user;
 
 // Sending the password in the reply isn't desired
-type UserNoPassword = Optional<Prisma.UserCreateInput, 'password'>;
+export type UserNoPassword = Optional<Prisma.UserCreateInput, 'password'>;
 
 interface JWT {
   id: number;
@@ -43,7 +43,7 @@ interface IUserCreateError extends Error {
   data: UserNoPassword;
 }
 
-interface RegisterBody {
+export interface RegisterBody {
   firstname: string;
   lastname: string;
   username: string;
