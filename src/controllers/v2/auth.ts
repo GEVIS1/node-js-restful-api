@@ -32,10 +32,12 @@ interface IUserCreateError extends Error {
   data: UserNoPassword;
 }
 
+const generateAvatar = () => `${baseURL}${uuid()}.svg`;
+
 const register = async (req: Request, res: Response) => {
   try {
     // Grab avatar
-    const avatar = `${baseURL}${uuid()}.svg`;
+    const avatar = generateAvatar();
 
     /**
      * zod does not have functionality to refer to another field from what I've found,
@@ -119,4 +121,4 @@ const register = async (req: Request, res: Response) => {
   }
 };
 
-export { register };
+export { register, generateAvatar };
