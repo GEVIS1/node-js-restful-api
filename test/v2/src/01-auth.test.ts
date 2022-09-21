@@ -2,15 +2,16 @@ import axios from 'axios';
 import chai from 'chai';
 import jwt from 'jsonwebtoken';
 
+import { seed } from '../../../prisma/v2/seeder/seeder';
 import { UserNoPassword } from '../../../src/controllers/v2/auth';
 import {
   user,
-  /*adminUser, superAdminUser,*/
   removePasswords,
   newUserOldUsernameEmail,
   adminUser,
   superAdminUser,
 } from './../misc/userdata';
+import { sheev as registeredSuperAdminUser } from '../../../prisma/v2/seeder/users';
 import { agent, closeAgent } from './00-setup.test';
 
 const { JWT_SECRET, ADMIN_USER_GIST } = process.env;
@@ -463,18 +464,37 @@ describe('It should register only unique new basic users', () => {
 });
 
 describe('It should seed users', () => {
-  it('it should seed admin users', (done) => {
-    const adminUsers = structuredClone(gistAdminUsers);
-    adminUsers.forEach((u) => {
-      delete u.password;
-    });
-    agent.post('/api/v2/seed').end((_, res) => {
-      chai.expect(res.status).to.be.equal(201);
-      chai.expect(res.body).to.be.an('object');
-      chai.expect(res.body.success).to.be.equal(true);
-      chai.expect(res.body.data).to.deep.equal(adminUsers);
+  it('it should seed super admin users', (done) => {
+    /**
+     * The seed function will throw an error if it fails
+     * so it being successfully called means we seeded
+     * successfully.
+     */
+    seed(false).then(() => {
       done();
     });
+  });
+
+  it('it should seed admin users', (done) => {
+    agent
+      .post('/api/v2/auth/login')
+      .send(registeredSuperAdminUser)
+      .end((_, resLogin) => {
+        const adminUsers = structuredClone(gistAdminUsers);
+        adminUsers.forEach((u) => {
+          delete u.password;
+        });
+        agent
+          .post('/api/v2/seed')
+          .set({ Authorization: `Bearer ${resLogin.body.token}` })
+          .end((__, res) => {
+            chai.expect(res.status).to.be.equal(201);
+            chai.expect(res.body).to.be.an('object');
+            chai.expect(res.body.success).to.be.equal(true);
+            chai.expect(res.body.data).to.deep.equal(adminUsers);
+            done();
+          });
+      });
   });
 });
 
