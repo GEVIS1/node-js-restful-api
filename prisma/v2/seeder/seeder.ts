@@ -63,6 +63,7 @@ const seed = async (consoleLog = true) => {
     } else {
       if (consoleLog) {
         // Let's print the resulting data in the console
+        console.log(`Inserted ${result.count} super admin users:`)
         resultData.forEach((user) => {
           console.table(user);
         });

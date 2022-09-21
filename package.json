@@ -13,6 +13,7 @@
     "prisma:migrate": "npx prisma migrate dev",
     "prisma:studio": "npx prisma studio",
     "prisma:generate": "npx prisma generate",
+    "prisma:seed": "npx cross-env NODE_ENV=testing npx prisma db seed",
     "prettier:fix": "npx prettier --write",
     "prettier:check": "npx prettier --check",
     "lint:fix": "npx eslint --fix",
