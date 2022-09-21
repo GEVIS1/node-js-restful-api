@@ -1,9 +1,8 @@
 import axios from 'axios';
 import bcryptjs from 'bcryptjs';
 import { Optional } from 'utility-types';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { JwtPayload } from 'jsonwebtoken';
 import { Prisma } from '@prisma/client';
 
 import {
@@ -13,40 +12,30 @@ import {
 } from '../../validators/v2/user';
 import { prisma } from '../../utils/v2/prisma/prisma';
 import { UserCreateOneSchema } from '../../../prisma/v2/zod-schemas/schemas/createOneUser.schema';
+import { AuthorizedRequest } from '../../middleware/v2/authorization/authRoute';
 
-//const authorizedRoles = ['SUPER_ADMIN_USER'];
-
-export interface AuthorizedRequest extends Request {
-  /**
-   * Make user optional as a workaround with TypeScript.
-   * The other option would be to overwrite the Request object and add
-   * a user property to all Request objects, which is objectively wrong since
-   * some requests will not use the authorization middleware and will not have
-   * the user property present.
-   *
-   * Source: https://stackoverflow.com/questions/44383387/typescript-error-property-user-does-not-exist-on-type-request
-   */
-  user?: JwtPayload;
-}
+const authorizedRoles = ['SUPER_ADMIN_USER'];
 
 const seed = async (req: AuthorizedRequest, res: Response) => {
   try {
-    //const token = req.user;
+    const token = req.user;
 
-    // if (token === undefined) {
-    //   throw Error('Unauthorized');
-    // }
+    if (token === undefined) {
+      throw Error('Unauthorized');
+    }
 
-    // // Get the user data to verify they have permission
-    // const user = await prisma.user.findFirst({ where: { id: token.id } });
+    // Get the user data to verify they have permission
+    const user = await prisma.user.findFirst({ where: { id: token.id } });
 
-    // // Fail if user is not found, or is not of authorized role
-    // if (
-    //   user !== null && !authorizedRoles.includes(user.role) ||
-    //   user === null
-    // ) {
-    //   throw Error('Unauthorized');
-    // }
+    // Return a 403 if not found, or is not of authorized role
+    if (
+      user !== null && !authorizedRoles.includes(user.role) ||
+      user === null
+    ) {
+      res
+        .status(StatusCodes.FORBIDDEN)
+        .json({ success: false, error: 'Not authorized to use this route' });
+    }
 
     if (!process.env.ADMIN_USER_GIST) {
       throw Error('No ADMIN_USER_GIST url set in app environment');
