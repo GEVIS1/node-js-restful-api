@@ -47,7 +47,8 @@
     ]
   },
   "prisma": {
-    "schema": "prisma/v2/schema.prisma"
+    "schema": "prisma/v2/schema.prisma",
+    "seed": "ts-node --experimental-specifier-resolution=node prisma/v2/seeder/seeder.ts"
   },
   "dependencies": {
     "@prisma/client": "^4.2.1",

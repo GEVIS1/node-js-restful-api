@@ -53,10 +53,12 @@ interface RegisterRequest extends Request {
   body: RegisterBody;
 }
 
+const generateAvatar = () => `${baseURL}${uuid()}.svg`;
+
 const register = async (req: RegisterRequest, res: Response) => {
   try {
     // Grab avatar
-    const avatar = `${baseURL}${uuid()}.svg`;
+    const avatar = generateAvatar();
 
     /**
      * zod does not have functionality to refer to another field from what I've found,
@@ -267,4 +269,4 @@ const logout = async (req: Request, res: Response) => {
   }
 };
 
-export { register, login, logout };
+export { register, login, logout, generateAvatar };
