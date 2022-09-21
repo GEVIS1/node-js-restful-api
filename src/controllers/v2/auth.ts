@@ -27,7 +27,7 @@ const { JWT_SECRET, JWT_LIFETIME } = process.env as JWTEnv;
 if (prisma?.user === undefined) throw Error('Prisma is undefined.');
 
 // Extract user delegate for type information
-const user: Prisma.UserDelegate<Prisma.RejectPerModel> = prisma.user;
+const user: Prisma.UserDelegate<Prisma.RejectOnNotFound> = prisma.user;
 
 // Sending the password in the reply isn't desired
 export type UserNoPassword = Optional<Prisma.UserCreateInput, 'password'>;
