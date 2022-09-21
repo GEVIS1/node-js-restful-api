@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "nodemon --experimental-specifier-resolution=node src/app.ts",
-    "test": "npx mocha --exit",
+    "test": "npx cross-env NODE_ENV=testing mocha --exit",
     "prisma:migrate": "npx prisma migrate dev",
     "prisma:studio": "npx prisma studio",
     "prisma:generate": "npx prisma generate",
@@ -78,6 +78,7 @@
     "chai": "^4.3.6",
     "chai-http": "^4.3.0",
     "commitizen": "^4.2.5",
+    "cross-env": "^7.0.3",
     "cz-conventional-changelog": "^3.3.0",
     "eslint": "^8.20.0",
     "eslint-config-airbnb-typescript": "^17.0.0",
