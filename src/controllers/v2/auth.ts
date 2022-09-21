@@ -19,6 +19,7 @@ import { createUserSchema, UserValidatedInput } from '../../validators/v2/user';
 import { baseURL } from '../../utils/v2/axios';
 import { UserCreateOneSchema } from '../../../prisma/v2/zod-schemas/schemas/createOneUser.schema';
 import { ZodError } from 'zod';
+import { JWT } from '../../middleware/v2/authorization/authRoute';
 
 type JWTEnv = { JWT_SECRET: jwt.Secret; JWT_LIFETIME: string };
 const { JWT_SECRET, JWT_LIFETIME } = process.env as JWTEnv;
@@ -31,12 +32,6 @@ const user: Prisma.UserDelegate<Prisma.RejectOnNotFound> = prisma.user;
 
 // Sending the password in the reply isn't desired
 export type UserNoPassword = Optional<Prisma.UserCreateInput, 'password'>;
-
-interface JWT {
-  id: number;
-  iat: number;
-  exp: number;
-}
 
 interface IUserCreateError extends Error {
   message: string;
