@@ -13,6 +13,7 @@ import {
 } from './../misc/userdata';
 import { sheev as registeredSuperAdminUser } from '../../../prisma/v2/seeder/users';
 import { agent, closeAgent } from './00-setup.test';
+import { JWT } from '../../../src/middleware/v2/authorization/authRoute';
 
 const { JWT_SECRET, ADMIN_USER_GIST } = process.env;
 let gistAdminUsers: UserNoPassword[];
@@ -518,9 +519,11 @@ describe('It should log in users', () => {
         const decodedToken = jwt.verify(
           res.body.token,
           JWT_SECRET as jwt.Secret
-        );
+        ) as JWT;
         chai.expect(decodedToken).to.be.an('object');
         chai.expect(decodedToken).to.have.property('id');
+        chai.expect(decodedToken).to.have.property('role');
+        chai.expect(decodedToken.role).to.equal('BASIC_USER');
 
         done();
       });
@@ -545,9 +548,11 @@ describe('It should log in users', () => {
         const decodedToken = jwt.verify(
           res.body.token,
           JWT_SECRET as jwt.Secret
-        );
+        ) as JWT;
         chai.expect(decodedToken).to.be.an('object');
         chai.expect(decodedToken).to.have.property('id');
+        chai.expect(decodedToken).to.have.property('role');
+        chai.expect(decodedToken.role).to.equal('BASIC_USER');
 
         done();
       });
@@ -572,9 +577,11 @@ describe('It should log in users', () => {
         const decodedToken = jwt.verify(
           res.body.token,
           JWT_SECRET as jwt.Secret
-        );
+        ) as JWT;
         chai.expect(decodedToken).to.be.an('object');
         chai.expect(decodedToken).to.have.property('id');
+        chai.expect(decodedToken).to.have.property('role');
+        chai.expect(decodedToken.role).to.equal('ADMIN_USER');
 
         done();
       });
