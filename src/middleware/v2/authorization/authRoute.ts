@@ -1,9 +1,11 @@
+import { Role } from '@prisma/client';
 import { Request, Response, NextFunction } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import jwt from 'jsonwebtoken';
 
 export interface JWT {
   id: number;
+  role: Role;
   iat: number;
   exp: number;
 }

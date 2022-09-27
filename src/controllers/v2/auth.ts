@@ -210,12 +210,13 @@ const login = async (req: LoginRequest, res: Response) => {
 
     /**
      * Return a JWT. The first argument is the payload, in this case an object containing
-     * the authenticated user's id, the second argument is the secret,
+     * the authenticated user's id and role, the second argument is the secret,
      * our public/private key, and the third argument is the lifetime of the JWT.
      */
     const token = jwt.sign(
       {
         id: loginUser.id,
+        role: loginUser.role,
       },
       JWT_SECRET,
       { expiresIn: JWT_LIFETIME }
