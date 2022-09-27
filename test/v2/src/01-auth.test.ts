@@ -11,7 +11,10 @@ import {
   adminUser,
   superAdminUser,
 } from './../misc/userdata';
-import { sheev as registeredSuperAdminUser } from '../../../prisma/v2/seeder/users';
+import {
+  sheev as registeredSuperAdminUser,
+  yoda,
+} from '../../../prisma/v2/seeder/users';
 import { agent, closeAgent } from './00-setup.test';
 import { JWT } from '../../../src/middleware/v2/authorization/authRoute';
 
@@ -582,6 +585,38 @@ describe('It should log in users', () => {
         chai.expect(decodedToken).to.have.property('id');
         chai.expect(decodedToken).to.have.property('role');
         chai.expect(decodedToken.role).to.equal('ADMIN_USER');
+
+        done();
+      });
+  });
+
+  const strikeThrough = '\u001b[9m';
+  const normalText = '\u001b[0m\u001b[90m';
+
+  it(`should log in ${strikeThrough}yoda${normalText} a super admin user`, (done) => {
+    const { username, password } = yoda;
+    const adminUserLogin = { username, password };
+    agent
+      .post('/api/v2/auth/login')
+      .send(adminUserLogin)
+      .end((_, res) => {
+        chai.expect(res.status).to.be.equal(200);
+        chai.expect(res.body).to.be.an('object');
+        chai.expect(res.body.success).to.be.equal(true);
+        chai
+          .expect(res.body.msg)
+          .to.be.equal(`${adminUserLogin.username} has successfully logged in`);
+        chai.expect(res.body.token).to.be.a('string');
+
+        // Confirm that token is valid
+        const decodedToken = jwt.verify(
+          res.body.token,
+          JWT_SECRET as jwt.Secret
+        ) as JWT;
+        chai.expect(decodedToken).to.be.an('object');
+        chai.expect(decodedToken).to.have.property('id');
+        chai.expect(decodedToken).to.have.property('role');
+        chai.expect(decodedToken.role).to.equal('SUPER_ADMIN_USER');
 
         done();
       });
