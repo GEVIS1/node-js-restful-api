@@ -305,4 +305,31 @@ describe('It should update a user by its id', () => {
     chai.expect(putResponse.body.success).to.be.equal(true);
     chai.expect(putResponse.body.data).to.include(compareUser);
   });
+
+  it('should let a super admin user update their own information', async () => {
+    const { username, email, password } = superAdminUser;
+    const loginUser = { username, password };
+    const compareUser = removePasswords(superAdminUser);
+
+    const prismaUser = await prisma?.user.findFirst({
+      where: {
+        username,
+        email,
+      },
+    });
+
+    chai.expect(prismaUser).to.be.an('object');
+
+    const loginResponse = await agent
+      .post('/api/v2/auth/login')
+      .send(loginUser);
+    const putResponse = await agent
+      .put(`/api/v2/users/${prismaUser?.id}`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` });
+
+    chai.expect(putResponse.status).to.be.equal(200);
+    chai.expect(putResponse.body).to.be.an('object');
+    chai.expect(putResponse.body.success).to.be.equal(true);
+    chai.expect(putResponse.body.data).to.include(compareUser);
+  });
 });
