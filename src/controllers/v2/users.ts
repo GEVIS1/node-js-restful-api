@@ -12,21 +12,30 @@ const allRoles: Role[] = ['BASIC_USER', 'ADMIN_USER', 'SUPER_ADMIN_USER'];
 
 /**
  * Check user permissions
- * @param user Decoded JWT with the user's id in it
- * @param allowedRoles Array of authorized roles
- * @returns A boolean reflecting whether the user is authorized
+ * @param requestingUser Decoded JWT with the user who is trying to update data's id in it
+ * @param userToBeUpdated User data of the user to be updated
+ * @param allowedRoles Array of roles the requesting user is allowed to modify
+ * @returns An array with a boolean reflecting whether the user is authorized and the data of the user to be updated
  */
-const isAuthorized = async (user: JWT, allowedRoles: Role[]) => {
+const isAuthorized = async (
+  requestingUser: JWT,
+  allowedRoles: Role[],
+  userToBeUpdated: User | null = null
+) => {
   const userAuthorized = await prisma.user.findFirst({
     where: {
-      id: user.id,
+      id: userToBeUpdated?.id,
       role: { in: allowedRoles },
     },
   });
 
-  if (!userAuthorized) {
+  if (userAuthorized) {
+    return [true, userAuthorized] as [boolean, User];
+  } else if (userToBeUpdated && requestingUser.id === userToBeUpdated.id) {
+    return [true, userToBeUpdated] as [boolean, User];
+  } else {
     return [false, null] as [boolean, null];
-  } else return [true, userAuthorized] as [boolean, User];
+  }
 };
 
 const getUsers = async (req: AuthorizedRequest, res: Response) => {
