@@ -252,9 +252,45 @@ describe('It should not update a user by its id without authorization', () => {
 
 describe('It should update a user by its id', () => {
   it('should let a basic user update their own information', async () => {
-    const { username, email, password } = user;
+    const { username, email, password, firstname } = user;
     const loginUser = { username, password };
-    const compareUser = removePasswords(user);
+    const compareUser = removePasswords(structuredClone(user));
+    compareUser.firstname += 'Hi';
+
+    const prismaUser = await prisma?.user.findFirst({
+      where: {
+        username,
+        email,
+      },
+    });
+
+    chai.expect(prismaUser).to.be.an('object');
+
+    const loginResponse = await agent
+      .post('/api/v2/auth/login')
+      .send(loginUser);
+    const putResponse = await agent
+      .put(`/api/v2/users/${prismaUser?.id}`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` })
+      .send({ firstname: user.firstname + 'Hi' });
+
+    chai.expect(putResponse.status).to.be.equal(200);
+    chai.expect(putResponse.body).to.be.an('object');
+    chai.expect(putResponse.body.success).to.be.equal(true);
+    chai.expect(putResponse.body.data).to.include(compareUser);
+
+    // Reset data after test
+    await agent
+      .put(`/api/v2/users/${prismaUser?.id}`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` })
+      .send({ firstname });
+  });
+
+  it('should let an admin user update their own information', async () => {
+    const fetchedAdminUser = await getAdminUser();
+    const { username, email, password } = fetchedAdminUser;
+    const loginUser = { username, password };
+    const compareUser = removePasswords(fetchedAdminUser);
 
     const prismaUser = await prisma?.user.findFirst({
       where: {
@@ -278,16 +314,17 @@ describe('It should update a user by its id', () => {
     chai.expect(putResponse.body.data).to.include(compareUser);
   });
 
-  it('should let an admin user update their own information', async () => {
+  it("should let an admin user update a basic user's information", async () => {
     const fetchedAdminUser = await getAdminUser();
-    const { username, email, password } = fetchedAdminUser;
+    const { username, password } = fetchedAdminUser;
     const loginUser = { username, password };
-    const compareUser = removePasswords(fetchedAdminUser);
+
+    const compareUser = removePasswords(user);
 
     const prismaUser = await prisma?.user.findFirst({
       where: {
-        username,
-        email,
+        username: compareUser.username,
+        email: compareUser.email,
       },
     });
 
