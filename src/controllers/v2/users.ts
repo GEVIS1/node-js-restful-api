@@ -1,12 +1,21 @@
-/* eslint-disable no-console */
 import { Prisma, Role, User } from '@prisma/client';
 import { Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
+import bcryptjs from 'bcryptjs';
+import { Optional } from 'utility-types';
+
 import {
   AuthorizedRequest,
   JWT,
 } from '../../middleware/v2/authorization/authRoute';
+import { baseURL } from '../../utils/v2/axios';
 import { prisma } from '../../utils/v2/prisma/prisma';
+import {
+  createUpdateUserSchema,
+  UserCreateInput,
+} from '../../validators/v2/user';
+import { UserUpdateOneSchema } from '../../../prisma/v2/zod-schemas/schemas/updateOneUser.schema';
+import { UserNoPassword } from './auth';
 
 const allRoles: Role[] = ['BASIC_USER', 'ADMIN_USER', 'SUPER_ADMIN_USER'];
 
@@ -100,11 +109,11 @@ const getUsers = async (req: AuthorizedRequest, res: Response) => {
       },
     };
 
-    const userData = await prisma.user.findMany(query);
+    const manyUserData = await prisma.user.findMany(query);
 
     return res.status(StatusCodes.OK).json({
       success: true,
-      data: userData,
+      data: manyUserData,
     });
   } catch (err) {
     if (err instanceof Error && err.message === 'Unauthorized') {
@@ -118,4 +127,147 @@ const getUsers = async (req: AuthorizedRequest, res: Response) => {
   }
 };
 
-export { getUsers };
+const updateUser = async (req: AuthorizedRequest, res: Response) => {
+  try {
+    if (req.user === undefined) {
+      throw Error('Unauthorized');
+    }
+
+    const id = Number.parseInt(req.params.id);
+
+    if (!id) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({
+          success: false,
+          message: 'No user id supplied or incorrect id',
+        });
+    }
+
+    // Get user data
+    const requestedUser = await prisma.user.findFirst({
+      where: {
+        id: Number(id),
+      },
+    });
+
+    if (!requestedUser) {
+      throw Error('User not found');
+    }
+
+    /**
+     * If the user is attempting to update a user that is not themselves, and that user's role is not lower than their own
+     * do not allow the operation.
+     */
+    const start = 0;
+    const index = allRoles.indexOf(req.user.role);
+    let end;
+    if (index === -1 || index >= allRoles.length) {
+      end = 0;
+    } else {
+      end = index;
+    }
+    const viewableRoles: Role[] = allRoles.slice(start, end);
+
+    // Check if user is in authorization list
+    const [authorized] = await isAuthorized(
+      req.user,
+      viewableRoles,
+      requestedUser
+    );
+
+    // If we are trying to update data that's not ours or not authorized
+    if (!authorized) {
+      throw Error('Unauthorized');
+    }
+
+    /**
+     * Now that we have ascertained that the user is allowed to update the data
+     * we can do the necessary manipulations on the input data and validate it.
+     */
+    const {
+      firstname: newFirstName,
+      lastname: newLastName,
+      username: newUsername,
+      email: newEmail,
+      password: newPassword,
+      confirm: newConfirm,
+    } = req.body;
+    let newAvatar: string | undefined = undefined;
+
+    if (req.body.avatar) {
+      newAvatar = `${baseURL}${req.body.avatar}.svg`;
+    }
+
+    // Create the object to update the user with
+    const newUser: Optional<UserCreateInput, 'avatar'> = {
+      firstname: newFirstName,
+      lastname: newLastName,
+      username: newUsername,
+      email: newEmail,
+      password: newPassword,
+      confirm: newConfirm,
+      avatar: newAvatar,
+    };
+
+    const UpdateUserSchema = createUpdateUserSchema(newUser as UserCreateInput);
+
+    // Validate extended rules
+    const validatedData = UpdateUserSchema.parse(newUser);
+
+    delete validatedData.confirm;
+
+    // Validate that the data fits the schema and that it is targeting the correct user
+    const userData = UserUpdateOneSchema.parse({
+      data: {
+        ...validatedData,
+      },
+      where: {
+        id: requestedUser.id,
+      },
+    });
+
+    /**
+     * If a new password is sent we've matched it with the confirm by this point
+     * so store it in the new userData.
+     */
+
+    if (userData.data.password) {
+      const salt = await bcryptjs.genSalt();
+      userData.data.password = await bcryptjs.hash(
+        userData.data.password as string,
+        salt
+      );
+    }
+
+    const resultData = await prisma.user.update(userData);
+
+    // I have looked through the documentation and there is no exception for delete operators..
+    // eslint-disable-next-line no-extra-parens
+    delete (resultData as UserNoPassword).password;
+
+    return res.status(StatusCodes.OK).json({
+      success: true,
+      data: resultData,
+    });
+  } catch (err) {
+    if (err instanceof Error && err.message === 'Unauthorized') {
+      return res
+        .status(StatusCodes.FORBIDDEN)
+        .json({ success: false, error: err.message });
+    } else if (err instanceof Error && err.message === 'User not found') {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ success: false, error: err.message });
+    }
+    return (
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        // Why is this error wrap necessary.. there must be a more elegant way
+        // eslint-disable-next-line no-extra-parens
+        .json({ success: false, error: (err as Error).message })
+    );
+  }
+};
+
+export { getUsers, updateUser };
