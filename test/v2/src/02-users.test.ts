@@ -4,7 +4,7 @@ import chai from 'chai';
 import { removePasswords, user, getAdminUser } from '../misc/userdata';
 import { agent } from './00-setup.test';
 
-describe('(GET /users) It should correctly get all the user data a user is authorized for.', () => {
+describe('It should correctly get all the user data a user is authorized for.', () => {
   it('should give a BASIC_USER their own data', (done) => {
     const { username, password } = user;
     const loginUser = { username, password };
