@@ -1,5 +1,8 @@
 import { Prisma } from '@prisma/client';
+import axios from 'axios';
 import { Optional, Assign } from 'utility-types';
+
+const { ADMIN_USER_GIST } = process.env;
 
 export type UserCreateInputNoAvatarWithConfirm = Assign<
   Optional<Prisma.UserCreateInput, 'avatar'>,
@@ -49,6 +52,16 @@ export const adminUser: UserCreateInputNoAvatarWithConfirm = {
   role: 'ADMIN_USER',
 };
 
+const getAdminUser = async () => {
+  if (!ADMIN_USER_GIST) {
+    throw Error(
+      'Can not get admin users from gist. Make sure ADMIN_USER_GIST is set.'
+    );
+  }
+  return (await axios.get(ADMIN_USER_GIST))
+    .data[0] as UserCreateInputNoAvatarWithConfirm;
+};
+
 export const superAdminUser: UserCreateInputNoAvatarWithConfirm = {
   firstname: 'Sheev',
   lastname: 'Palpatine',
@@ -60,4 +73,4 @@ export const superAdminUser: UserCreateInputNoAvatarWithConfirm = {
 };
 
 export const users = [user, adminUser, superAdminUser];
-export { removePasswords };
+export { removePasswords, getAdminUser };
