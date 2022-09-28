@@ -9,6 +9,7 @@ import {
 } from '../misc/userdata';
 import { yoda } from '../../../prisma/v2/seeder/users';
 import { agent } from './00-setup.test';
+import { baseURL } from '../../../src/utils/v2/axios';
 
 describe('It should correctly get all the user data a user is authorized for.', () => {
   it('should give a BASIC_USER their own data', (done) => {
@@ -328,6 +329,7 @@ describe('It should update a user by its id', () => {
     const loginUser = { username, password };
 
     const compareUser = removePasswords(user);
+    compareUser.avatar = `${baseURL}JamesCameron.svg`;
 
     const prismaUser = await prisma?.user.findFirst({
       where: {
@@ -343,7 +345,8 @@ describe('It should update a user by its id', () => {
       .send(loginUser);
     const putResponse = await agent
       .put(`/api/v2/users/${prismaUser?.id}`)
-      .set({ Authorization: `Bearer ${loginResponse.body.token}` });
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` })
+      .send({ avatar: 'JamesCameron' });
 
     chai.expect(putResponse.status).to.be.equal(200);
     chai.expect(putResponse.body).to.be.an('object');
