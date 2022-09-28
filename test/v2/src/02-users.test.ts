@@ -358,6 +358,7 @@ describe('It should update a user by its id', () => {
     const { username, email, password } = superAdminUser;
     const loginUser = { username, password };
     const compareUser = removePasswords(superAdminUser);
+    compareUser.avatar = `${baseURL}Bender.svg`;
 
     const prismaUser = await prisma?.user.findFirst({
       where: {
@@ -373,7 +374,8 @@ describe('It should update a user by its id', () => {
       .send(loginUser);
     const putResponse = await agent
       .put(`/api/v2/users/${prismaUser?.id}`)
-      .set({ Authorization: `Bearer ${loginResponse.body.token}` });
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` })
+      .send({ avatar: 'Bender' });
 
     chai.expect(putResponse.status).to.be.equal(200);
     chai.expect(putResponse.body).to.be.an('object');
