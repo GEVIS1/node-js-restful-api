@@ -382,4 +382,62 @@ describe('It should update a user by its id', () => {
     chai.expect(putResponse.body.success).to.be.equal(true);
     chai.expect(putResponse.body.data).to.include(compareUser);
   });
+
+  it("should let a super admin user update an admin user's information", async () => {
+    const { username, password } = superAdminUser;
+    const loginUser = { username, password };
+    const compareUser = removePasswords(await getAdminUser());
+    compareUser.avatar = `${baseURL}Bender.svg`;
+
+    const prismaUser = await prisma?.user.findFirst({
+      where: {
+        username: compareUser.username,
+        email: compareUser.email,
+      },
+    });
+
+    chai.expect(prismaUser).to.be.an('object');
+
+    const loginResponse = await agent
+      .post('/api/v2/auth/login')
+      .send(loginUser);
+    const putResponse = await agent
+      .put(`/api/v2/users/${prismaUser?.id}`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` })
+      .send({ avatar: 'Bender' });
+
+    chai.expect(putResponse.status).to.be.equal(200);
+    chai.expect(putResponse.body).to.be.an('object');
+    chai.expect(putResponse.body.success).to.be.equal(true);
+    chai.expect(putResponse.body.data).to.include(compareUser);
+  });
+
+  it("should let a super admin user update a basic user's information", async () => {
+    const { username, password } = superAdminUser;
+    const loginUser = { username, password };
+    const compareUser = removePasswords(user);
+    compareUser.avatar = `${baseURL}Bonk.svg`;
+
+    const prismaUser = await prisma?.user.findFirst({
+      where: {
+        username: compareUser.username,
+        email: compareUser.email,
+      },
+    });
+
+    chai.expect(prismaUser).to.be.an('object');
+
+    const loginResponse = await agent
+      .post('/api/v2/auth/login')
+      .send(loginUser);
+    const putResponse = await agent
+      .put(`/api/v2/users/${prismaUser?.id}`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` })
+      .send({ avatar: 'Bonk' });
+
+    chai.expect(putResponse.status).to.be.equal(200);
+    chai.expect(putResponse.body).to.be.an('object');
+    chai.expect(putResponse.body.success).to.be.equal(true);
+    chai.expect(putResponse.body.data).to.include(compareUser);
+  });
 });
