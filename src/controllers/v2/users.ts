@@ -24,22 +24,19 @@ const isAuthorized = async (user: JWT, allowedRoles: Role[]) => {
     },
   });
 
-  console.log(userAuthorized);
-  console.log('allowedRoles[0]', allowedRoles[0]);
-  console.log('allowedRoles[1]', allowedRoles[1]);
-
-  return userAuthorized ? true : false;
+  if (!userAuthorized) {
+    return [false, null] as [boolean, null];
+  } else return [true, userAuthorized] as [boolean, User];
 };
 
 const getUsers = async (req: AuthorizedRequest, res: Response) => {
-  const getUsersAuthorization: Role[] = ['ADMIN_USER', 'SUPER_ADMIN_USER'];
   try {
     if (req.user === undefined) {
       throw Error('Unauthorized');
     }
 
     // Check if user is in authorization list
-    const authorized = await isAuthorized(req.user, getUsersAuthorization);
+    const [authorized] = await isAuthorized(req.user, allRoles);
 
     if (!authorized) {
       throw Error('Unauthorized');
