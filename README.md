@@ -51,6 +51,17 @@ You will have three types of users:
 can get all users’ information, update all admin & basic users’ information & delete all admin &
 basic users. An admin user can get all admin & basic users’ information & update all basic users’
 information. A basic user can register.
+  - [x] All user types can login and logout
+  - [x] Basic user can GET /user and get their own information
+  - [x] Admin user can GET /user and get all BASIC_USERS and ADMIN_USERS
+  - [x] Super admin user can GET /user and get all BASIC_USERS, ADMIN_USERS & SUPER_ADMIN_USERS
+  - [ ] Basic user can GET /user/:id where id is their own id
+  - [ ] Admin user can GET /user/:id where the role is BASIC_USER & ADMIN_USER
+  - [ ] Super admin user can GET /user/:id where the role is BASIC_USER, ADMIN_USER & SUPER_ADMIN_USER
+  - [ ] Basic user can PUT /user/:id where id is their own id
+  - [ ] Admin user can PUT /user/:id where the role is BASIC_USER
+  - [ ] Super admin user can PUT /user/:id where the role is BASIC_USER & ADMIN_USER
+
 
 When performing a POST request for registering a basic user, the following error checking must be implemented:
   - [x] First name has a minimum length of two characters, a maximum length of 50 characters & alpha characters only.
