@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { Prisma, Role } from '@prisma/client';
+import { Prisma, Role, User } from '@prisma/client';
 import { Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import {
@@ -36,7 +36,7 @@ const getUsers = async (req: AuthorizedRequest, res: Response) => {
     }
 
     // Check if user is in authorization list
-    const [authorized] = await isAuthorized(req.user, allRoles);
+    const [authorized, user] = await isAuthorized(req.user, allRoles);
 
     if (!authorized) {
       throw Error('Unauthorized');
@@ -67,9 +67,16 @@ const getUsers = async (req: AuthorizedRequest, res: Response) => {
     let end = 0;
     const roleIndex = allRoles.indexOf(req.user.role) + 1;
 
-    // Safeguard index in case an exception happens
-    if (roleIndex < 0 || roleIndex > allRoles.length) {
-      throw Error('Unauthorized');
+    // If role is a basic user, or something goes wrong with the permission validation only return the requesting user's data
+    if (
+      req.user.role === 'BASIC_USER' ||
+      roleIndex < 0 ||
+      roleIndex > allRoles.length
+    ) {
+      return res.status(StatusCodes.OK).json({
+        success: true,
+        data: user,
+      });
     } else {
       end = roleIndex;
     }
