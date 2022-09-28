@@ -1,28 +1,52 @@
+import { User } from '@prisma/client';
 import chai from 'chai';
 
-import { user } from '../misc/userdata';
+import { removePasswords, user, getAdminUser } from '../misc/userdata';
 import { agent } from './00-setup.test';
 
-describe('It should not give access to user data the user is not authorized to access', () => {
-  it("should fail when a BASIC_USER tries to request other users' data", (done) => {
+describe('(GET /users) It should correctly get all the user data a user is authorized for.', () => {
+  it('should give a BASIC_USER their own data', (done) => {
     const { username, password } = user;
     const loginUser = { username, password };
+    const compareUser = removePasswords(user);
     agent
       .post('/api/v2/auth/login')
       .send(loginUser)
-      .end((_, res) => {
-        // eslint-disable-next-line no-console
-        console.log(res);
-        chai.expect(res).to.not.be.equal(undefined);
-
-        done();
+      .end((_, resLogin) => {
+        agent
+          .get('/api/v2/users')
+          .set({ Authorization: `Bearer ${resLogin.body.token}` })
+          .end((__, res) => {
+            chai.expect(res.status).to.be.equal(200);
+            chai.expect(res.body).to.be.an('object');
+            chai.expect(res.body.success).to.be.equal(true);
+            chai.expect(res.body.data).to.include(compareUser);
+            done();
+          });
       });
   });
-});
 
-describe('It should correctly get all the user data a user is authorized for', () => {
   it('should give BASIC_USER data to an ADMIN_USER', (done) => {
-    done();
+    getAdminUser().then((adminUser) => {
+      agent
+        .post('/api/v2/auth/login')
+        .send(adminUser)
+        .end((_, resLogin) => {
+          agent
+            .get('/api/v2/users')
+            .set({ Authorization: `Bearer ${resLogin.body.token}` })
+            .end((__, res) => {
+              const basicUserData = res.body.data.filter(
+                (u: User) => u.role === 'BASIC_USER'
+              );
+              chai.expect(res.status).to.be.equal(200);
+              chai.expect(res.body).to.be.an('object');
+              chai.expect(res.body.success).to.be.equal(true);
+              chai.expect(basicUserData[0]).to.include(removePasswords(user));
+              done();
+            });
+        });
+    });
   });
 
   it('should give ADMIN_USER data to an ADMIN_USER', (done) => {
