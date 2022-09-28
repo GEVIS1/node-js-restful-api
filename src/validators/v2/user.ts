@@ -134,7 +134,7 @@ const createUpdateUserSchema = (data: UserCreateInput) => {
       .startsWith(data.username, {
         message: `The Local-part of the email address must match username. I.E: ${
           data.username
-        }@${data.email.split('@')[1]}`,
+        }@${data.email?.split('@')[1]}`,
       });
   }
 
