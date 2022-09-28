@@ -157,6 +157,36 @@ describe('It should correctly get all the user data a user is authorized for.', 
   });
 });
 
+describe('It should not update a user by its id without authorization', () => {
+  it("should not let a basic user update another basic user's information", async () => {
+    const { username, email, password } = user;
+    const loginUser = { username, password };
+
+    const prismaUser = await prisma?.user.findFirst({
+      where: {
+        username,
+        email,
+      },
+    });
+
+    chai.expect(prismaUser).to.be.an('object');
+    if (!prismaUser) {
+      throw Error('Could not get own user data');
+    }
+    const loginResponse = await agent
+      .post('/api/v2/auth/login')
+      .send(loginUser);
+    const putResponse = await agent
+      .put(`/api/v2/users/${prismaUser.id + 1}`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` });
+
+    chai.expect(putResponse.status).to.be.equal(403);
+    chai.expect(putResponse.body).to.be.an('object');
+    chai.expect(putResponse.body.success).to.be.equal(false);
+    chai.expect(putResponse.body.error).to.be.equal('Unauthorized');
+  });
+});
+
 describe('It should update a user by its id', () => {
   it('should let a basic user update their own information', async () => {
     const { username, email, password } = user;
