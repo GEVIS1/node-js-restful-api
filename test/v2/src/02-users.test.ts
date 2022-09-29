@@ -163,6 +163,423 @@ describe('It should correctly get all the user data a user is authorized for.', 
   });
 });
 
+describe("It should not get a user's information without authorization", () => {
+  it('should not let a basic user get another basic users information', async () => {
+    const { username, email, password } = user;
+    const loginUser = { username, password };
+
+    const ownUser = await prisma?.user.findFirst({
+      where: {
+        username,
+        email,
+      },
+    });
+
+    chai.expect(ownUser).to.be.an('object');
+
+    const otherBasicUser = await prisma?.user.findFirst({
+      where: {
+        id: {
+          not: ownUser?.id,
+        },
+        role: 'BASIC_USER',
+      },
+    });
+
+    chai.expect(otherBasicUser).to.be.an('object');
+
+    const loginResponse = await agent
+      .post('/api/v2/auth/login')
+      .send(loginUser);
+    const putResponse = await agent
+      .get(`/api/v2/users/${otherBasicUser?.id}`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` });
+
+    chai.expect(putResponse.status).to.be.equal(403);
+    chai.expect(putResponse.body).to.be.an('object');
+    chai.expect(putResponse.body.success).to.be.equal(false);
+    chai.expect(putResponse.body.error).to.equal('Unauthorized');
+  });
+
+  it('should not let a basic user get an admin users information', async () => {
+    const { username, password } = user;
+    const loginUser = { username, password };
+
+    const anAdminUser = await prisma?.user.findFirst({
+      where: {
+        role: 'ADMIN_USER',
+      },
+    });
+
+    chai.expect(anAdminUser).to.be.an('object');
+
+    const loginResponse = await agent
+      .post('/api/v2/auth/login')
+      .send(loginUser);
+    const putResponse = await agent
+      .get(`/api/v2/users/${anAdminUser?.id}`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` });
+
+    chai.expect(putResponse.status).to.be.equal(403);
+    chai.expect(putResponse.body).to.be.an('object');
+    chai.expect(putResponse.body.success).to.be.equal(false);
+    chai.expect(putResponse.body.error).to.equal('Unauthorized');
+  });
+
+  it('should not let a basic user get a super admin users information', async () => {
+    const { username, email, password } = user;
+    const loginUser = { username, password };
+
+    const ownUser = await prisma?.user.findFirst({
+      where: {
+        username,
+        email,
+      },
+    });
+
+    chai.expect(ownUser).to.be.an('object');
+
+    const aSuperAdminUser = await prisma?.user.findFirst({
+      where: {
+        role: 'SUPER_ADMIN_USER',
+      },
+    });
+
+    chai.expect(aSuperAdminUser).to.be.an('object');
+
+    chai.expect(aSuperAdminUser).to.be.an('object');
+
+    const loginResponse = await agent
+      .post('/api/v2/auth/login')
+      .send(loginUser);
+    const putResponse = await agent
+      .get(`/api/v2/users/${aSuperAdminUser?.id}`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` });
+
+    chai.expect(putResponse.status).to.be.equal(403);
+    chai.expect(putResponse.body).to.be.an('object');
+    chai.expect(putResponse.body.success).to.be.equal(false);
+    chai.expect(putResponse.body.error).to.equal('Unauthorized');
+  });
+
+  it('should not let an admin user get a super admin users information', async () => {
+    const adminUser = await getAdminUser();
+    const { username, email, password } = adminUser;
+    const loginUser = { username, password };
+
+    const ownUser = await prisma?.user.findFirst({
+      where: {
+        username,
+        email,
+      },
+    });
+
+    chai.expect(ownUser).to.be.an('object');
+
+    const aSuperAdminUser = await prisma?.user.findFirst({
+      where: {
+        role: 'SUPER_ADMIN_USER',
+      },
+    });
+
+    chai.expect(aSuperAdminUser).to.be.an('object');
+
+    const loginResponse = await agent
+      .post('/api/v2/auth/login')
+      .send(loginUser);
+    const putResponse = await agent
+      .get(`/api/v2/users/${aSuperAdminUser?.id}`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` });
+
+    chai.expect(putResponse.status).to.be.equal(403);
+    chai.expect(putResponse.body).to.be.an('object');
+    chai.expect(putResponse.body.success).to.be.equal(false);
+    chai.expect(putResponse.body.error).to.equal('Unauthorized');
+  });
+});
+
+describe('It should get a users information', () => {
+  it('should let a basic user get their own information', async () => {
+    const { username, email, password } = user;
+    const loginUser = { username, password };
+    const compareUser = removePasswords(structuredClone(user));
+
+    const prismaUser = await prisma?.user.findFirst({
+      where: {
+        username,
+        email,
+      },
+    });
+
+    chai.expect(prismaUser).to.be.an('object');
+
+    const loginResponse = await agent
+      .post('/api/v2/auth/login')
+      .send(loginUser);
+    const putResponse = await agent
+      .get(`/api/v2/users/${prismaUser?.id}`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` });
+
+    chai.expect(putResponse.status).to.be.equal(200);
+    chai.expect(putResponse.body).to.be.an('object');
+    chai.expect(putResponse.body.success).to.be.equal(true);
+    chai.expect(putResponse.body.data).to.include(compareUser);
+  });
+
+  it('should let an admin user get their own information', async () => {
+    const fetchedAdminUser = await getAdminUser();
+    const { username, email, password } = fetchedAdminUser;
+    const loginUser = { username, password };
+    const compareUser = removePasswords(fetchedAdminUser);
+
+    const prismaUser = await prisma?.user.findFirst({
+      where: {
+        username,
+        email,
+      },
+    });
+
+    chai.expect(prismaUser).to.be.an('object');
+
+    const loginResponse = await agent
+      .post('/api/v2/auth/login')
+      .send(loginUser);
+    const putResponse = await agent
+      .get(`/api/v2/users/${prismaUser?.id}`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` });
+
+    chai.expect(putResponse.status).to.be.equal(200);
+    chai.expect(putResponse.body).to.be.an('object');
+    chai.expect(putResponse.body.success).to.be.equal(true);
+    chai.expect(putResponse.body.data).to.include(compareUser);
+  });
+
+  it("should let an admin user get a basic user's information", async () => {
+    const fetchedAdminUser = await getAdminUser();
+    const { username, password } = fetchedAdminUser;
+    const loginUser = { username, password };
+    const compareUser = removePasswords(user);
+
+    const prismaUser = await prisma?.user.findFirst({
+      where: {
+        username: compareUser.username,
+        email: compareUser.email,
+      },
+    });
+
+    chai.expect(prismaUser).to.be.an('object');
+
+    const loginResponse = await agent
+      .post('/api/v2/auth/login')
+      .send(loginUser);
+    const putResponse = await agent
+      .get(`/api/v2/users/${prismaUser?.id}`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` });
+
+    chai.expect(putResponse.status).to.be.equal(200);
+    chai.expect(putResponse.body).to.be.an('object');
+    chai.expect(putResponse.body.success).to.be.equal(true);
+    chai.expect(putResponse.body.data).to.include(compareUser);
+  });
+
+  it("should let an admin user get another admin user's information", async () => {
+    const fetchedAdminUser = await getAdminUser();
+    const { username, email, password } = fetchedAdminUser;
+    const loginUser = { username, password };
+
+    const prismaUser = await prisma?.user.findFirst({
+      where: {
+        username,
+        email,
+      },
+    });
+
+    chai.expect(prismaUser).to.be.an('object');
+
+    const otherAdminUser = await prisma?.user.findFirst({
+      select: {
+        id: true,
+        firstname: true,
+        lastname: true,
+        username: true,
+        email: true,
+        avatar: true,
+      },
+      where: {
+        id: {
+          not: prismaUser?.id,
+        },
+        role: 'ADMIN_USER',
+      },
+    });
+
+    chai.expect(otherAdminUser).to.be.an('object');
+
+    const loginResponse = await agent
+      .post('/api/v2/auth/login')
+      .send(loginUser);
+    const putResponse = await agent
+      .get(`/api/v2/users/${otherAdminUser?.id}`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` });
+
+    chai.expect(putResponse.status).to.be.equal(200);
+    chai.expect(putResponse.body).to.be.an('object');
+    chai.expect(putResponse.body.success).to.be.equal(true);
+    chai.expect(putResponse.body.data).to.include(otherAdminUser);
+  });
+
+  it('should let a super admin user get their own information', async () => {
+    const { username, email, password } = superAdminUser;
+    const loginUser = { username, password };
+    const compareUser = removePasswords(superAdminUser);
+
+    const prismaUser = await prisma?.user.findFirst({
+      where: {
+        username,
+        email,
+      },
+    });
+
+    chai.expect(prismaUser).to.be.an('object');
+
+    const loginResponse = await agent
+      .post('/api/v2/auth/login')
+      .send(loginUser);
+    const putResponse = await agent
+      .get(`/api/v2/users/${prismaUser?.id}`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` });
+
+    chai.expect(putResponse.status).to.be.equal(200);
+    chai.expect(putResponse.body).to.be.an('object');
+    chai.expect(putResponse.body.success).to.be.equal(true);
+    chai.expect(putResponse.body.data).to.include(compareUser);
+  });
+
+  it("should let a super admin user get a basic user's information", async () => {
+    const { username, email, password } = superAdminUser;
+    const loginUser = { username, password };
+    const compareUser = removePasswords(structuredClone(user));
+
+    const prismaUser = await prisma?.user.findFirst({
+      where: {
+        username,
+        email,
+      },
+    });
+
+    chai.expect(prismaUser).to.be.an('object');
+
+    const basicUser = await prisma?.user.findFirst({
+      where: {
+        username: compareUser.username,
+        email: compareUser.email,
+      },
+    });
+
+    chai.expect(basicUser).to.be.an('object');
+
+    const loginResponse = await agent
+      .post('/api/v2/auth/login')
+      .send(loginUser);
+    const putResponse = await agent
+      .get(`/api/v2/users/${basicUser?.id}`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` });
+
+    chai.expect(putResponse.status).to.be.equal(200);
+    chai.expect(putResponse.body).to.be.an('object');
+    chai.expect(putResponse.body.success).to.be.equal(true);
+    chai.expect(putResponse.body.data).to.include(compareUser);
+  });
+
+  it("should let a super admin user get an admin user's information", async () => {
+    const { username, email, password } = superAdminUser;
+    const loginUser = { username, password };
+
+    const prismaUser = await prisma?.user.findFirst({
+      where: {
+        username,
+        email,
+      },
+    });
+
+    chai.expect(prismaUser).to.be.an('object');
+
+    const anAdminUser = await prisma?.user.findFirst({
+      select: {
+        id: true,
+        firstname: true,
+        lastname: true,
+        username: true,
+        email: true,
+        avatar: true,
+      },
+      where: {
+        username,
+        email,
+      },
+    });
+
+    chai.expect(anAdminUser).to.be.an('object');
+
+    const loginResponse = await agent
+      .post('/api/v2/auth/login')
+      .send(loginUser);
+    const putResponse = await agent
+      .get(`/api/v2/users/${anAdminUser?.id}`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` });
+
+    chai.expect(putResponse.status).to.be.equal(200);
+    chai.expect(putResponse.body).to.be.an('object');
+    chai.expect(putResponse.body.success).to.be.equal(true);
+    chai.expect(putResponse.body.data).to.include(anAdminUser);
+  });
+
+  it("should let a super admin user get another super admin user's information", async () => {
+    const { username, email, password } = superAdminUser;
+    const loginUser = { username, password };
+
+    const prismaUser = await prisma?.user.findFirst({
+      where: {
+        username,
+        email,
+      },
+    });
+
+    chai.expect(prismaUser).to.be.an('object');
+
+    const anotherAdminUser = await prisma?.user.findFirst({
+      select: {
+        id: true,
+        firstname: true,
+        lastname: true,
+        username: true,
+        email: true,
+        avatar: true,
+      },
+      where: {
+        id: {
+          not: prismaUser?.id,
+        },
+        role: 'SUPER_ADMIN_USER',
+      },
+    });
+
+    chai.expect(anotherAdminUser).to.be.an('object');
+
+    const loginResponse = await agent
+      .post('/api/v2/auth/login')
+      .send(loginUser);
+    const putResponse = await agent
+      .get(`/api/v2/users/${anotherAdminUser?.id}`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` });
+
+    chai.expect(putResponse.status).to.be.equal(200);
+    chai.expect(putResponse.body).to.be.an('object');
+    chai.expect(putResponse.body.success).to.be.equal(true);
+    chai.expect(putResponse.body.data).to.include(anotherAdminUser);
+  });
+});
+
 describe('It should not update a user by its id without authorization', () => {
   it("should not let a basic user update another basic user's information", async () => {
     const { username, email, password } = user;
