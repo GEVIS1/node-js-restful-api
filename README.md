@@ -58,9 +58,11 @@ information. A basic user can register.
   - [ ] Basic user can GET /user/:id where id is their own id
   - [ ] Admin user can GET /user/:id where the role is BASIC_USER & ADMIN_USER
   - [ ] Super admin user can GET /user/:id where the role is BASIC_USER, ADMIN_USER & SUPER_ADMIN_USER
-  - [ ] Basic user can PUT /user/:id where id is their own id
-  - [ ] Admin user can PUT /user/:id where the role is BASIC_USER
-  - [ ] Super admin user can PUT /user/:id where the role is BASIC_USER & ADMIN_USER
+  - [x] Basic user can PUT /user/:id where id is their own id
+  - [x] Admin user can PUT /user/:id where id is their own id
+  - [x] Admin user can PUT /user/:id where the role is BASIC_USER
+  - [x] Super admin user can PUT /user/:id where id is their own id
+  - [x] Super admin user can PUT /user/:id where the role is BASIC_USER & ADMIN_USER
 
 
 When performing a POST request for registering a basic user, the following error checking must be implemented:
@@ -84,7 +86,7 @@ i.e., ”<User’s username> has successfully logged out” & set the user’s J
 ”<User’s username>’s information has successfully updated” or ”<User’s username> has successfully
 deleted”.
 
-- [ ] Two super admin users are seeded via you. Only you can seed the two super admin users. The
+- [x] Two super admin users are seeded via you. Only you can seed the two super admin users. The
 super admin users’ data will be fetched from a local file & inserted into the User table using
 Prisma.
 
