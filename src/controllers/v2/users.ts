@@ -127,6 +127,94 @@ const getUsers = async (req: AuthorizedRequest, res: Response) => {
   }
 };
 
+const getUser = async (req: AuthorizedRequest, res: Response) => {
+  try {
+    if (req.user === undefined) {
+      throw Error('Unauthorized');
+    }
+
+    const id = Number.parseInt(req.params.id);
+
+    if (!id) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        message: 'No user id supplied or incorrect id',
+      });
+    }
+
+    // Get user data
+    const requestedUser = await prisma.user.findFirst({
+      where: {
+        id: Number(id),
+      },
+    });
+
+    if (!requestedUser) {
+      throw Error('User not found');
+    }
+
+    /**
+     * If the user is attempting to get a user that is not themselves
+     */
+    if (req.user.id !== requestedUser.id) {
+      /**
+       * There is not a straight pattern to basic user, admin user and super admin user view permissions
+       * so instead of generating them just hard code them.
+       */
+      const viewableRoles: Role[] = [];
+      switch (req.user.role) {
+        case 'BASIC_USER':
+          break;
+
+        case 'ADMIN_USER':
+          viewableRoles.push('BASIC_USER', 'ADMIN_USER');
+          break;
+
+        case 'SUPER_ADMIN_USER':
+          viewableRoles.push('BASIC_USER', 'ADMIN_USER', 'SUPER_ADMIN_USER');
+          break;
+
+        default:
+          break;
+      }
+
+      // Check if user is in authorization list
+      const [authorized] = await isAuthorized(
+        req.user,
+        viewableRoles,
+        requestedUser
+      );
+
+      // If we are trying to view data that's not ours or not authorized
+      if (!authorized) {
+        throw Error('Unauthorized');
+      }
+    }
+
+    return res.status(StatusCodes.OK).json({
+      success: true,
+      data: requestedUser,
+    });
+  } catch (err) {
+    if (err instanceof Error && err.message === 'Unauthorized') {
+      return res
+        .status(StatusCodes.FORBIDDEN)
+        .json({ success: false, error: err.message });
+    } else if (err instanceof Error && err.message === 'User not found') {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ success: false, error: err.message });
+    }
+    return (
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        // Why is this error wrap necessary.. there must be a more elegant way
+        // eslint-disable-next-line no-extra-parens
+        .json({ success: false, error: (err as Error).message })
+    );
+  }
+};
+
 const updateUser = async (req: AuthorizedRequest, res: Response) => {
   try {
     if (req.user === undefined) {
@@ -136,12 +224,10 @@ const updateUser = async (req: AuthorizedRequest, res: Response) => {
     const id = Number.parseInt(req.params.id);
 
     if (!id) {
-      return res
-        .status(StatusCodes.BAD_REQUEST)
-        .json({
-          success: false,
-          message: 'No user id supplied or incorrect id',
-        });
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        message: 'No user id supplied or incorrect id',
+      });
     }
 
     // Get user data
@@ -270,4 +356,4 @@ const updateUser = async (req: AuthorizedRequest, res: Response) => {
   }
 };
 
-export { getUsers, updateUser };
+export { getUsers, getUser, updateUser };
