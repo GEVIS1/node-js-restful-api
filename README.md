@@ -63,6 +63,7 @@ information. A basic user can register.
   - [x] Admin user can PUT /user/:id where the role is BASIC_USER
   - [x] Super admin user can PUT /user/:id where id is their own id
   - [x] Super admin user can PUT /user/:id where the role is BASIC_USER & ADMIN_USER
+  - [ ] Super admin user can DELETE ADMIN_USER and BASIC_USER
 
 
 When performing a POST request for registering a basic user, the following error checking must be implemented:
@@ -75,7 +76,7 @@ When performing a POST request for registering a basic user, the following error
   > Note: Confirm password will not be a field in the User table. Rather, it will be used to validate the user’s password. 
   > For each error check, a status code & response message is returned, i.e., ”First name must have a minimum length of two characters”.
 
-- [ ] When performing a POST request for logging in a user using either username/password or email
+- [x] When performing a POST request for logging in a user using either username/password or email
 address/password, return a status code, a response message, i.e., ”<User’s username> has successfully
 logged in” & the user’s JWT.
 
@@ -129,14 +130,14 @@ in the RESTful API.
 - [ ] Implement CORS, compression, caching & rate limiting.
 ### Testing:
 - [x] API tests are written using Mocha & Chai.
-- [ ] At least 40 API/integration tests verifying the user & quiz functionality.
+- [x] At least 40 API/integration tests verifying the user & quiz functionality.
 - [ ] Code coverage using c8.
 ### Deployment:
 - [ ] RESTful API is deployed to Heroku.
 ### NPM scripts:
-- [ ] Opening Prisma Studio.
-- [ ] Creating a migration using Prisma.
-- [ ] Linting & fixing your code using ESLint.
-- [ ] Formatting your code using Prettier.
-- [ ] Running API/integration tests using Mocha.
+- [x] Opening Prisma Studio.
+- [x] Creating a migration using Prisma.
+- [x] Linting & fixing your code using ESLint.
+- [x] Formatting your code using Prettier.
+- [x] Running API/integration tests using Mocha.
 - [ ] Running code coverage using c8 & Mocha.
