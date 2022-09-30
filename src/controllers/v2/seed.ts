@@ -16,7 +16,7 @@ import { AuthorizedRequest } from '../../middleware/v2/authorization/authRoute';
 
 const authorizedRoles = ['SUPER_ADMIN_USER'];
 
-const seed = async (req: AuthorizedRequest, res: Response) => {
+const seedAdminUsers = async (req: AuthorizedRequest, res: Response) => {
   try {
     const token = req.user;
 
@@ -116,4 +116,4 @@ const seed = async (req: AuthorizedRequest, res: Response) => {
   }
 };
 
-export default seed;
+export { seedAdminUsers };

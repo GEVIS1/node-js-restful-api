@@ -1,8 +1,8 @@
 import { Router } from 'express';
 const router = Router();
 
-import seed from '../../controllers/v2/seed';
+import { seedAdminUsers } from '../../controllers/v2/seed';
 
-router.route('/').post(seed);
+router.route('/admin').post(seedAdminUsers);
 
 export default router;

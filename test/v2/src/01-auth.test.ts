@@ -491,7 +491,7 @@ describe('It should seed users', () => {
           delete u.password;
         });
         agent
-          .post('/api/v2/seed')
+          .post('/api/v2/seed/admin')
           .set({ Authorization: `Bearer ${resLogin.body.token}` })
           .end((__, res) => {
             chai.expect(res.status).to.be.equal(201);
