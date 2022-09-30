@@ -54,7 +54,7 @@ const getUsers = async (req: AuthorizedRequest, res: Response) => {
     }
 
     // Check if user is in authorization list
-    const [authorized, user] = await isAuthorized(req.user, allRoles);
+    const [authorized] = await isAuthorized(req.user, allRoles);
 
     if (!authorized) {
       throw Error('Unauthorized');
@@ -93,7 +93,7 @@ const getUsers = async (req: AuthorizedRequest, res: Response) => {
     ) {
       return res.status(StatusCodes.OK).json({
         success: true,
-        data: user,
+        data: await prisma.user.findFirst({ where: { id: req.user.id } }),
       });
     } else {
       end = roleIndex;
