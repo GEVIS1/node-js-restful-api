@@ -3,7 +3,7 @@ import bcryptjs from 'bcryptjs';
 import { Optional } from 'utility-types';
 import { Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { Prisma } from '@prisma/client';
+import { Prisma, Role } from '@prisma/client';
 
 import {
   createUserSchema,
@@ -17,202 +17,102 @@ import { wordToAvatar } from './auth';
 
 const authorizedRoles = ['SUPER_ADMIN_USER'];
 
-const seedAdminUsers = async (req: AuthorizedRequest, res: Response) => {
-  try {
-    const token = req.user;
+const createSeeder =
+  (gistURL: string, role: Role) =>
+  async (req: AuthorizedRequest, res: Response) => {
+    try {
+      const token = req.user;
 
-    if (token === undefined) {
-      throw Error('Unauthorized');
-    }
-
-    // Get the user data to verify they have permission
-    const user = await prisma.user.findFirst({ where: { id: token.id } });
-
-    // Return a 403 if not found, or is not of authorized role
-    if (
-      user !== null && !authorizedRoles.includes(user.role) ||
-      user === null
-    ) {
-      res
-        .status(StatusCodes.FORBIDDEN)
-        .json({ success: false, error: 'Not authorized to use this route' });
-    }
-
-    if (!process.env.ADMIN_USER_GIST) {
-      throw Error('No ADMIN_USER_GIST url set in app environment');
-    }
-
-    const adminUsers = (
-      await axios.get<UserCreateInput[]>(process.env.ADMIN_USER_GIST)
-    ).data;
-
-    // Verify all accounts with the extended rules before inserting
-    const userData = adminUsers.map((admin) => {
-      // Create the validation schema for this admin user
-      const AdminUserSchema = createUserSchema(admin, 'ADMIN_USER');
-
-      // Validate the data for our extended rules
-      const validData: UserValidatedInput = AdminUserSchema.parse(admin);
-
-      // Async map functions are tricky, so generate passwords synchronously
-      const salt = bcryptjs.genSaltSync();
-      validData.password = bcryptjs.hashSync(validData.password, salt);
-
-      // Delete confirm property
-      delete validData.confirm;
-
-      // Validate the prisma schema
-      const schemaData = UserCreateOneSchema.parse({ data: validData });
-
-      return schemaData;
-    });
-
-    // Map the array into the UserCreateManyArgs type
-    const data: Prisma.UserCreateManyArgs = {
-      data: userData.map(
-        (d) => d.data
-      ) as Prisma.Enumerable<Prisma.UserCreateManyInput>,
-    };
-
-    // Delete old admin user accounts
-    await prisma.user.deleteMany({ where: { role: 'ADMIN_USER' } });
-
-    // Insert the validated data
-    const result = await prisma.user.createMany(data);
-
-    // If we don't get a result, or the result count isn't the same as the userData length something went wrong.
-    if (!result || result.count !== userData.length) {
-      throw Error(
-        `Could not insert data properly. Expected to create ${userData.length} new documents, but only created ${result.count}.`
-      );
-    }
-
-    // Strip the password from the data before returning it
-    // eslint-disable-next-line no-extra-parens
-    const resData = (adminUsers as UserCreateInput[]).map(
-      (admin: Optional<UserCreateInput, 'password'>) => {
-        delete admin.password;
-        return admin;
+      if (token === undefined) {
+        throw Error('Unauthorized');
       }
-    );
 
-    return res
-      .status(StatusCodes.CREATED)
-      .json({ success: true, data: resData });
-  } catch (err) {
-    if (err instanceof Error && err.message === 'Unauthorized') {
-      return res
-        .status(StatusCodes.UNAUTHORIZED)
-        .json({ success: false, error: 'Unauthorized' });
-    } else if (err instanceof Error) {
-      return res
-        .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .json({ success: false, error: err.message });
-    } else {
-      return res
-        .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .json({ success: false });
-    }
-  }
-};
+      // Get the user data to verify they have permission
+      const authorizedUser = await prisma.user.findFirst({
+        where: { id: token.id },
+      });
 
-const seedUsers = async (req: AuthorizedRequest, res: Response) => {
-  try {
-    const token = req.user;
-
-    if (token === undefined) {
-      throw Error('Unauthorized');
-    }
-
-    // Get the user data to verify they have permission
-    const user = await prisma.user.findFirst({ where: { id: token.id } });
-
-    // Return a 403 if not found, or is not of authorized role
-    if (
-      user !== null && !authorizedRoles.includes(user.role) ||
-      user === null
-    ) {
-      res
-        .status(StatusCodes.FORBIDDEN)
-        .json({ success: false, error: 'Not authorized to use this route' });
-    }
-
-    if (!process.env.BASIC_USER_GIST) {
-      throw Error('No BASIC_USER_GIST url set in app environment');
-    }
-
-    const basicUsers = (
-      await axios.get<UserCreateInput[]>(process.env.BASIC_USER_GIST)
-    ).data;
-
-    // Verify all accounts with the extended rules before inserting
-    const userData = basicUsers.map((basicUser) => {
-      // Generate the avatar URL
-      basicUser.avatar = wordToAvatar(basicUser.avatar);
-
-      // Create the validation schema for this basic user
-      const BasicUserSchema = createUserSchema(basicUser, 'BASIC_USER');
-
-      // Validate the data for our extended rules
-      const validData: UserValidatedInput = BasicUserSchema.parse(basicUser);
-
-      // Async map functions are tricky, so generate passwords synchronously
-      const salt = bcryptjs.genSaltSync();
-      validData.password = bcryptjs.hashSync(validData.password, salt);
-
-      // Delete confirm property
-      delete validData.confirm;
-
-      // Validate the prisma schema
-      const schemaData = UserCreateOneSchema.parse({ data: validData });
-
-      return schemaData;
-    });
-
-    // Map the array into the UserCreateManyArgs type
-    const data: Prisma.UserCreateManyArgs = {
-      data: userData.map(
-        (d) => d.data
-      ) as Prisma.Enumerable<Prisma.UserCreateManyInput>,
-    };
-
-    // Insert the validated data
-    const result = await prisma.user.createMany(data);
-
-    // If we don't get a result, or the result count isn't the same as the userData length something went wrong.
-    if (!result || result.count !== userData.length) {
-      throw Error(
-        `Could not insert data properly. Expected to create ${userData.length} new documents, but only created ${result.count}.`
-      );
-    }
-
-    // Strip the password from the data before returning it
-    // eslint-disable-next-line no-extra-parens
-    const resData = (basicUsers as UserCreateInput[]).map(
-      (basicUser: Optional<UserCreateInput, 'password'>) => {
-        delete basicUser.password;
-        return basicUser;
+      // Return a 403 if not found, or is not of authorized role
+      if (
+        authorizedUser !== null &&
+          !authorizedRoles.includes(authorizedUser.role) ||
+        authorizedUser === null
+      ) {
+        res
+          .status(StatusCodes.FORBIDDEN)
+          .json({ success: false, error: 'Not authorized to use this route' });
       }
-    );
 
-    return res
-      .status(StatusCodes.CREATED)
-      .json({ success: true, data: resData });
-  } catch (err) {
-    if (err instanceof Error && err.message === 'Unauthorized') {
+      const basicUsers = (await axios.get<UserCreateInput[]>(gistURL)).data;
+
+      // Verify all accounts with the extended rules before inserting
+      const userData = basicUsers.map((user) => {
+        // Generate the avatar URL
+        user.avatar = wordToAvatar(user.avatar);
+
+        // Create the validation schema for this basic user
+        const UserSchema = createUserSchema(user, role);
+
+        // Validate the data for our extended rules
+        const validData: UserValidatedInput = UserSchema.parse(user);
+
+        // Async map functions are tricky, so generate passwords synchronously
+        const salt = bcryptjs.genSaltSync();
+        validData.password = bcryptjs.hashSync(validData.password, salt);
+
+        // Delete confirm property
+        delete validData.confirm;
+
+        // Validate the prisma schema
+        const schemaData = UserCreateOneSchema.parse({ data: validData });
+
+        return schemaData;
+      });
+
+      // Map the array into the UserCreateManyArgs type
+      const data: Prisma.UserCreateManyArgs = {
+        data: userData.map(
+          (d) => d.data
+        ) as Prisma.Enumerable<Prisma.UserCreateManyInput>,
+      };
+
+      // Insert the validated data
+      const result = await prisma.user.createMany(data);
+
+      // If we don't get a result, or the result count isn't the same as the userData length something went wrong.
+      if (!result || result.count !== userData.length) {
+        throw Error(
+          `Could not insert data properly. Expected to create ${userData.length} new documents, but only created ${result.count}.`
+        );
+      }
+
+      // Strip the password from the data before returning it
+      // eslint-disable-next-line no-extra-parens
+      const resData = (basicUsers as UserCreateInput[]).map(
+        (basicUser: Optional<UserCreateInput, 'password'>) => {
+          delete basicUser.password;
+          return basicUser;
+        }
+      );
+
       return res
-        .status(StatusCodes.UNAUTHORIZED)
-        .json({ success: false, error: 'Unauthorized' });
-    } else if (err instanceof Error) {
-      return res
-        .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .json({ success: false, error: err.message });
-    } else {
-      return res
-        .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .json({ success: false });
+        .status(StatusCodes.CREATED)
+        .json({ success: true, data: resData });
+    } catch (err) {
+      if (err instanceof Error && err.message === 'Unauthorized') {
+        return res
+          .status(StatusCodes.UNAUTHORIZED)
+          .json({ success: false, error: 'Unauthorized' });
+      } else if (err instanceof Error) {
+        return res
+          .status(StatusCodes.INTERNAL_SERVER_ERROR)
+          .json({ success: false, error: err.message });
+      } else {
+        return res
+          .status(StatusCodes.INTERNAL_SERVER_ERROR)
+          .json({ success: false });
+      }
     }
-  }
-};
+  };
 
-export { seedAdminUsers, seedUsers };
+export { createSeeder };
