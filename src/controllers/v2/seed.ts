@@ -41,12 +41,11 @@ const seedAdminUsers = async (req: AuthorizedRequest, res: Response) => {
       throw Error('No ADMIN_USER_GIST url set in app environment');
     }
 
-    const adminUsers = await (
+    const adminUsers = (
       await axios.get<UserCreateInput[]>(process.env.ADMIN_USER_GIST)
     ).data;
 
     // Verify all accounts with the extended rules before inserting
-    // eslint-disable-next-line no-extra-parens
     const userData = adminUsers.map((admin) => {
       // Create the validation schema for this admin user
       const AdminUserSchema = createUserSchema(admin, 'ADMIN_USER');
