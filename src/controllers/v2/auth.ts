@@ -54,6 +54,7 @@ interface RegisterRequest extends Request {
 }
 
 const generateAvatar = () => `${baseURL}${uuid()}.svg`;
+const wordToAvatar = (word: string) => `${baseURL}${word}.svg`;
 
 const register = async (req: RegisterRequest, res: Response) => {
   try {
@@ -270,4 +271,4 @@ const logout = async (req: Request, res: Response) => {
   }
 };
 
-export { register, login, logout, generateAvatar };
+export { register, login, logout, generateAvatar, wordToAvatar };
