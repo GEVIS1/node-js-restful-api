@@ -496,6 +496,9 @@ describe('It should seed users', () => {
         adminUsers.forEach((u) => {
           delete u.password;
         });
+        const compareAdminUsers = structuredClone(adminUsers);
+        compareAdminUsers.forEach((u) => u.avatar = wordToAvatar(u.avatar));
+
         agent
           .post('/api/v2/seed/admin')
           .set({ Authorization: `Bearer ${resLogin.body.token}` })
@@ -503,7 +506,7 @@ describe('It should seed users', () => {
             chai.expect(res.status).to.be.equal(201);
             chai.expect(res.body).to.be.an('object');
             chai.expect(res.body.success).to.be.equal(true);
-            chai.expect(res.body.data).to.deep.equal(adminUsers);
+            chai.expect(res.body.data).to.deep.equal(compareAdminUsers);
             done();
           });
       });
