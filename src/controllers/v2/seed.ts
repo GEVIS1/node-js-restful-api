@@ -13,6 +13,7 @@ import {
 import { prisma } from '../../utils/v2/prisma/prisma';
 import { UserCreateOneSchema } from '../../../prisma/v2/zod-schemas/schemas/createOneUser.schema';
 import { AuthorizedRequest } from '../../middleware/v2/authorization/authRoute';
+import { wordToAvatar } from './auth';
 
 const authorizedRoles = ['SUPER_ADMIN_USER'];
 
@@ -146,7 +147,10 @@ const seedUsers = async (req: AuthorizedRequest, res: Response) => {
 
     // Verify all accounts with the extended rules before inserting
     const userData = basicUsers.map((basicUser) => {
-      // Create the validation schema for this admin user
+      // Generate the avatar URL
+      basicUser.avatar = wordToAvatar(basicUser.avatar);
+
+      // Create the validation schema for this basic user
       const BasicUserSchema = createUserSchema(basicUser, 'BASIC_USER');
 
       // Validate the data for our extended rules
