@@ -131,7 +131,7 @@ const register = async (req: RegisterRequest, res: Response) => {
 
     return res.status(StatusCodes.CREATED).json({
       success: true,
-      msg: 'User successfully registered',
+      msg: `User ${userData.data.username} successfully registered`,
       data: createdUser,
     });
   } catch (err) {
