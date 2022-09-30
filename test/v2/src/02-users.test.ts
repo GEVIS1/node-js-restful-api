@@ -10,6 +10,7 @@ import {
 import { yoda } from '../../../prisma/v2/seeder/users';
 import { agent } from './00-setup.test';
 import { baseURL } from '../../../src/utils/v2/axios';
+import { wordToAvatar } from '../../../src/controllers/v2/auth';
 
 describe('It should correctly get all the user data a user is authorized for.', () => {
   it('should give a BASIC_USER their own data', (done) => {
@@ -331,6 +332,7 @@ describe('It should get a users information', () => {
     const { username, email, password } = fetchedAdminUser;
     const loginUser = { username, password };
     const compareUser = removePasswords(fetchedAdminUser);
+    compareUser.avatar = wordToAvatar(compareUser.avatar);
 
     const prismaUser = await prisma?.user.findFirst({
       where: {
@@ -709,6 +711,7 @@ describe('It should update a user by its id', () => {
     const { username, email, password, lastname } = fetchedAdminUser;
     const loginUser = { username, password };
     const compareUser = removePasswords(fetchedAdminUser);
+    compareUser.avatar = wordToAvatar(compareUser.avatar);
     compareUser.lastname += 'Nice';
 
     const prismaUser = await prisma?.user.findFirst({
