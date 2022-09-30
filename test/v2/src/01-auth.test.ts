@@ -419,7 +419,9 @@ describe('It should register only unique new basic users', () => {
       .end((_, res) => {
         chai.expect(res.status).to.be.equal(201);
         chai.expect(res.body).to.be.an('object');
-        chai.expect(res.body.msg).to.be.equal('User successfully registered');
+        chai
+          .expect(res.body.msg)
+          .to.be.equal(`User ${userNoPass.username} successfully registered`);
         chai.expect(res.body.data).to.contain(userNoPass);
         chai.expect(res.body.success).to.be.equal(true);
         done();
