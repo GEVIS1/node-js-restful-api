@@ -76,6 +76,13 @@ const createSeeder =
         ) as Prisma.Enumerable<Prisma.UserCreateManyInput>,
       };
 
+      // Delete old data
+      await prisma?.user.deleteMany({
+        where: {
+          role,
+        },
+      });
+
       // Insert the validated data
       const result = await prisma.user.createMany(data);
 
