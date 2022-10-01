@@ -10,7 +10,21 @@ import {
 import { yoda } from '../../../prisma/v2/seeder/users';
 import { agent } from './00-setup.test';
 import { baseURL } from '../../../src/utils/v2/axios';
-import { wordToAvatar } from '../../../src/controllers/v2/auth';
+import { UserNoPassword, wordToAvatar } from '../../../src/controllers/v2/auth';
+import axios from 'axios';
+
+const { BASIC_USER_GIST } = process.env;
+let gistBasicUsers: UserNoPassword[];
+
+before(async () => {
+  if (!BASIC_USER_GIST) {
+    throw Error(
+      'Can not get basic users from gist. Make sure BASIC_USER_GIST is set.'
+    );
+  }
+  const basicRes = await axios.get(BASIC_USER_GIST);
+  gistBasicUsers = basicRes.data;
+});
 
 describe('It should correctly get all the user data a user is authorized for.', () => {
   it('should give a BASIC_USER their own data', (done) => {
@@ -871,5 +885,120 @@ describe('It should update a user by its id', () => {
     chai.expect(putResponse.body).to.be.an('object');
     chai.expect(putResponse.body.success).to.be.equal(true);
     chai.expect(putResponse.body.data).to.include(compareUser);
+  });
+});
+
+describe('It should not let unauthorized users delete userdata', () => {
+  it('should not let a basic user delete userdata', async () => {
+    const loginResponse = await agent.post('/api/v2/auth/login').send(user);
+
+    const { username } = gistBasicUsers[0];
+
+    const basicUser = await prisma?.user.findFirst({
+      where: {
+        username,
+      },
+    });
+
+    const deleteResponse = await agent
+      .delete(`/api/v2/users/${basicUser?.id}`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` });
+
+    chai.expect(deleteResponse.status).to.be.equal(403);
+    chai.expect(deleteResponse.body).to.be.an('object');
+    chai.expect(deleteResponse.body.success).to.be.equal(false);
+    chai.expect(deleteResponse.body.error).to.equal('Unauthorized');
+  });
+
+  it('should not let an admin user delete super admin data', async () => {
+    const fetchedAdminUser = await getAdminUser();
+
+    const loginResponse = await agent
+      .post('/api/v2/auth/login')
+      .send(fetchedAdminUser);
+
+    const { username } = superAdminUser;
+
+    const prismaSuperAdminUser = await prisma?.user.findFirst({
+      where: {
+        username,
+      },
+    });
+
+    const deleteResponse = await agent
+      .delete(`/api/v2/users/${prismaSuperAdminUser?.id}`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` });
+
+    chai.expect(deleteResponse.status).to.be.equal(403);
+    chai.expect(deleteResponse.body).to.be.an('object');
+    chai.expect(deleteResponse.body.success).to.be.equal(false);
+    chai.expect(deleteResponse.body.error).to.equal('Unauthorized');
+  });
+});
+
+describe('It should not delete non-existing users', () => {
+  it('should not delete non-existing user', async () => {
+    const loginResponse = await agent.post('/api/v2/auth/login').send(yoda);
+
+    const deleteResponse = await agent
+      .delete('/api/v2/users/9999')
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` });
+
+    chai.expect(deleteResponse.status).to.be.equal(404);
+    chai.expect(deleteResponse.body).to.be.an('object');
+    chai.expect(deleteResponse.body.success).to.be.equal(false);
+    chai.expect(deleteResponse.body.error).to.equal('User not found');
+  });
+});
+
+describe('It should delete users', () => {
+  it('should delete an admin user', async () => {
+    const loginResponse = await agent.post('/api/v2/auth/login').send(yoda);
+
+    const adminUsers = await prisma?.user.findMany({
+      where: {
+        role: 'ADMIN_USER',
+      },
+    });
+
+    if (!adminUsers) throw Error('Could not find admin users');
+
+    const deleteUser = adminUsers[Math.floor(adminUsers.length / 2)];
+
+    const deleteResponse = await agent
+      .delete(`/api/v2/users/${deleteUser.id}`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` });
+
+    chai.expect(deleteResponse.status).to.be.equal(200);
+    chai.expect(deleteResponse.body).to.be.an('object');
+    chai.expect(deleteResponse.body.success).to.be.equal(true);
+    chai
+      .expect(deleteResponse.body.message)
+      .to.equal(`${deleteUser.username} has been successfully deleted`);
+  });
+
+  it('should delete an admin user', async () => {
+    const loginResponse = await agent.post('/api/v2/auth/login').send(yoda);
+
+    const basicUsers = await prisma?.user.findMany({
+      where: {
+        role: 'BASIC_USER',
+      },
+    });
+
+    if (!basicUsers) throw Error('Could not find admin users');
+
+    const deleteUser = basicUsers[Math.floor(basicUsers.length / 2)];
+
+    const deleteResponse = await agent
+      .delete(`/api/v2/users/${deleteUser.id}`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` });
+
+    chai.expect(deleteResponse.status).to.be.equal(200);
+    chai.expect(deleteResponse.body).to.be.an('object');
+    chai.expect(deleteResponse.body.success).to.be.equal(true);
+    chai
+      .expect(deleteResponse.body.message)
+      .to.equal(`${deleteUser.username} has been successfully deleted`);
   });
 });
