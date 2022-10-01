@@ -239,6 +239,13 @@ const login = async (req: LoginRequest, res: Response) => {
   }
 };
 
+export interface RegisterBody {
+  token: string;
+}
+interface LogoutRequest extends Request {
+  body: RegisterBody;
+}
+
 /**
  * The logout function
  * @summary This function simply generates a new JWT with an immediate expiry to be written over the old JWT.
@@ -247,7 +254,7 @@ const login = async (req: LoginRequest, res: Response) => {
  * @param req Request object
  * @param res Response object
  */
-const logout = async (req: Request, res: Response) => {
+const logout = async (req: LogoutRequest, res: Response) => {
   try {
     const { token } = req.body;
 
@@ -261,9 +268,19 @@ const logout = async (req: Request, res: Response) => {
       { expiresIn: '1s' }
     );
 
+    const loggedOutUser = await prisma?.user.findFirst({
+      where: {
+        id: decodedToken.id,
+      },
+    });
+
     return res
       .status(200)
-      .json({ success: true, token: newToken, msg: 'Logged Out' });
+      .json({
+        success: true,
+        token: newToken,
+        message: `${loggedOutUser?.username} has successfully logged out`,
+      });
   } catch (err) {
     return res
       .status(StatusCodes.UNAUTHORIZED)
