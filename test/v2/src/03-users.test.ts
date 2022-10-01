@@ -50,7 +50,13 @@ describe('It should correctly get all the user data a user is authorized for.', 
               chai.expect(res.status).to.be.equal(200);
               chai.expect(res.body).to.be.an('object');
               chai.expect(res.body.success).to.be.equal(true);
-              chai.expect(basicUserData[0]).to.include(removePasswords(user));
+              chai
+                .expect(
+                  basicUserData.filter(
+                    (u: User) => u.username === user.username
+                  )[0]
+                )
+                .to.include(removePasswords(user));
               done();
             });
         });
@@ -105,7 +111,13 @@ describe('It should correctly get all the user data a user is authorized for.', 
             chai.expect(res.status).to.be.equal(200);
             chai.expect(res.body).to.be.an('object');
             chai.expect(res.body.success).to.be.equal(true);
-            chai.expect(basicUserData[0]).to.include(removePasswords(user));
+            chai
+              .expect(
+                basicUserData.filter(
+                  (u: User) => u.username === user.username
+                )[0]
+              )
+              .to.include(removePasswords(user));
             done();
           });
       });
@@ -602,7 +614,7 @@ describe('It should not update a user by its id without authorization', () => {
       .post('/api/v2/auth/login')
       .send(loginUser);
     const putResponse = await agent
-      .put(`/api/v2/users/${prismaUser.id + 1}`)
+      .put(`/api/v2/users/${prismaUser.id - 1}`)
       .set({ Authorization: `Bearer ${loginResponse.body.token}` });
 
     chai.expect(putResponse.status).to.be.equal(403);
