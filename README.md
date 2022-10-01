@@ -55,15 +55,15 @@ information. A basic user can register.
   - [x] Basic user can GET /user and get their own information
   - [x] Admin user can GET /user and get all BASIC_USERS and ADMIN_USERS
   - [x] Super admin user can GET /user and get all BASIC_USERS, ADMIN_USERS & SUPER_ADMIN_USERS
-  - [ ] Basic user can GET /user/:id where id is their own id
-  - [ ] Admin user can GET /user/:id where the role is BASIC_USER & ADMIN_USER
-  - [ ] Super admin user can GET /user/:id where the role is BASIC_USER, ADMIN_USER & SUPER_ADMIN_USER
+  - [x] Basic user can GET /user/:id where id is their own id
+  - [x] Admin user can GET /user/:id where the role is BASIC_USER & ADMIN_USER
+  - [x] Super admin user can GET /user/:id where the role is BASIC_USER, ADMIN_USER & SUPER_ADMIN_USER
   - [x] Basic user can PUT /user/:id where id is their own id
   - [x] Admin user can PUT /user/:id where id is their own id
   - [x] Admin user can PUT /user/:id where the role is BASIC_USER
   - [x] Super admin user can PUT /user/:id where id is their own id
   - [x] Super admin user can PUT /user/:id where the role is BASIC_USER & ADMIN_USER
-  - [ ] Super admin user can DELETE ADMIN_USER and BASIC_USER
+  - [x] Super admin user can DELETE ADMIN_USER and BASIC_USER
 
 
 When performing a POST request for registering a basic user, the following error checking must be implemented:
@@ -80,10 +80,10 @@ When performing a POST request for registering a basic user, the following error
 address/password, return a status code, a response message, i.e., ”<User’s username> has successfully
 logged in” & the user’s JWT.
 
-- [ ] When performing a GET request for logging out a user, return a status code, a response message,
+- [x] When performing a GET request for logging out a user, return a status code, a response message,
 i.e., ”<User’s username> has successfully logged out” & set the user’s JWT to expired.
 
-- [ ] When performing a PUT & DELETE request, return a status code & a response message, i.e.,
+- [x] When performing a PUT & DELETE request, return a status code & a response message, i.e.,
 ”<User’s username>’s information has successfully updated” or ”<User’s username> has successfully
 deleted”.
 
