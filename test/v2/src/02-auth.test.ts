@@ -584,6 +584,31 @@ describe('It should log in users', () => {
   });
 });
 
+describe('It should logout users', () => {
+  it('it should log out a user', async () => {
+    const { username, password } = yoda;
+    const adminUserLogin = { username, password };
+
+    const loginRes = await agent
+      .post('/api/v2/auth/login')
+      .send(adminUserLogin);
+
+    const { token } = loginRes.body;
+
+    const logoutRes = await agent
+      .get('/api/v2/auth/logout')
+      .set({ Authorization: `Bearer ${loginRes.body.token}` })
+      .send({ token });
+
+    chai.expect(logoutRes.status).to.be.equal(200);
+    chai.expect(logoutRes.body).to.be.an('object');
+    chai.expect(logoutRes.body.success).to.be.equal(true);
+    chai
+      .expect(logoutRes.body.message)
+      .to.equal(`${username} has successfully logged out`);
+  });
+});
+
 after(() => {
   closeAgent();
 });
