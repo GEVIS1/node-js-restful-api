@@ -1,14 +1,31 @@
+import axios from 'axios';
 import chai from 'chai';
+import jwt from 'jsonwebtoken';
 
+import { UserNoPassword } from '../../../src/controllers/v2/auth';
 import {
   user,
-  /*adminUser, superAdminUser,*/
   removePasswords,
   newUserOldUsernameEmail,
   adminUser,
   superAdminUser,
-} from './../misc/userdata';
+} from '../misc/userdata';
 import { agent, closeAgent } from './00-setup.test';
+import { JWT } from '../../../src/middleware/v2/authorization/authRoute';
+import { yoda } from '../../../prisma/v2/seeder/users';
+
+const { JWT_SECRET, ADMIN_USER_GIST } = process.env;
+let gistAdminUsers: UserNoPassword[];
+
+before(async () => {
+  if (!ADMIN_USER_GIST) {
+    throw Error(
+      'Can not get admin users from gist. Make sure ADMIN_USER_GIST is set.'
+    );
+  }
+  const adminRes = await axios.get(ADMIN_USER_GIST);
+  gistAdminUsers = adminRes.data;
+});
 
 describe('It should not register users with invalid requests', () => {
   it('should fail to register a user where the first name is too short', (done) => {
@@ -396,7 +413,9 @@ describe('It should register only unique new basic users', () => {
       .end((_, res) => {
         chai.expect(res.status).to.be.equal(201);
         chai.expect(res.body).to.be.an('object');
-        chai.expect(res.body.msg).to.be.equal('User successfully registered');
+        chai
+          .expect(res.body.msg)
+          .to.be.equal(`User ${userNoPass.username} successfully registered`);
         chai.expect(res.body.data).to.contain(userNoPass);
         chai.expect(res.body.success).to.be.equal(true);
         done();
@@ -441,6 +460,152 @@ describe('It should register only unique new basic users', () => {
         chai.expect(res.body.success).to.be.equal(false);
         done();
       });
+  });
+});
+
+describe('It should log in users', () => {
+  it('should log in a basic user with their username', (done) => {
+    const { username, password } = user;
+    const loginUser = { username, password };
+    agent
+      .post('/api/v2/auth/login')
+      .send(loginUser)
+      .end((_, res) => {
+        chai.expect(res.status).to.be.equal(200);
+        chai.expect(res.body).to.be.an('object');
+        chai.expect(res.body.success).to.be.equal(true);
+        chai
+          .expect(res.body.msg)
+          .to.be.equal(`${loginUser.username} has successfully logged in`);
+        chai.expect(res.body.token).to.be.a('string');
+
+        // Confirm that token is valid
+        const decodedToken = jwt.verify(
+          res.body.token,
+          JWT_SECRET as jwt.Secret
+        ) as JWT;
+        chai.expect(decodedToken).to.be.an('object');
+        chai.expect(decodedToken).to.have.property('id');
+        chai.expect(decodedToken).to.have.property('role');
+        chai.expect(decodedToken.role).to.equal('BASIC_USER');
+
+        done();
+      });
+  });
+
+  it('should log in a basic user with their email', (done) => {
+    const { username, email, password } = user;
+    const loginUser = { email, password };
+    agent
+      .post('/api/v2/auth/login')
+      .send(loginUser)
+      .end((_, res) => {
+        chai.expect(res.status).to.be.equal(200);
+        chai.expect(res.body).to.be.an('object');
+        chai.expect(res.body.success).to.be.equal(true);
+        chai
+          .expect(res.body.msg)
+          .to.be.equal(`${username} has successfully logged in`);
+        chai.expect(res.body.token).to.be.a('string');
+
+        // Confirm that token is valid
+        const decodedToken = jwt.verify(
+          res.body.token,
+          JWT_SECRET as jwt.Secret
+        ) as JWT;
+        chai.expect(decodedToken).to.be.an('object');
+        chai.expect(decodedToken).to.have.property('id');
+        chai.expect(decodedToken).to.have.property('role');
+        chai.expect(decodedToken.role).to.equal('BASIC_USER');
+
+        done();
+      });
+  });
+
+  it('should log in an admin user', (done) => {
+    const { username, password } = gistAdminUsers[0];
+    const adminUserLogin = { username, password };
+    agent
+      .post('/api/v2/auth/login')
+      .send(adminUserLogin)
+      .end((_, res) => {
+        chai.expect(res.status).to.be.equal(200);
+        chai.expect(res.body).to.be.an('object');
+        chai.expect(res.body.success).to.be.equal(true);
+        chai
+          .expect(res.body.msg)
+          .to.be.equal(`${adminUserLogin.username} has successfully logged in`);
+        chai.expect(res.body.token).to.be.a('string');
+
+        // Confirm that token is valid
+        const decodedToken = jwt.verify(
+          res.body.token,
+          JWT_SECRET as jwt.Secret
+        ) as JWT;
+        chai.expect(decodedToken).to.be.an('object');
+        chai.expect(decodedToken).to.have.property('id');
+        chai.expect(decodedToken).to.have.property('role');
+        chai.expect(decodedToken.role).to.equal('ADMIN_USER');
+
+        done();
+      });
+  });
+
+  const strikeThrough = '\u001b[9m';
+  const normalText = '\u001b[0m\u001b[90m';
+
+  it(`should log in ${strikeThrough}yoda${normalText} a super admin user`, (done) => {
+    const { username, password } = yoda;
+    const adminUserLogin = { username, password };
+    agent
+      .post('/api/v2/auth/login')
+      .send(adminUserLogin)
+      .end((_, res) => {
+        chai.expect(res.status).to.be.equal(200);
+        chai.expect(res.body).to.be.an('object');
+        chai.expect(res.body.success).to.be.equal(true);
+        chai
+          .expect(res.body.msg)
+          .to.be.equal(`${adminUserLogin.username} has successfully logged in`);
+        chai.expect(res.body.token).to.be.a('string');
+
+        // Confirm that token is valid
+        const decodedToken = jwt.verify(
+          res.body.token,
+          JWT_SECRET as jwt.Secret
+        ) as JWT;
+        chai.expect(decodedToken).to.be.an('object');
+        chai.expect(decodedToken).to.have.property('id');
+        chai.expect(decodedToken).to.have.property('role');
+        chai.expect(decodedToken.role).to.equal('SUPER_ADMIN_USER');
+
+        done();
+      });
+  });
+});
+
+describe('It should logout users', () => {
+  it('it should log out a user', async () => {
+    const { username, password } = yoda;
+    const adminUserLogin = { username, password };
+
+    const loginRes = await agent
+      .post('/api/v2/auth/login')
+      .send(adminUserLogin);
+
+    const { token } = loginRes.body;
+
+    const logoutRes = await agent
+      .get('/api/v2/auth/logout')
+      .set({ Authorization: `Bearer ${loginRes.body.token}` })
+      .send({ token });
+
+    chai.expect(logoutRes.status).to.be.equal(200);
+    chai.expect(logoutRes.body).to.be.an('object');
+    chai.expect(logoutRes.body.success).to.be.equal(true);
+    chai
+      .expect(logoutRes.body.message)
+      .to.equal(`${username} has successfully logged out`);
   });
 });
 

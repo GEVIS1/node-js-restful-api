@@ -14,7 +14,7 @@ import { generateAvatar } from '../../../src/controllers/v2/auth';
 import { UserCreateOneSchema } from '../zod-schemas/schemas/createOneUser.schema';
 
 const User = prisma.user;
-const seed = async () => {
+const seed = async (consoleLog = true) => {
   try {
     const data = superAdminUsers.map((user) => {
       // Generate necessary additional data
@@ -48,7 +48,9 @@ const seed = async () => {
     });
 
     if (deleteResult.count > 0) {
-      console.log(`Deleted ${deleteResult.count} old super admin users.`);
+      if (consoleLog) {
+        console.log(`Deleted ${deleteResult.count} old super admin users.`);
+      }
     }
 
     const result = await User.createMany({ data });
@@ -59,10 +61,13 @@ const seed = async () => {
     if (result.count !== resultData.length) {
       throw Error('Did not successfully insert all super admin users');
     } else {
-      // Let's print the resulting data in the console
-      resultData.forEach((user) => {
-        console.table(user);
-      });
+      if (consoleLog) {
+        // Let's print the resulting data in the console
+        console.log(`Inserted ${result.count} super admin users:`)
+        resultData.forEach((user) => {
+          console.table(user);
+        });
+      }
     }
   } catch (err) {
     console.log(err);
@@ -70,3 +75,5 @@ const seed = async () => {
 };
 
 seed();
+
+export { seed };
