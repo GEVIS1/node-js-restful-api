@@ -334,6 +334,7 @@ const updateUser = async (req: AuthorizedRequest, res: Response) => {
 
     return res.status(StatusCodes.OK).json({
       success: true,
+      message: `${resultData.username}'s information has successfully updated`,
       data: resultData,
     });
   } catch (err) {
