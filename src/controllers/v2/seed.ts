@@ -38,7 +38,7 @@ const createSeeder =
           !authorizedRoles.includes(authorizedUser.role) ||
         authorizedUser === null
       ) {
-        res
+        return res
           .status(StatusCodes.FORBIDDEN)
           .json({ success: false, error: 'Not authorized to use this route' });
       }
