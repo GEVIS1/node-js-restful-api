@@ -95,7 +95,7 @@ Prisma.
 admin users. The admin users’ data will be fetched from a private GitHub Gist using Axios &
 inserted into the User table using Prisma.
 
-- [ ] Five basic users are seeded via a super admin or an admin user. Only a super admin or an
+- [x] Five basic users are seeded via a super admin or an admin user. Only a super admin or an
 admin user can seed the five basic users. The basic users’ data will be fetched from a private
 GitHub Gist using Axios & inserted into the User table using Prisma.
 
