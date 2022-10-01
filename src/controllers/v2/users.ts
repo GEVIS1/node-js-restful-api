@@ -357,4 +357,82 @@ const updateUser = async (req: AuthorizedRequest, res: Response) => {
   }
 };
 
-export { getUsers, getUser, updateUser };
+const deleteUser = async (req: AuthorizedRequest, res: Response) => {
+  try {
+    if (req.user === undefined) {
+      throw Error('Unauthorized');
+    }
+
+    const id = Number.parseInt(req.params.id);
+
+    if (!id) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        message: 'No user id supplied or incorrect id',
+      });
+    }
+
+    // Get user data
+    const requestedUser = await prisma.user.findFirst({
+      where: {
+        id: Number(id),
+      },
+    });
+
+    if (!requestedUser) {
+      throw Error('User not found');
+    }
+
+    let deletableRoles: Role[] = [];
+
+    switch (req.user.role) {
+      case 'SUPER_ADMIN_USER':
+        deletableRoles = ['BASIC_USER', 'ADMIN_USER'];
+        break;
+      default:
+        break;
+    }
+
+    // Check if user is in authorization list
+    const [authorized] = await isAuthorized(
+      req.user,
+      deletableRoles,
+      requestedUser
+    );
+
+    // If we are trying to update data that's not ours or not authorized
+    if (!authorized) {
+      throw Error('Unauthorized');
+    }
+
+    const deletedUser = await prisma?.user.delete({
+      where: {
+        id,
+      },
+    });
+
+    return res.status(StatusCodes.OK).json({
+      success: true,
+      message: `${deletedUser.username} has been successfully deleted`,
+    });
+  } catch (err) {
+    if (err instanceof Error && err.message === 'Unauthorized') {
+      return res
+        .status(StatusCodes.FORBIDDEN)
+        .json({ success: false, error: err.message });
+    } else if (err instanceof Error && err.message === 'User not found') {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ success: false, error: err.message });
+    }
+    return (
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        // Why is this error wrap necessary.. there must be a more elegant way
+        // eslint-disable-next-line no-extra-parens
+        .json({ success: false, error: (err as Error).message })
+    );
+  }
+};
+
+export { getUsers, getUser, updateUser, deleteUser };
