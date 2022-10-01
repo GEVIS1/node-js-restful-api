@@ -15,15 +15,20 @@ import { UserCreateOneSchema } from '../../../prisma/v2/zod-schemas/schemas/crea
 import { AuthorizedRequest } from '../../middleware/v2/authorization/authRoute';
 import { wordToAvatar } from './auth';
 
-const authorizedRoles = ['SUPER_ADMIN_USER'];
-
 const createSeeder =
   (gistURL: string, role: Role) =>
   async (req: AuthorizedRequest, res: Response) => {
     try {
       const token = req.user;
 
-      if (token === undefined) {
+      const authorizedRoles =
+        role === 'ADMIN_USER'
+          ? ['SUPER_ADMIN_USER']
+          : role === 'BASIC_USER'
+          ? ['ADMIN_USER', 'SUPER_ADMIN_USER']
+          : [];
+
+      if (token === undefined || authorizedRoles.length === 0) {
         throw Error('Unauthorized');
       }
 
