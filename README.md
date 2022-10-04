@@ -51,6 +51,20 @@ You will have three types of users:
 can get all users’ information, update all admin & basic users’ information & delete all admin &
 basic users. An admin user can get all admin & basic users’ information & update all basic users’
 information. A basic user can register.
+  - [x] All user types can login and logout
+  - [x] Basic user can GET /user and get their own information
+  - [x] Admin user can GET /user and get all BASIC_USERS and ADMIN_USERS
+  - [x] Super admin user can GET /user and get all BASIC_USERS, ADMIN_USERS & SUPER_ADMIN_USERS
+  - [x] Basic user can GET /user/:id where id is their own id
+  - [x] Admin user can GET /user/:id where the role is BASIC_USER & ADMIN_USER
+  - [x] Super admin user can GET /user/:id where the role is BASIC_USER, ADMIN_USER & SUPER_ADMIN_USER
+  - [x] Basic user can PUT /user/:id where id is their own id
+  - [x] Admin user can PUT /user/:id where id is their own id
+  - [x] Admin user can PUT /user/:id where the role is BASIC_USER
+  - [x] Super admin user can PUT /user/:id where id is their own id
+  - [x] Super admin user can PUT /user/:id where the role is BASIC_USER & ADMIN_USER
+  - [x] Super admin user can DELETE ADMIN_USER and BASIC_USER
+
 
 When performing a POST request for registering a basic user, the following error checking must be implemented:
   - [x] First name has a minimum length of two characters, a maximum length of 50 characters & alpha characters only.
@@ -62,18 +76,18 @@ When performing a POST request for registering a basic user, the following error
   > Note: Confirm password will not be a field in the User table. Rather, it will be used to validate the user’s password. 
   > For each error check, a status code & response message is returned, i.e., ”First name must have a minimum length of two characters”.
 
-- [ ] When performing a POST request for logging in a user using either username/password or email
+- [x] When performing a POST request for logging in a user using either username/password or email
 address/password, return a status code, a response message, i.e., ”<User’s username> has successfully
 logged in” & the user’s JWT.
 
-- [ ] When performing a GET request for logging out a user, return a status code, a response message,
+- [x] When performing a GET request for logging out a user, return a status code, a response message,
 i.e., ”<User’s username> has successfully logged out” & set the user’s JWT to expired.
 
-- [ ] When performing a PUT & DELETE request, return a status code & a response message, i.e.,
+- [x] When performing a PUT & DELETE request, return a status code & a response message, i.e.,
 ”<User’s username>’s information has successfully updated” or ”<User’s username> has successfully
 deleted”.
 
-- [ ] Two super admin users are seeded via you. Only you can seed the two super admin users. The
+- [x] Two super admin users are seeded via you. Only you can seed the two super admin users. The
 super admin users’ data will be fetched from a local file & inserted into the User table using
 Prisma.
 
@@ -81,7 +95,7 @@ Prisma.
 admin users. The admin users’ data will be fetched from a private GitHub Gist using Axios &
 inserted into the User table using Prisma.
 
-- [ ] Five basic users are seeded via a super admin or an admin user. Only a super admin or an
+- [x] Five basic users are seeded via a super admin or an admin user. Only a super admin or an
 admin user can seed the five basic users. The basic users’ data will be fetched from a private
 GitHub Gist using Axios & inserted into the User table using Prisma.
 
@@ -116,14 +130,14 @@ in the RESTful API.
 - [ ] Implement CORS, compression, caching & rate limiting.
 ### Testing:
 - [x] API tests are written using Mocha & Chai.
-- [ ] At least 40 API/integration tests verifying the user & quiz functionality.
+- [x] At least 40 API/integration tests verifying the user & quiz functionality.
 - [ ] Code coverage using c8.
 ### Deployment:
 - [ ] RESTful API is deployed to Heroku.
 ### NPM scripts:
-- [ ] Opening Prisma Studio.
-- [ ] Creating a migration using Prisma.
-- [ ] Linting & fixing your code using ESLint.
-- [ ] Formatting your code using Prettier.
-- [ ] Running API/integration tests using Mocha.
+- [x] Opening Prisma Studio.
+- [x] Creating a migration using Prisma.
+- [x] Linting & fixing your code using ESLint.
+- [x] Formatting your code using Prettier.
+- [x] Running API/integration tests using Mocha.
 - [ ] Running code coverage using c8 & Mocha.

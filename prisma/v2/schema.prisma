@@ -35,7 +35,7 @@ model User {
   lastname     String                                       @db.VarChar(50)
   username     String        @unique                        @db.VarChar(10)
   email        String        @unique
-  password     String                                       @db.VarChar(16)
+  password     String                                       @db.VarChar(100)
   avatar       String        
   role         Role          @default(BASIC_USER)
   createdAt    DateTime      @default(now())

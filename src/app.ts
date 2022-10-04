@@ -10,15 +10,16 @@ import helmet from 'helmet';
 
 import auth from './routes/v2/auth';
 import seed from './routes/v2/seed';
+import users from './routes/v2/users';
 
-// import authRoute from './middleware/v1/authorization/authRoute';
 import { checkEnv } from './utils/v1/env';
+import authRoute from './middleware/v2/authorization/authRoute';
 // import cacheRoute from './middleware/v1/caching/cacheRoute';
 
 /**
  * An object holding all the routes available in the API
  */
-// const routes = { auth };
+const routes = { seed, users };
 
 dotenv.config();
 
@@ -51,19 +52,14 @@ app.use(helmet());
 /**
  * Iterate over the routes and add them to the express app
  */
-// for (const [routeName, route] of Object.entries(routes)) {
-//  app.use(`/${BASE_URL}/${CURRENT_VERSION}/${routeName}`, authRoute, route);
-// }
+for (const [routeName, route] of Object.entries(routes)) {
+  app.use(`/${BASE_URL}/${CURRENT_VERSION}/${routeName}`, authRoute, route);
+}
 
 /**
  * Separately use for the auth router since it does not use the authRoute middleware
  */
 app.use(`/${BASE_URL}/${CURRENT_VERSION}/auth`, auth);
-
-/**
- * Temporary use for seed route until authorization is implemented
- */
-app.use(`/${BASE_URL}/${CURRENT_VERSION}/seed`, seed);
 
 app.listen(PORT, () =>
   // eslint-disable-next-line no-console

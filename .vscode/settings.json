@@ -6,6 +6,12 @@
         "**/CVS": true,
         "**/.DS_Store": true,
         "**/Thumbs.db": true,
-        "**/node_modules": true
-    }
+        "**/v1/": true,
+        "**/node_modules": true,
+    },
+    // Ideally these should be camelcased, but this is a quicker fix
+    "cSpell.words": [
+        "firstname",
+        "lastname"
+    ]
 }

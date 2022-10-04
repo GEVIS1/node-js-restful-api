@@ -1,5 +1,5 @@
 import { Prisma, Role } from '@prisma/client';
-import { z } from 'zod';
+import { z, ZodString } from 'zod';
 
 // Input data with confirm, which doesn't exist in the prisma schema
 export type UserCreateInput = Prisma.UserUncheckedCreateInput & {
@@ -79,4 +79,89 @@ const createUserSchema = (data: UserCreateInput, userRole: Role) => {
   });
 };
 
-export { createUserSchema };
+/**
+ * Creates a user schema fitting the user data for updating a user
+ * @param data The user data to be verified
+ * @returns A user schema validator that can confirm passwords
+ */
+const createUpdateUserSchema = (data: UserCreateInput) => {
+  const schema: {
+    firstname?: ZodString;
+    lastname?: ZodString;
+    username?: ZodString;
+    email?: ZodString;
+    password?: ZodString;
+    confirm?: ZodString;
+    avatar?: ZodString;
+  } = {};
+
+  /**
+   * Conditionally adding tests to schema based on input data
+   */
+  if (data.firstname)
+    schema.firstname = z
+      .string()
+      .min(2)
+      .max(50)
+      .regex(/^[a-zA-Z]*$/, {
+        message: 'Only alpha characters allowed',
+      });
+
+  if (data.lastname)
+    schema.lastname = z
+      .string()
+      .min(2)
+      .max(50)
+      .regex(/^[a-zA-Z]*$/, {
+        message: 'Only alpha characters allowed',
+      });
+
+  /**
+   * If we have a username or an email, we need to check both, as they are dependant on each other
+   */
+  if (data.username || data.email) {
+    schema.username = z
+      .string()
+      .min(5)
+      .max(10)
+      .regex(/^[a-zA-Z0-9]*$/, {
+        message: 'Only alphanumeric characters allowed',
+      });
+
+    schema.email = z
+      .string()
+      .email()
+      .startsWith(data.username, {
+        message: `The Local-part of the email address must match username. I.E: ${
+          data.username
+        }@${data.email?.split('@')[1]}`,
+      });
+  }
+
+  /**
+   * If the password is being updated we have to check the confirm
+   */
+  if (data.password) {
+    schema.password = z
+      .string()
+      .min(8)
+      .max(16)
+      .regex(/.*([^a-zA-Z0-9\t\n\r ].*[0-9]|[0-9].*[^a-zA-Z0-9\t\n\r ]).*/, {
+        message:
+          'The password must contain at least one number and at least one special character.',
+      });
+    schema.confirm = z
+      .string()
+      .min(8)
+      .max(16)
+      .regex(new RegExp(`${escapeRegex(data.password)}`), {
+        message: 'Passwords did not match.',
+      });
+  }
+
+  if (data.avatar) schema.avatar = z.string().url();
+
+  return z.object(schema);
+};
+
+export { createUserSchema, createUpdateUserSchema };
