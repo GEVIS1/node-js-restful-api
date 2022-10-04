@@ -40,3 +40,10 @@ model User {
   role         Role          @default(BASIC_USER)
   createdAt    DateTime      @default(now())
 }
+
+model Category {
+  id          Int           @id
+  name        String        @unique                         @db.VarChar(100)
+  //quizzes      Quiz[]
+  //category   Category @relation(fields: [categoryId], references: [id])
+}
