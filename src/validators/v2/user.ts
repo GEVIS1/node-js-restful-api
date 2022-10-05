@@ -1,3 +1,12 @@
+/**
+ * The validator functions/schemas for user data.
+ * When this was first written I was unsure how to validate two fields together, because what I knew from joi was that you can
+ * refer to another field in the same object and compare them, but I could not find this functionality in zod. I have now realized
+ * this is because there is a more powerful functionality that easily allows you to do anything with any data in the object.
+ * Link here: https://github.com/colinhacks/zod#customize-error-path
+ * I definitely would implement it like this in the future.
+ */
+
 import { Prisma, Role } from '@prisma/client';
 import { z, ZodString } from 'zod';
 
