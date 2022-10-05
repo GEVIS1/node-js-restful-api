@@ -4,7 +4,7 @@ import chai from 'chai';
 import { agent } from './00-setup.test';
 import { wordToAvatar } from '../../../src/controllers/v2/auth';
 import { UserNoPassword } from '../../../src/controllers/v2/auth';
-import { seed } from '../../../prisma/v2/seeder/seeder';
+import { seedSuperAdminUsers } from '../../../prisma/v2/seeder/seeders';
 import {
   sheev as registeredSuperAdminUser,
   yoda,
@@ -40,7 +40,7 @@ describe('It should seed users', () => {
      * so it being successfully called means we seeded
      * successfully.
      */
-    seed(false).then(() => {
+    seedSuperAdminUsers(false).then(() => {
       done();
     });
   });
