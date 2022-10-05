@@ -8,7 +8,7 @@ import {
   AuthorizedRequest,
   JWT,
 } from '../../middleware/v2/authorization/authRoute';
-import { baseURL } from '../../utils/v2/axios';
+import { avatarBaseUrl } from '../../utils/v2/axios';
 import { prisma } from '../../utils/v2/prisma/prisma';
 import {
   createUpdateUserSchema,
@@ -282,7 +282,7 @@ const updateUser = async (req: AuthorizedRequest, res: Response) => {
     let newAvatar: string | undefined = undefined;
 
     if (req.body.avatar) {
-      newAvatar = `${baseURL}${req.body.avatar}.svg`;
+      newAvatar = `${avatarBaseUrl}${req.body.avatar}.svg`;
     }
 
     // Create the object to update the user with

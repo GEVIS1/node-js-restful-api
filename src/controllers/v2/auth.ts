@@ -16,7 +16,7 @@ import { Optional } from 'utility-types';
 
 import { prisma } from '../../utils/v2/prisma/prisma';
 import { createUserSchema, UserValidatedInput } from '../../validators/v2/user';
-import { baseURL } from '../../utils/v2/axios';
+import { avatarBaseUrl } from '../../utils/v2/axios';
 import { UserCreateOneSchema } from '../../../prisma/v2/zod-schemas/schemas/createOneUser.schema';
 import { ZodError } from 'zod';
 import { JWT } from '../../middleware/v2/authorization/authRoute';
@@ -53,8 +53,8 @@ interface RegisterRequest extends Request {
   body: RegisterBody;
 }
 
-const generateAvatar = () => `${baseURL}${uuid()}.svg`;
-const wordToAvatar = (word: string) => `${baseURL}${word}.svg`;
+const generateAvatar = () => `${avatarBaseUrl}${uuid()}.svg`;
+const wordToAvatar = (word: string) => `${avatarBaseUrl}${word}.svg`;
 
 const register = async (req: RegisterRequest, res: Response) => {
   try {
@@ -274,13 +274,11 @@ const logout = async (req: LogoutRequest, res: Response) => {
       },
     });
 
-    return res
-      .status(200)
-      .json({
-        success: true,
-        token: newToken,
-        message: `${loggedOutUser?.username} has successfully logged out`,
-      });
+    return res.status(200).json({
+      success: true,
+      token: newToken,
+      message: `${loggedOutUser?.username} has successfully logged out`,
+    });
   } catch (err) {
     return res
       .status(StatusCodes.UNAUTHORIZED)
