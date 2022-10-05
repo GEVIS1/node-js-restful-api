@@ -5,7 +5,12 @@ import { agent } from './00-setup.test';
 import { wordToAvatar } from '../../../src/controllers/v2/auth';
 import { UserNoPassword } from '../../../src/controllers/v2/auth';
 import { seed } from '../../../prisma/v2/seeder/seeder';
-import { sheev as registeredSuperAdminUser } from '../../../prisma/v2/seeder/users';
+import {
+  sheev as registeredSuperAdminUser,
+  yoda,
+} from '../../../prisma/v2/seeder/users';
+import { getCategories } from '../../../src/utils/v2/axios';
+import { CategoryResponse } from '../../../src/controllers/v2/categories';
 
 const { ADMIN_USER_GIST, BASIC_USER_GIST } = process.env;
 let gistAdminUsers: UserNoPassword[];
@@ -88,5 +93,97 @@ describe('It should seed users', () => {
             done();
           });
       });
+  });
+});
+
+describe('It should seed categories', () => {
+  it('should not let a BASIC_USER seed the categories', async () => {
+    const { username, password } =
+      gistBasicUsers[Math.floor(Math.random() * gistBasicUsers.length)];
+
+    const loginResponse = await agent.post('/api/v2/auth/login').send({
+      username,
+      password,
+    });
+
+    const seedResponse = await agent
+      .post('/api/v2/seed/categories')
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` });
+
+    chai.expect(seedResponse.status).to.be.equal(403);
+    chai.expect(seedResponse.body).to.be.an('object');
+    chai.expect(seedResponse.body.success).to.be.equal(false);
+    chai.expect(seedResponse.body.error).to.equal('Unauthorized');
+  });
+
+  it('should let an ADMIN_USER seed the categories', async () => {
+    const { username, password } =
+      gistAdminUsers[Math.floor(Math.random() * gistAdminUsers.length)];
+
+    const loginResponse = await agent.post('/api/v2/auth/login').send({
+      username,
+      password,
+    });
+
+    const categoryCount = (await getCategories.get<CategoryResponse>('')).data
+      .trivia_categories.length;
+
+    const seedResponse = await agent
+      .post('/api/v2/seed/categories')
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` });
+
+    chai.expect(seedResponse.status).to.be.equal(201);
+    chai.expect(seedResponse.body).to.be.an('object');
+    chai.expect(seedResponse.body.success).to.be.equal(true);
+    chai
+      .expect(seedResponse.body.message)
+      .to.equal(`Successfully inserted ${categoryCount} categories.`);
+    chai.expect(seedResponse.body.data).to.be.of.length(categoryCount);
+  });
+
+  it('should fail if categories are already seeded', async () => {
+    const { username, password } = yoda;
+
+    const loginResponse = await agent.post('/api/v2/auth/login').send({
+      username,
+      password,
+    });
+
+    const seedResponse = await agent
+      .post('/api/v2/seed/categories')
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` });
+
+    chai.expect(seedResponse.status).to.be.equal(409);
+    chai.expect(seedResponse.body).to.be.an('object');
+    chai.expect(seedResponse.body.success).to.be.equal(false);
+    chai
+      .expect(seedResponse.body.error)
+      .to.equal(
+        'Categories are already seeded. Request again with ?force=true to override.'
+      );
+  });
+
+  it('should let a SUPER_ADMIN_USER seed the categories (forced re-seed)', async () => {
+    const { username, password } = yoda;
+
+    const loginResponse = await agent.post('/api/v2/auth/login').send({
+      username,
+      password,
+    });
+
+    const categoryCount = (await getCategories.get<CategoryResponse>('')).data
+      .trivia_categories.length;
+
+    const seedResponse = await agent
+      .post('/api/v2/seed/categories?force=true')
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` });
+
+    chai.expect(seedResponse.status).to.be.equal(201);
+    chai.expect(seedResponse.body).to.be.an('object');
+    chai.expect(seedResponse.body.success).to.be.equal(true);
+    chai
+      .expect(seedResponse.body.message)
+      .to.equal(`Successfully inserted ${categoryCount} categories.`);
+    chai.expect(seedResponse.body.data).to.be.of.length(categoryCount);
   });
 });
