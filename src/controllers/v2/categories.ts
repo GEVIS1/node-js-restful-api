@@ -73,15 +73,15 @@ const seedCategories = async (req: AuthorizedRequest, res: Response) => {
     });
   } catch (err) {
     if (err instanceof ZodError) {
-      // eslint-disable-next-line no-console
-      console.log(err);
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
         success: false,
         error: err,
       });
+    } else if (err instanceof Error && err.message === 'Unauthorized') {
+      return res.status(StatusCodes.FORBIDDEN).json(unauthorizedResponse);
     } else {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-        succes: false,
+        success: false,
         // eslint-disable-next-line no-extra-parens
         error: (err as Error).message,
       });
