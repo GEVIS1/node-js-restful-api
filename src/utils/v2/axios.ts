@@ -40,9 +40,9 @@ const getCategories = axios.create({
 });
 
 /**
- * An axios instance with the baseURL set to the quiz categories
+ * An axios instance with the baseURL set to the quiz questions
  */
-const getQuiz = axios.create({
+const getQuestions = axios.create({
   baseURL: quizDataUrl,
 });
 
@@ -52,5 +52,5 @@ export {
   quizBaseUrl,
   quizCategoriesUrl,
   getCategories,
-  getQuiz,
+  getQuestions,
 };
