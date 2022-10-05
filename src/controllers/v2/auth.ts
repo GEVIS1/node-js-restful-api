@@ -24,6 +24,12 @@ import { JWT } from '../../middleware/v2/authorization/authRoute';
 type JWTEnv = { JWT_SECRET: jwt.Secret; JWT_LIFETIME: string };
 const { JWT_SECRET, JWT_LIFETIME } = process.env as JWTEnv;
 
+// Standard unauthorized response object
+export const unauthorizedResponse = {
+  success: false,
+  error: 'Unauthorized',
+};
+
 // Ensure prisma.user isn't undefined
 if (prisma?.user === undefined) throw Error('Prisma is undefined.');
 

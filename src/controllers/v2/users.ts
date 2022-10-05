@@ -15,7 +15,7 @@ import {
   UserCreateInput,
 } from '../../validators/v2/user';
 import { UserUpdateOneSchema } from '../../../prisma/v2/zod-schemas/schemas/updateOneUser.schema';
-import { UserNoPassword } from './auth';
+import { unauthorizedResponse, UserNoPassword } from './auth';
 
 const allRoles: Role[] = ['BASIC_USER', 'ADMIN_USER', 'SUPER_ADMIN_USER'];
 
@@ -117,9 +117,7 @@ const getUsers = async (req: AuthorizedRequest, res: Response) => {
     });
   } catch (err) {
     if (err instanceof Error && err.message === 'Unauthorized') {
-      return res
-        .status(StatusCodes.FORBIDDEN)
-        .json({ success: false, error: 'Unauthorized' });
+      return res.status(StatusCodes.FORBIDDEN).json(unauthorizedResponse);
     } else
       return res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
@@ -197,9 +195,7 @@ const getUser = async (req: AuthorizedRequest, res: Response) => {
     });
   } catch (err) {
     if (err instanceof Error && err.message === 'Unauthorized') {
-      return res
-        .status(StatusCodes.FORBIDDEN)
-        .json({ success: false, error: err.message });
+      return res.status(StatusCodes.FORBIDDEN).json(unauthorizedResponse);
     } else if (err instanceof Error && err.message === 'User not found') {
       return res
         .status(StatusCodes.NOT_FOUND)
@@ -339,9 +335,7 @@ const updateUser = async (req: AuthorizedRequest, res: Response) => {
     });
   } catch (err) {
     if (err instanceof Error && err.message === 'Unauthorized') {
-      return res
-        .status(StatusCodes.FORBIDDEN)
-        .json({ success: false, error: err.message });
+      return res.status(StatusCodes.FORBIDDEN).json(unauthorizedResponse);
     } else if (err instanceof Error && err.message === 'User not found') {
       return res
         .status(StatusCodes.NOT_FOUND)
@@ -417,9 +411,7 @@ const deleteUser = async (req: AuthorizedRequest, res: Response) => {
     });
   } catch (err) {
     if (err instanceof Error && err.message === 'Unauthorized') {
-      return res
-        .status(StatusCodes.FORBIDDEN)
-        .json({ success: false, error: err.message });
+      return res.status(StatusCodes.FORBIDDEN).json(unauthorizedResponse);
     } else if (err instanceof Error && err.message === 'User not found') {
       return res
         .status(StatusCodes.NOT_FOUND)

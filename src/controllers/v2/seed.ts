@@ -13,7 +13,7 @@ import {
 import { prisma } from '../../utils/v2/prisma/prisma';
 import { UserCreateOneSchema } from '../../../prisma/v2/zod-schemas/schemas/createOneUser.schema';
 import { AuthorizedRequest } from '../../middleware/v2/authorization/authRoute';
-import { wordToAvatar } from './auth';
+import { unauthorizedResponse, wordToAvatar } from './auth';
 
 const createSeeder =
   (gistURL: string, role: Role) =>
@@ -112,9 +112,7 @@ const createSeeder =
         .json({ success: true, data: resData });
     } catch (err) {
       if (err instanceof Error && err.message === 'Unauthorized') {
-        return res
-          .status(StatusCodes.UNAUTHORIZED)
-          .json({ success: false, error: 'Unauthorized' });
+        return res.status(StatusCodes.UNAUTHORIZED).json(unauthorizedResponse);
       } else if (err instanceof Error) {
         return res
           .status(StatusCodes.INTERNAL_SERVER_ERROR)
