@@ -10,7 +10,7 @@ import { Role } from '@prisma/client';
 
 type Category = z.infer<typeof CategoryCreateInputObjectSchema>;
 
-interface CategoryResponse {
+export interface CategoryResponse {
   trivia_categories: Category[];
 }
 
