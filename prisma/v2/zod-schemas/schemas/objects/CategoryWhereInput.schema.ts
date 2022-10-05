@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { IntFilterObjectSchema } from './IntFilter.schema';
 import { StringFilterObjectSchema } from './StringFilter.schema';
+import { QuestionListRelationFilterObjectSchema } from './QuestionListRelationFilter.schema';
 
 import type { Prisma } from '@prisma/client';
 
@@ -26,6 +27,7 @@ const Schema: z.ZodType<Prisma.CategoryWhereInput> = z
     name: z
       .union([z.lazy(() => StringFilterObjectSchema), z.string()])
       .optional(),
+    questions: z.lazy(() => QuestionListRelationFilterObjectSchema).optional(),
   })
   .strict();
 

@@ -2,19 +2,19 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native"]
 }
 
 generator erd {
   provider = "prisma-erd-generator"
-  theme = "forest"
-  output = "./ERD.png"
+  theme    = "forest"
+  output   = "./ERD.png"
 }
 
 generator zod {
   provider = "prisma-zod-generator"
-  output = "./zod-schemas"
+  output   = "./zod-schemas"
 }
 
 datasource db {
@@ -30,20 +30,71 @@ enum Role {
 }
 
 model User {
-  id           Int           @id @default(autoincrement())
-  firstname    String                                       @db.VarChar(50)
-  lastname     String                                       @db.VarChar(50)
-  username     String        @unique                        @db.VarChar(10)
-  email        String        @unique
-  password     String                                       @db.VarChar(100)
-  avatar       String        
-  role         Role          @default(BASIC_USER)
-  createdAt    DateTime      @default(now())
+  id        Int      @id @default(autoincrement())
+  firstname String   @db.VarChar(50)
+  lastname  String   @db.VarChar(50)
+  username  String   @unique @db.VarChar(10)
+  email     String   @unique
+  password  String   @db.VarChar(100)
+  avatar    String
+  role      Role     @default(BASIC_USER)
+  createdAt DateTime @default(now())
+  scores    Score[]
+  quizzes   Quiz[]
+  ratings   Rating[]
 }
 
 model Category {
-  id          Int           @id
-  name        String        @unique                         @db.VarChar(100)
-  //quizzes      Quiz[]
-  //category   Category @relation(fields: [categoryId], references: [id])
+  id        Int        @id
+  name      String     @unique @db.VarChar(100)
+  questions Question[]
+}
+
+enum Difficulty {
+  easy
+  medium
+  hard
+}
+
+model Question {
+  id               Int          @id @default(autoincrement())
+  category         Category?    @relation(fields: [categoryId], references: [id])
+  categoryId       Int?
+  type             QuestionType
+  difficulty       Difficulty
+  question         String       @db.VarChar(200)
+  correctAnswer    String
+  incorrectAnswers String[]
+  quizzes          Quiz[]
+}
+
+enum QuestionType {
+  multiple
+  boolean
+}
+
+model Quiz {
+  id                Int        @id @default(autoincrement())
+  name              String     @db.VarChar(30)
+  startDate         DateTime   @default(now())
+  endDate           DateTime   @default(dbgenerated("NOW() + interval '5 days'"))
+  difficulty        Difficulty
+  numberOfQuestions Int        @default(10) @db.SmallInt
+  questions         Question[]
+  winner            User?      @relation(fields: [userId], references: [id])
+  userId            Int?
+}
+
+model Score {
+  id     Int  @id @default(autoincrement())
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+  score  Int  @db.SmallInt
+}
+
+model Rating {
+  id     Int  @id @default(autoincrement())
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+  rating Int  @db.SmallInt
 }

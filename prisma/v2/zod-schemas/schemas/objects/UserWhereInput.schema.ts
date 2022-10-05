@@ -4,6 +4,9 @@ import { StringFilterObjectSchema } from './StringFilter.schema';
 import { EnumRoleFilterObjectSchema } from './EnumRoleFilter.schema';
 import { RoleSchema } from '../enums/Role.schema';
 import { DateTimeFilterObjectSchema } from './DateTimeFilter.schema';
+import { ScoreListRelationFilterObjectSchema } from './ScoreListRelationFilter.schema';
+import { QuizListRelationFilterObjectSchema } from './QuizListRelationFilter.schema';
+import { RatingListRelationFilterObjectSchema } from './RatingListRelationFilter.schema';
 
 import type { Prisma } from '@prisma/client';
 
@@ -53,6 +56,9 @@ const Schema: z.ZodType<Prisma.UserWhereInput> = z
     createdAt: z
       .union([z.lazy(() => DateTimeFilterObjectSchema), z.date()])
       .optional(),
+    scores: z.lazy(() => ScoreListRelationFilterObjectSchema).optional(),
+    quizzes: z.lazy(() => QuizListRelationFilterObjectSchema).optional(),
+    ratings: z.lazy(() => RatingListRelationFilterObjectSchema).optional(),
   })
   .strict();
 

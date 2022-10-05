@@ -1,5 +1,8 @@
 import { z } from 'zod';
 import { RoleSchema } from '../enums/Role.schema';
+import { ScoreUncheckedCreateNestedManyWithoutUserInputObjectSchema } from './ScoreUncheckedCreateNestedManyWithoutUserInput.schema';
+import { QuizUncheckedCreateNestedManyWithoutWinnerInputObjectSchema } from './QuizUncheckedCreateNestedManyWithoutWinnerInput.schema';
+import { RatingUncheckedCreateNestedManyWithoutUserInputObjectSchema } from './RatingUncheckedCreateNestedManyWithoutUserInput.schema';
 
 import type { Prisma } from '@prisma/client';
 
@@ -14,6 +17,15 @@ const Schema: z.ZodType<Prisma.UserUncheckedCreateInput> = z
     avatar: z.string(),
     role: z.lazy(() => RoleSchema).optional(),
     createdAt: z.date().optional(),
+    scores: z
+      .lazy(() => ScoreUncheckedCreateNestedManyWithoutUserInputObjectSchema)
+      .optional(),
+    quizzes: z
+      .lazy(() => QuizUncheckedCreateNestedManyWithoutWinnerInputObjectSchema)
+      .optional(),
+    ratings: z
+      .lazy(() => RatingUncheckedCreateNestedManyWithoutUserInputObjectSchema)
+      .optional(),
   })
   .strict();
 
