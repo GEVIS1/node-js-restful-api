@@ -9,7 +9,7 @@ import {
 } from '../misc/userdata';
 import { yoda } from '../../../prisma/v2/seeder/users';
 import { agent } from './00-setup.test';
-import { baseURL } from '../../../src/utils/v2/axios';
+import { avatarBaseUrl } from '../../../src/utils/v2/axios';
 import { UserNoPassword, wordToAvatar } from '../../../src/controllers/v2/auth';
 import axios from 'axios';
 
@@ -775,7 +775,7 @@ describe('It should update a user by its id', () => {
     const loginUser = { username, password };
 
     const compareUser = removePasswords(user);
-    compareUser.avatar = `${baseURL}JamesCameron.svg`;
+    compareUser.avatar = `${avatarBaseUrl}JamesCameron.svg`;
 
     const prismaUser = await prisma?.user.findFirst({
       where: {
@@ -804,7 +804,7 @@ describe('It should update a user by its id', () => {
     const { username, email, password } = superAdminUser;
     const loginUser = { username, password };
     const compareUser = removePasswords(superAdminUser);
-    compareUser.avatar = `${baseURL}Bender.svg`;
+    compareUser.avatar = `${avatarBaseUrl}Bender.svg`;
 
     const prismaUser = await prisma?.user.findFirst({
       where: {
@@ -833,7 +833,7 @@ describe('It should update a user by its id', () => {
     const { username, password } = superAdminUser;
     const loginUser = { username, password };
     const compareUser = removePasswords(await getAdminUser());
-    compareUser.avatar = `${baseURL}Bender.svg`;
+    compareUser.avatar = `${avatarBaseUrl}Bender.svg`;
 
     const prismaUser = await prisma?.user.findFirst({
       where: {
@@ -862,7 +862,7 @@ describe('It should update a user by its id', () => {
     const { username, password } = superAdminUser;
     const loginUser = { username, password };
     const compareUser = removePasswords(user);
-    compareUser.avatar = `${baseURL}Bonk.svg`;
+    compareUser.avatar = `${avatarBaseUrl}Bonk.svg`;
 
     const prismaUser = await prisma?.user.findFirst({
       where: {
