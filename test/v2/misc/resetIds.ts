@@ -41,7 +41,7 @@ const resetIdIncrementor = async (table: Prisma.ModelName, resetIds = true) => {
 
   console.log(
     `  Reset ${table}${
-      newSequence ? `and set auto increment to ${newSequence.last_value}` : ''
+      newSequence ? ` and set auto increment to ${newSequence.last_value}` : ''
     }`
   );
 };
