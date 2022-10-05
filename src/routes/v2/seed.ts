@@ -2,6 +2,7 @@ import { Router } from 'express';
 const router = Router();
 
 import { createSeeder } from '../../controllers/v2/seed';
+import { seedCategories } from '../../controllers/v2/categories';
 
 const { BASIC_USER_GIST, ADMIN_USER_GIST } = process.env;
 
@@ -15,5 +16,6 @@ const seedAdminUsers = createSeeder(ADMIN_USER_GIST as string, 'ADMIN_USER');
 
 router.route('/user').post(seedUsers);
 router.route('/admin').post(seedAdminUsers);
+router.route('/categories').post(seedCategories);
 
 export default router;
