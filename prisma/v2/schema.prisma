@@ -62,7 +62,7 @@ model Question {
   categoryId       Int?
   type             QuestionType
   difficulty       Difficulty
-  question         String       @db.VarChar(200)
+  question         String       @unique     @db.VarChar(200)
   correctAnswer    String
   incorrectAnswers String[]
   quizzes          Quiz[]
