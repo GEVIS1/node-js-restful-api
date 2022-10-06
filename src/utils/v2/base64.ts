@@ -4,10 +4,10 @@
 const base64 = {
   decode: (inputString: string) => {
     const buff = Buffer.from(inputString, 'base64');
-    return buff.toString('ascii');
+    return buff.toString('utf8');
   },
   encode: (inputString: string) => {
-    const buff = Buffer.from(inputString, 'ascii');
+    const buff = Buffer.from(inputString, 'utf8');
     return buff.toString('base64');
   },
 };
