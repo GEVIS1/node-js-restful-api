@@ -4,6 +4,8 @@
 import bcryptjs from 'bcryptjs';
 import { Difficulty, QuestionType } from '@prisma/client';
 
+import axios from 'axios';
+
 import superAdminUsers from './users';
 import { prisma } from '../../../src/utils/v2/prisma/prisma';
 import {
@@ -15,10 +17,11 @@ import { generateAvatar } from '../../../src/controllers/v2/auth';
 import { UserCreateOneSchema } from '../zod-schemas/schemas/createOneUser.schema';
 import { quizBaseUrl } from '../../../src/utils/v2/axios';
 import decodeQuestion from './decode';
-import axios from 'axios';
-import { QuestionCreateManyCategoryInputEnvelopeObjectSchema } from '../zod-schemas/schemas/objects/QuestionCreateManyCategoryInputEnvelope.schema';
+
+import { QuestionCreateManySchema } from '../zod-schemas/schemas/createManyQuestion.schema';
 
 const User = prisma.user;
+
 const seedSuperAdminUsers = async (consoleLog = true) => {
   try {
     const data = superAdminUsers.map((user) => {
@@ -105,7 +108,7 @@ export interface DatabaseQuestion extends FetchedQuestion {
 const seedQuestions = async (QUESTIONS = 500, MAX_REQUEST = 50) => {
   try {
     const questions = new Set<FetchedQuestion>();
-    const EXPECTED_ITERATIONS = QUESTIONS / MAX_REQUEST;
+    const EXPECTED_ITERATIONS = MAX_REQUEST > 1 ? QUESTIONS / MAX_REQUEST : 1;
     let iterations = 0;
 
     console.log(
@@ -115,10 +118,12 @@ const seedQuestions = async (QUESTIONS = 500, MAX_REQUEST = 50) => {
     process.stdout.write(`[ ${' '.repeat(EXPECTED_ITERATIONS)}]`);
     process.stdout.moveCursor(-EXPECTED_ITERATIONS - 2, 0);
 
-    // Attempt to fetch 500 unique questions or break at 10 iterations
+    // Attempt to fetch 500 unique questions or break at 10 iterations (by default)
     do {
       const res = await axios.get<QuestionResponse>(
-        `${quizBaseUrl}api.php?amount=${MAX_REQUEST}&encode=base64`
+        `${quizBaseUrl}api.php?amount=${
+          MAX_REQUEST > 1 ? MAX_REQUEST : 50
+        }&encode=base64`
       );
       res.data.results.forEach((q) => questions.add(q));
       process.stdout.write('⁂');
@@ -127,14 +132,15 @@ const seedQuestions = async (QUESTIONS = 500, MAX_REQUEST = 50) => {
 
     console.log();
 
-    // writeFileSync(join(__dirname, 'questionsSet.json'), JSON.stringify([...questions]), {
-    //   flag: 'a+',
-    // });
-
     if (iterations >= MAX_REQUEST) {
       process.stdout.write('Hit max iterations. ');
     }
     console.log(`Fetched ${questions.size} questions.`);
+
+    // We need to know the ids of the categories here
+    const categories: { [key: string]: number } = {};
+    const categoryData = await prisma?.category.findMany({});
+    categoryData.forEach((c) => categories[c.name] = c.id);
 
     const decodedQuestions = [...questions].map((q: FetchedQuestion) => {
       const {
@@ -147,31 +153,27 @@ const seedQuestions = async (QUESTIONS = 500, MAX_REQUEST = 50) => {
       } = decodeQuestion(q);
 
       return {
-        category,
+        categoryId: categories[category],
         type,
         difficulty,
         question,
         correctAnswer,
         incorrectAnswers,
-      } as DatabaseQuestion;
+      };
     });
 
-    // writeFileSync(join(__dirname, 'decodedQuestions.json'), JSON.stringify(decodedQuestions), {
-    //   flag: 'a+',
-    // });
-
-    const validatedQuestions =
-      QuestionCreateManyCategoryInputEnvelopeObjectSchema.parse({
-        data: decodedQuestions,
-      });
-
-    const createManyResult = await prisma?.question.createMany(
-      validatedQuestions
+    decodedQuestions.forEach((q) =>
+      QuestionCreateManySchema.parse({ data: q })
     );
 
-    console.log(
-      `Seeded ${createManyResult.count} questions into the database.`
-    );
+    await prisma?.question.deleteMany({});
+
+    const createManyResult = await prisma?.question.createMany({
+      data: [...decodedQuestions],
+      skipDuplicates: true,
+    });
+
+    console.log(`Successfully seeded ${createManyResult.count} questions.`);
   } catch (err) {
     console.log(err);
   }
