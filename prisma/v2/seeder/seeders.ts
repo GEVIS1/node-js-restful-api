@@ -15,7 +15,9 @@ import {
 } from '../../../src/validators/v2/user';
 import { generateAvatar } from '../../../src/controllers/v2/auth';
 import { UserCreateOneSchema } from '../zod-schemas/schemas/createOneUser.schema';
-import { quizBaseUrl } from '../../../src/utils/v2/axios';
+import { getCategories, quizBaseUrl } from '../../../src/utils/v2/axios';
+import { CategoryCreateInputObjectSchema } from '../zod-schemas/schemas/objects/CategoryCreateInput.schema';
+import { CategoryResponse } from '../../../src/controllers/v2/categories';
 import decodeQuestion from './decode';
 
 import { QuestionCreateManySchema } from '../zod-schemas/schemas/createManyQuestion.schema';
@@ -80,6 +82,27 @@ const seedSuperAdminUsers = async (consoleLog = true) => {
   } catch (err) {
     console.log(err);
   }
+};
+
+const seedCategories = async () => {
+  try {
+    const {
+      data: { trivia_categories: triviaCategories },
+    } = await getCategories.get<CategoryResponse>('');
+
+    // Validate the data
+    const validatedTriviaCategories = triviaCategories.map((category) =>
+      CategoryCreateInputObjectSchema.parse(category)
+    );
+
+    await prisma?.category.deleteMany({});
+
+    const result = await prisma?.category.createMany({
+      data: validatedTriviaCategories,
+    });
+
+    console.log(`Seeded ${result.count} categories`);
+  } catch (err) {}
 };
 
 interface QuestionResponse {
@@ -179,4 +202,4 @@ const seedQuestions = async (QUESTIONS = 500, MAX_REQUEST = 50) => {
   }
 };
 
-export { seedSuperAdminUsers, seedQuestions };
+export { seedSuperAdminUsers, seedCategories, seedQuestions };
