@@ -30,7 +30,7 @@ interface CreateQuizRequest extends AuthorizedRequest {
  * @param oldDate Original date
  * @returns A clone of the oldDate with the amount of days added to it.
  */
-const getNewDateWithAddedDays = (oldDate: Date, days: number) => {
+export const getNewDateWithAddedDays = (oldDate: Date, days: number) => {
   const newDate = structuredClone(oldDate);
   newDate.setDate(newDate.getDate() + days);
   return newDate;
