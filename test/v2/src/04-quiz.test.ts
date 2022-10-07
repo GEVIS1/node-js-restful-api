@@ -1,11 +1,12 @@
 import { Difficulty } from '@prisma/client';
 import chai from 'chai';
+
 import { yoda } from '../../../prisma/v2/seeder/users';
 import { getNewDateWithAddedDays } from '../../../src/controllers/v2/quizzes';
 import { getAdminUser, user } from '../misc/userdata';
 import { agent } from './00-setup.test';
 
-describe('It should create quizzes', () => {
+describe('It should fail to create quizzes', () => {
   it('should not let a BASIC_USER create a quiz', async () => {
     const loginResponse = await agent.post('/api/v2/auth/login').send(user);
 
@@ -22,6 +23,42 @@ describe('It should create quizzes', () => {
     chai.expect(postResponse.body.error).to.equal('Unauthorized');
   });
 
+  it('Should not create a quiz where endDate is before startDate', async () => {
+    const loginResponse = await agent
+      .post('/api/v2/auth/login')
+      .send(await getAdminUser());
+
+    const startDate = new Date();
+    const endDate = getNewDateWithAddedDays(startDate, -1);
+
+    const postResponse = await agent
+      .post(`/api/v2/quizzes`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` })
+      .send({
+        name: 'endDate before startDate',
+        startDate,
+        endDate,
+        difficulty: 'easy',
+      });
+
+    chai.expect(postResponse.status).to.be.equal(422);
+    chai.expect(postResponse.body).to.be.an('object');
+    chai.expect(postResponse.body.success).to.be.equal(false);
+    chai.expect(postResponse.body.error).to.be.an('array');
+    chai.expect(postResponse.body.error[0]).to.be.an('object');
+    chai.expect(postResponse.body.error[0]).to.have.property('code');
+    chai.expect(postResponse.body.error[0].code).to.equal('custom');
+    chai.expect(postResponse.body.error[0]).to.have.property('message');
+    chai
+      .expect(postResponse.body.error[0].message)
+      .to.equal('End date can not be before start date.');
+    chai.expect(postResponse.body.error[0]).to.have.property('path');
+    chai.expect(postResponse.body.error[0].path).to.be.an('array');
+    chai.expect(postResponse.body.error[0].path[0]).to.be.equal('endDate');
+  });
+});
+
+describe('It should create quizzes', () => {
   it('should let an ADMIN_USER create a quiz', async () => {
     const loginResponse = await agent
       .post('/api/v2/auth/login')
