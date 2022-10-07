@@ -40,7 +40,7 @@ const createQuiz = async (req: CreateQuizRequest, res: Response) => {
   try {
     const { role } = req.user as JWT;
 
-    if (role !== 'BASIC_USER') {
+    if (role === 'BASIC_USER') {
       throw Error('Unauthorized');
     }
 
