@@ -157,7 +157,7 @@ const createQuiz = async (req: CreateQuizRequest, res: Response) => {
       },
     });
 
-    return res.status(StatusCodes.OK).json({
+    return res.status(StatusCodes.CREATED).json({
       success: true,
       data: returnData,
     });
