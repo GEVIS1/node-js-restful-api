@@ -4,13 +4,17 @@ import chai from 'chai';
 import { agent } from './00-setup.test';
 import { wordToAvatar } from '../../../src/controllers/v2/auth';
 import { UserNoPassword } from '../../../src/controllers/v2/auth';
-import { seedSuperAdminUsers } from '../../../prisma/v2/seeder/seeders';
+import {
+  seedQuestions,
+  seedSuperAdminUsers,
+} from '../../../prisma/v2/seeder/seeders';
 import {
   sheev as registeredSuperAdminUser,
   yoda,
 } from '../../../prisma/v2/seeder/users';
 import { getCategories } from '../../../src/utils/v2/axios';
 import { CategoryResponse } from '../../../src/controllers/v2/categories';
+import { Difficulty, QuestionType } from '@prisma/client';
 
 const { ADMIN_USER_GIST, BASIC_USER_GIST } = process.env;
 let gistAdminUsers: UserNoPassword[];
@@ -186,4 +190,36 @@ describe('It should seed categories', () => {
       .to.equal(`Successfully inserted ${categoryCount} categories.`);
     chai.expect(seedResponse.body.data).to.be.of.length(categoryCount);
   });
+});
+
+describe('It should seed questions', () => {
+  it('should seed questions', async () => {
+    await seedQuestions(false);
+
+    const questions = await prisma?.question.findMany();
+    if (!questions) throw Error('Could not retrieve questions from database.');
+    const randomQuestionIndex = Math.floor(Math.random() * questions.length);
+
+    chai.expect(questions).to.be.an('array');
+    chai.expect(questions.length).to.be.greaterThan(0);
+    chai.expect(questions[randomQuestionIndex]).to.be.an('object');
+
+    const randomQuestion = questions[randomQuestionIndex];
+
+    chai.expect(randomQuestion).to.have.property('categoryId');
+    chai.expect(randomQuestion.categoryId).to.be.a('number');
+    chai.expect(randomQuestion).to.have.property('type');
+    chai.expect(randomQuestion.type).to.be.a('string');
+    chai.expect(Object.values(QuestionType)).to.include(randomQuestion.type);
+    chai.expect(randomQuestion.difficulty).to.be.a('string');
+    chai
+      .expect(Object.values(Difficulty))
+      .to.include(randomQuestion.difficulty);
+    chai.expect(randomQuestion).to.have.property('question');
+    chai.expect(randomQuestion.question).to.be.a('string');
+    chai.expect(randomQuestion).to.have.property('correctAnswer');
+    chai.expect(randomQuestion.correctAnswer).to.be.a('string');
+    chai.expect(randomQuestion).to.have.property('incorrectAnswers');
+    chai.expect(randomQuestion.incorrectAnswers).to.be.an('array');
+  }).timeout(60000);
 });
