@@ -18,6 +18,12 @@ const QuizQuestionsInputSchema = z.object({
   }),
 });
 
+const incorrectNumber: z.ZodErrorMap = (error, ctx) => {
+  if (error.code === 'invalid_literal')
+    return { message: 'Number of questions can only be 10.' };
+  else return { message: ctx.defaultError };
+};
+
 const QuizCreateOneExtendedRulesSchema = z
   .object({
     name: z
@@ -28,7 +34,7 @@ const QuizCreateOneExtendedRulesSchema = z
     startDate: z.date({ ...requiredError, ...invalidTypeError }),
     endDate: z.date({ ...invalidTypeError }).optional(),
     difficulty: z.lazy(() => DifficultySchema),
-    numberOfQuestions: z.literal(10).optional(),
+    numberOfQuestions: z.literal(10, { errorMap: incorrectNumber }).optional(),
     questions: z
       .lazy(() => QuizQuestionsInputSchema)
       .array()
