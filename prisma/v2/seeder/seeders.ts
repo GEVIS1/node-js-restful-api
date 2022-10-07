@@ -128,19 +128,26 @@ export interface DatabaseQuestion extends FetchedQuestion {
  * @param QUESTIONS The amount of questions to fetch
  * @param MAX_REQUEST Max fetch size and number of attempts to request questions
  */
-const seedQuestions = async (QUESTIONS = 500, MAX_REQUEST = 50) => {
+const seedQuestions = async (
+  consoleLog = true,
+  QUESTIONS = 500,
+  MAX_REQUEST = 50
+) => {
   try {
     const questions = new Set<FetchedQuestion>();
     const EXPECTED_ITERATIONS = MAX_REQUEST > 1 ? QUESTIONS / MAX_REQUEST : 1;
     let iterations = 0;
 
-    console.log(
-      `Attempting to fetch ${QUESTIONS} questions from ${quizBaseUrl}`
-    );
+    if (consoleLog) {
+      console.log(
+        `Attempting to fetch ${QUESTIONS} questions from ${quizBaseUrl}`
+      );
+    }
 
-    process.stdout.write(`[ ${' '.repeat(EXPECTED_ITERATIONS)}]`);
-    process.stdout.moveCursor(-EXPECTED_ITERATIONS - 2, 0);
-
+    if (consoleLog) {
+      process.stdout.write(`[ ${' '.repeat(EXPECTED_ITERATIONS)}]`);
+      process.stdout.moveCursor(-EXPECTED_ITERATIONS - 2, 0);
+    }
     // Attempt to fetch 500 unique questions or break at 10 iterations (by default)
     do {
       const res = await axios.get<QuestionResponse>(
@@ -149,16 +156,19 @@ const seedQuestions = async (QUESTIONS = 500, MAX_REQUEST = 50) => {
         }&encode=base64`
       );
       res.data.results.forEach((q) => questions.add(q));
-      process.stdout.write('⁂');
+      if (consoleLog) process.stdout.write('⁂');
       iterations++;
     } while (questions.size < QUESTIONS && iterations < MAX_REQUEST);
 
-    console.log();
+    if (consoleLog) console.log();
 
     if (iterations >= MAX_REQUEST) {
       process.stdout.write('Hit max iterations. ');
     }
-    console.log(`Fetched ${questions.size} questions.`);
+
+    if (consoleLog) {
+      console.log(`Fetched ${questions.size} questions.`);
+    }
 
     // We need to know the ids of the categories here
     const categories: { [key: string]: number } = {};
@@ -195,8 +205,9 @@ const seedQuestions = async (QUESTIONS = 500, MAX_REQUEST = 50) => {
       data: [...decodedQuestions],
       skipDuplicates: true,
     });
-
-    console.log(`Successfully seeded ${createManyResult.count} questions.`);
+    if (consoleLog) {
+      console.log(`Successfully seeded ${createManyResult.count} questions.`);
+    }
   } catch (err) {
     console.log(err);
   }
