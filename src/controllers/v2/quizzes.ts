@@ -172,6 +172,11 @@ const createQuiz = async (req: CreateQuizRequest, res: Response) => {
         success: false,
         error: [...err.issues],
       });
+    } else if (err instanceof Error && err.message === 'Unauthorized') {
+      return res.status(StatusCodes.FORBIDDEN).json({
+        success: false,
+        error: err.message,
+      });
     } else if (err instanceof Error) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
         success: false,
