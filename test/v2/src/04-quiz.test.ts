@@ -66,7 +66,7 @@ describe('It should create quizzes', () => {
 
     const quizName = 'Admin User User quiz';
     const startDate = new Date();
-    const endDate = getNewDateWithAddedDays(startDate, 5);
+    const endDate = getNewDateWithAddedDays(startDate, 4);
     const difficulties = [...Object.values(Difficulty)];
     const difficulty =
       difficulties[Math.floor(Math.random() * difficulties.length)];
@@ -146,7 +146,7 @@ describe('It should create quizzes', () => {
 
     const quizName = 'Super Admin User User quiz';
     const startDate = new Date();
-    const endDate = getNewDateWithAddedDays(startDate, 5);
+    const endDate = getNewDateWithAddedDays(startDate, 4);
     const difficulties = [...Object.values(Difficulty)];
     const difficulty =
       difficulties[Math.floor(Math.random() * difficulties.length)];
