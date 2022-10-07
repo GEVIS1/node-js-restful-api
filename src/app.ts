@@ -11,6 +11,7 @@ import helmet from 'helmet';
 import auth from './routes/v2/auth';
 import seed from './routes/v2/seed';
 import users from './routes/v2/users';
+import quizzes from './routes/v2/quizzes';
 
 import { checkEnv } from './utils/v1/env';
 import authRoute from './middleware/v2/authorization/authRoute';
@@ -19,7 +20,7 @@ import authRoute from './middleware/v2/authorization/authRoute';
 /**
  * An object holding all the routes available in the API
  */
-const routes = { seed, users };
+const routes = { seed, users, quizzes };
 
 dotenv.config();
 
