@@ -1,4 +1,4 @@
-import { Difficulty, Question } from '@prisma/client';
+import { Difficulty, Prisma, Question } from '@prisma/client';
 import { Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { z, ZodError } from 'zod';
@@ -8,6 +8,7 @@ import {
   JWT,
 } from '../../middleware/v2/authorization/authRoute';
 import {
+  GetQuizParamsSchema,
   QuizCreateOneExtendedRulesSchema,
   QuizQuestionsInputSchema,
 } from '../../validators/v2/quiz';
@@ -193,4 +194,70 @@ const createQuiz = async (req: CreateQuizRequest, res: Response) => {
   }
 };
 
-export { createQuiz };
+/**
+ * The controller function for returning requested quizzes. Users can specify a status of quiz that's past, present or future to filter quizzes by date.
+ * @param req Authorized request
+ * @param res Express Response
+ * @returns Requested quiz data
+ */
+const getQuiz = async (req: AuthorizedRequest, res: Response) => {
+  try {
+    const { status } = GetQuizParamsSchema.parse(req.query);
+
+    const now = new Date();
+    let where: Prisma.QuizWhereInput = {};
+
+    switch (status) {
+      case 'past':
+        where = {
+          endDate: {
+            lt: now,
+          },
+        };
+        break;
+      case 'present':
+        where = {
+          startDate: {
+            lt: now,
+          },
+          endDate: {
+            gt: now,
+          },
+        };
+        break;
+      case 'future':
+        where = {
+          startDate: {
+            gt: now,
+          },
+        };
+        break;
+      default:
+        break;
+    }
+
+    const quizzes = await prisma?.quiz.findMany({
+      where,
+    });
+
+    // TODO: Iterate quizzes and update winner if there is no winner and the endDate is lt now
+
+    return res.status(StatusCodes.OK).json({
+      success: true,
+      data: quizzes,
+    });
+  } catch (err) {
+    if (err instanceof ZodError) {
+      return res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({
+        success: false,
+        error: [...err.issues],
+      });
+    } else {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        sucess: false,
+        error: err,
+      });
+    }
+  }
+};
+export { createQuiz, getQuiz };
