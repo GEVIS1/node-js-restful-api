@@ -107,9 +107,12 @@ type, number of questions, list of questions, list of correct answers, list of i
 of scores, average score, list of ratings, average rating & overall winner. The category, list of questions, list of correct answers & list of incorrect answers will be fetched from the following API -
 https://opentdb.com/api config.php. The difficulties will be easy, medium & hard. The types will be
 multiple choice or true/false.
-- [ ] Each user can get all quizzes, get all past quizzes, get all present quizzes, get all future quizzes, get a
-list of scores & get a list of ratings. A super admin & an admin user can create a quiz. A super
-admin user can delete a quiz. A basic user can participate in a quiz & rate a quiz.
+Each user can: 
+- [x] get all quizzes, get all past quizzes, get all present quizzes, get all future quizzes
+- [ ] get a list of scores & get a list of ratings.
+- [x] A super admin & an admin user can create a quiz.
+- [ ] A super admin user can delete a quiz. 
+- [ ] A basic user can participate in a quiz & rate a quiz.
 - [x] When performing a POST request for creating a quiz, the following error checking must be implemented:
   - [x] Name has a minimum length of five characters, a maximum length of 30 characters & alpha
 characters only.
