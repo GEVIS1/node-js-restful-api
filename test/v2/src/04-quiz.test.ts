@@ -23,6 +23,78 @@ describe('It should fail to create quizzes', () => {
     chai.expect(postResponse.body.error).to.equal('Unauthorized');
   });
 
+  it('Should not create a quiz where name is too short', async () => {
+    const loginResponse = await agent
+      .post('/api/v2/auth/login')
+      .send(await getAdminUser());
+
+    const startDate = new Date();
+    const endDate = getNewDateWithAddedDays(startDate, 1);
+
+    const postResponse = await agent
+      .post(`/api/v2/quizzes`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` })
+      .send({
+        name: 'Test',
+        startDate,
+        endDate,
+        difficulty: 'easy',
+      });
+
+    chai.expect(postResponse.status).to.be.equal(422);
+    chai.expect(postResponse.body).to.be.an('object');
+    chai.expect(postResponse.body.success).to.be.equal(false);
+    chai.expect(postResponse.body.error).to.be.an('array');
+    chai.expect(postResponse.body.error[0]).to.be.an('object');
+    chai.expect(postResponse.body.error[0]).to.have.property('code');
+    chai.expect(postResponse.body.error[0].code).to.equal('too_small');
+    chai.expect(postResponse.body.error[0]).to.have.property('minimum');
+    chai.expect(postResponse.body.error[0].minimum).to.equal(5);
+    chai.expect(postResponse.body.error[0]).to.have.property('message');
+    chai
+      .expect(postResponse.body.error[0].message)
+      .to.equal('String must contain at least 5 character(s)');
+    chai.expect(postResponse.body.error[0]).to.have.property('path');
+    chai.expect(postResponse.body.error[0].path).to.be.an('array');
+    chai.expect(postResponse.body.error[0].path[0]).to.be.equal('name');
+  });
+
+  it('Should not create a quiz where name is too long', async () => {
+    const loginResponse = await agent
+      .post('/api/v2/auth/login')
+      .send(await getAdminUser());
+
+    const startDate = new Date();
+    const endDate = getNewDateWithAddedDays(startDate, 1);
+
+    const postResponse = await agent
+      .post(`/api/v2/quizzes`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` })
+      .send({
+        name: `Test ${'a'.repeat(999)}`,
+        startDate,
+        endDate,
+        difficulty: 'easy',
+      });
+
+    chai.expect(postResponse.status).to.be.equal(422);
+    chai.expect(postResponse.body).to.be.an('object');
+    chai.expect(postResponse.body.success).to.be.equal(false);
+    chai.expect(postResponse.body.error).to.be.an('array');
+    chai.expect(postResponse.body.error[0]).to.be.an('object');
+    chai.expect(postResponse.body.error[0]).to.have.property('code');
+    chai.expect(postResponse.body.error[0].code).to.equal('too_big');
+    chai.expect(postResponse.body.error[0]).to.have.property('maximum');
+    chai.expect(postResponse.body.error[0].maximum).to.equal(30);
+    chai.expect(postResponse.body.error[0]).to.have.property('message');
+    chai
+      .expect(postResponse.body.error[0].message)
+      .to.equal('String must contain at most 30 character(s)');
+    chai.expect(postResponse.body.error[0]).to.have.property('path');
+    chai.expect(postResponse.body.error[0].path).to.be.an('array');
+    chai.expect(postResponse.body.error[0].path[0]).to.be.equal('name');
+  });
+
   it('Should not create a quiz where endDate is before startDate', async () => {
     const loginResponse = await agent
       .post('/api/v2/auth/login')
