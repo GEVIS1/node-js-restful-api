@@ -61,9 +61,10 @@ const createQuiz = async (req: CreateQuizRequest, res: Response) => {
     const startDate = startDateString ? new Date(startDateString) : undefined;
     const endDate = endDateString
       ? new Date(endDateString)
-      : startDate
+      : startDate instanceof Date
       ? getNewDateWithAddedDays(startDate, 5)
       : undefined;
+
     const firstParse = QuizCreateOneExtendedRulesSchema.parse({
       name,
       startDate,
