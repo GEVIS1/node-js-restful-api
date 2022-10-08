@@ -102,7 +102,7 @@ admin user can seed the five basic users. The basic users’ data will be fetche
 GitHub Gist using Axios & inserted into the User table using Prisma.
 
 ### Quiz:
-- [ ] Each quiz will have the following information: name, start date, end date, category, difficulty,
+- [x] Each quiz will have the following information: name, start date, end date, category, difficulty,
 type, number of questions, list of questions, list of correct answers, list of incorrect answers, list
 of scores, average score, list of ratings, average rating & overall winner. The category, list of questions, list of correct answers & list of incorrect answers will be fetched from the following API -
 https://opentdb.com/api config.php. The difficulties will be easy, medium & hard. The types will be
@@ -110,12 +110,12 @@ multiple choice or true/false.
 - [ ] Each user can get all quizzes, get all past quizzes, get all present quizzes, get all future quizzes, get a
 list of scores & get a list of ratings. A super admin & an admin user can create a quiz. A super
 admin user can delete a quiz. A basic user can participate in a quiz & rate a quiz.
-- [ ] When performing a POST request for creating a quiz, the following error checking must be implemented:
-  - [ ] Name has a minimum length of five characters, a maximum length of 30 characters & alpha
+- [x] When performing a POST request for creating a quiz, the following error checking must be implemented:
+  - [x] Name has a minimum length of five characters, a maximum length of 30 characters & alpha
 characters only.
-  - [ ] Start date has to greater than today’s date.
-  - [ ] End date has to greater than the start date & no longer than five days.
-  - [ ] Number of questions has to be ten.
+  - [x] Start date has to greater than today’s date.
+  - [x] End date has to greater than the start date & no longer than five days.
+  - [x] Number of questions has to be ten.
 For each error check, a status code & response message is returned, i.e., ”Name must have a minimum
 length of five characters”.
 - [ ] When performing a POST request for a basic user who is participating in a quiz, the following error
