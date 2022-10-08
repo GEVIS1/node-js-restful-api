@@ -24,6 +24,17 @@ const incorrectNumber: z.ZodErrorMap = (error, ctx) => {
   else return { message: ctx.defaultError };
 };
 
+/**
+ * Function that takes in two date objects and returns the number of days between them
+ * @param startDate A start date
+ * @param endDate An end date
+ * @returns The amount of days between start and end dates
+ * @see +Date converts the date to the amount of milliseconds since 1970-01-01T00:00:00.000Z, so by dividing the return value of +Date by 1000 to get to seconds, 60 to get to minutes, 60 to get to hours and 24 to get to days you return the day difference between two dates
+ */
+const calculateDayDifference = (startDate: Date, endDate: Date) => {
+  return (+endDate - +startDate) / 1000 / 60 / 60 / 24;
+};
+
 const QuizCreateOneExtendedRulesSchema = z
   .object({
     name: z
@@ -41,6 +52,32 @@ const QuizCreateOneExtendedRulesSchema = z
       .optional(),
     winner: z.never().optional(),
   })
-  .strict();
+  .strict()
+  .refine(
+    (data) => {
+      const difference = calculateDayDifference(
+        data.startDate,
+        data.endDate as Date
+      );
+      return difference < 5;
+    },
+    {
+      message: 'End date can not be more than 5 days later than start date.',
+      path: ['endDate'],
+    }
+  )
+  .refine(
+    (data) => {
+      const difference = calculateDayDifference(
+        data.startDate,
+        data.endDate as Date
+      );
+      return difference > 0;
+    },
+    {
+      message: 'End date can not be before start date.',
+      path: ['endDate'],
+    }
+  );
 
 export { QuizCreateOneExtendedRulesSchema, QuizQuestionsInputSchema };
