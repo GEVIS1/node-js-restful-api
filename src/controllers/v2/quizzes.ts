@@ -164,6 +164,7 @@ const createQuiz = async (req: CreateQuizRequest, res: Response) => {
     });
   } catch (err) {
     if (err instanceof ZodError) {
+      // TODO: move this check to validator
       err.issues.forEach((e) => {
         if (e.message === 'Invalid date')
           e.message =
