@@ -6,6 +6,7 @@ import { wordToAvatar } from '../../../src/controllers/v2/auth';
 import { UserNoPassword } from '../../../src/controllers/v2/auth';
 import {
   seedQuestions,
+  seedQuizzes,
   seedSuperAdminUsers,
 } from '../../../prisma/v2/seeder/seeders';
 import {
@@ -222,4 +223,11 @@ describe('It should seed questions', () => {
     chai.expect(randomQuestion).to.have.property('incorrectAnswers');
     chai.expect(randomQuestion.incorrectAnswers).to.be.an('array');
   }).timeout(60000);
+
+  describe('It should seed quizzes', () => {
+    it('should seed quizzes', async () => {
+      // This function will throw an error if it fails, so it passing is sufficient
+      await seedQuizzes();
+    });
+  });
 });
