@@ -1,4 +1,4 @@
-import { Difficulty } from '@prisma/client';
+import { Difficulty, Quiz } from '@prisma/client';
 import chai from 'chai';
 
 import { yoda } from '../../../prisma/v2/seeder/users';
@@ -366,5 +366,30 @@ describe('It should create quizzes', () => {
     chai
       .expect(postResponse.body.data.questions[0].incorrectAnswers)
       .to.deep.equal(question.incorrectAnswers);
+  });
+});
+
+describe('It should get quizzes', () => {
+  it('Should get past quizzes', async () => {
+    const now = new Date();
+    const loginResponse = await agent.post('/api/v2/auth/login').send(yoda);
+    const getResponse = await agent
+      .get(`/api/v2/quizzes?status=past`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` });
+
+    chai.expect(getResponse.status).to.be.equal(200);
+    chai.expect(getResponse.body).to.be.an('object');
+    chai.expect(getResponse.body.success).to.be.equal(true);
+    chai.expect(getResponse.body.data).to.be.an('array');
+    chai
+      .expect(
+        getResponse.body.data.filter((q: Quiz) => {
+          // Convert string of date to date object
+          const endDate = new Date(q.endDate);
+          // Coerce date objects to epoch and compare size
+          return +endDate < +now;
+        }).length
+      )
+      .to.equal(getResponse.body.data.length);
   });
 });
