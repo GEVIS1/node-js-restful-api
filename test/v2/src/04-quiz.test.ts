@@ -392,4 +392,53 @@ describe('It should get quizzes', () => {
       )
       .to.equal(getResponse.body.data.length);
   });
+
+  it('Should get present quizzes', async () => {
+    const now = new Date();
+    const loginResponse = await agent.post('/api/v2/auth/login').send(yoda);
+    const getResponse = await agent
+      .get(`/api/v2/quizzes?status=present`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` });
+
+    chai.expect(getResponse.status).to.be.equal(200);
+    chai.expect(getResponse.body).to.be.an('object');
+    chai.expect(getResponse.body.success).to.be.equal(true);
+    chai.expect(getResponse.body.data).to.be.an('array');
+    chai
+      .expect(
+        getResponse.body.data.filter((q: Quiz) => {
+          // Convert string of date to date object
+          const startDate = new Date(q.startDate);
+          const endDate = new Date(q.endDate);
+          // Coerce date objects to epoch and compare size
+          return +startDate < +now && +endDate > +now;
+        }).length
+      )
+      .to.equal(getResponse.body.data.length);
+  });
+
+  it('Should get future quizzes', async () => {
+    const now = new Date();
+    const loginResponse = await agent.post('/api/v2/auth/login').send(yoda);
+    const getResponse = await agent
+      .get(`/api/v2/quizzes?status=future`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` });
+
+    chai.expect(getResponse.status).to.be.equal(200);
+    chai.expect(getResponse.body).to.be.an('object');
+    chai.expect(getResponse.body.success).to.be.equal(true);
+    chai.expect(getResponse.body.data).to.be.an('array');
+
+    chai
+      .expect(
+        getResponse.body.data.filter((q: Quiz) => {
+          // Convert string of date to date object
+          const startDate = new Date(q.startDate);
+          const result = +startDate > +now;
+          // Coerce date objects to epoch and compare size
+          return result;
+        }).length
+      )
+      .to.equal(getResponse.body.data.length);
+  });
 });
