@@ -41,7 +41,7 @@ const QuizCreateOneExtendedRulesSchema = z
       .string()
       .min(5)
       .max(30)
-      .regex(/[A-Za-z]/),
+      .regex(/^[A-Z a-z]+$/, 'Quiz name must be alpha characters only.'),
     startDate: z.date({ ...requiredError, ...invalidTypeError }),
     endDate: z.date({ ...invalidTypeError }).optional(),
     difficulty: z.lazy(() => DifficultySchema),
