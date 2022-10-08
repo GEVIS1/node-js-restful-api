@@ -2,7 +2,7 @@
 /* eslint-disable no-console */
 
 import bcryptjs from 'bcryptjs';
-import { Difficulty, QuestionType } from '@prisma/client';
+import { Difficulty, Prisma, QuestionType } from '@prisma/client';
 
 import axios from 'axios';
 
@@ -21,6 +21,7 @@ import { CategoryResponse } from '../../../src/controllers/v2/categories';
 import decodeQuestion from './decode';
 
 import { QuestionCreateManySchema } from '../zod-schemas/schemas/createManyQuestion.schema';
+import { getNewDateWithAddedDays } from '../../../src/controllers/v2/quizzes';
 
 const User = prisma.user;
 
@@ -213,4 +214,59 @@ const seedQuestions = async (
   }
 };
 
-export { seedSuperAdminUsers, seedCategories, seedQuestions };
+const seedQuizzes = async () => {
+  const now = new Date();
+  const past = getNewDateWithAddedDays(now, -30);
+  const future = getNewDateWithAddedDays(now, 30);
+  const pastQuizzes: Prisma.QuizCreateManyInput[] = [
+    ...Array(5)
+      .fill({
+        name: 'Past Quiz ',
+        difficulty: 'easy',
+        startDate: past.toJSON(),
+        endDate: getNewDateWithAddedDays(past, 4).toJSON(),
+      })
+      .map((q) => ({
+        name: q.name += 'a',
+        difficulty: q.difficulty,
+        startDate: q.startDate,
+        endDate: q.endDate,
+      })),
+  ];
+  const currentQuizzes: Prisma.QuizCreateManyInput[] = [
+    ...Array(5)
+      .fill({
+        name: 'Current Quiz ',
+        difficulty: 'medium',
+        startDate: now.toJSON(),
+        endDate: getNewDateWithAddedDays(now, 4).toJSON(),
+      })
+      .map((q) => ({
+        name: q.name += 'b',
+        difficulty: q.difficulty,
+        startDate: q.startDate,
+        endDate: q.endDate,
+      })),
+  ];
+  const futureQuizzes: Prisma.QuizCreateManyInput[] = [
+    ...Array(5)
+      .fill({
+        name: 'Future Quiz ',
+        difficulty: 'hard',
+        startDate: future.toJSON(),
+        endDate: getNewDateWithAddedDays(future, 4).toJSON(),
+      })
+      .map((q) => ({
+        name: q.name += 'c',
+        difficulty: q.difficulty,
+        startDate: q.startDate,
+        endDate: q.endDate,
+      })),
+  ];
+
+  await prisma?.quiz.createMany({
+    data: [...pastQuizzes, ...currentQuizzes, ...futureQuizzes],
+  });
+};
+
+export { seedSuperAdminUsers, seedCategories, seedQuestions, seedQuizzes };
