@@ -195,12 +195,12 @@ const createQuiz = async (req: CreateQuizRequest, res: Response) => {
 };
 
 /**
- * The controller function for returning requested quizzes. Users can specify a status of quiz that's past, present or future to filter quizzes by date.
+ * The controller function for returning quizzes. Users can specify a status of quiz that's past, present or future to filter quizzes by date.
  * @param req Authorized request
  * @param res Express Response
  * @returns Requested quiz data
  */
-const getQuiz = async (req: AuthorizedRequest, res: Response) => {
+const getQuizzes = async (req: AuthorizedRequest, res: Response) => {
   try {
     const { status } = GetQuizParamsSchema.parse(req.query);
 
@@ -260,4 +260,4 @@ const getQuiz = async (req: AuthorizedRequest, res: Response) => {
     }
   }
 };
-export { createQuiz, getQuiz };
+export { createQuiz, getQuizzes };
