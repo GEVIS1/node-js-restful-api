@@ -88,8 +88,16 @@ const GetQuizParamsSchema = z
   })
   .refine(
     // Always pass the test if status is undefined, otherwise check if it's allowed
-    (data) =>
-      data.status === undefined ? true : allowedStatuses.includes(data.status),
+    (data) => {
+      switch (data.status) {
+        case undefined:
+          return true;
+        case '':
+          return true;
+        default:
+          return allowedStatuses.includes(data.status);
+      }
+    },
     {
       message: `Status can only be past, present or future.`,
       path: ['status'],
