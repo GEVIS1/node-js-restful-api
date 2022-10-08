@@ -95,6 +95,42 @@ describe('It should fail to create quizzes', () => {
     chai.expect(postResponse.body.error[0].path[0]).to.be.equal('name');
   });
 
+  it('Should not create a quiz where name is not alpha only', async () => {
+    const loginResponse = await agent
+      .post('/api/v2/auth/login')
+      .send(await getAdminUser());
+
+    const startDate = new Date();
+    const endDate = getNewDateWithAddedDays(startDate, 1);
+
+    const postResponse = await agent
+      .post(`/api/v2/quizzes`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` })
+      .send({
+        name: `Test 69, nice!`,
+        startDate,
+        endDate,
+        difficulty: 'easy',
+      });
+
+    chai.expect(postResponse.status).to.be.equal(422);
+    chai.expect(postResponse.body).to.be.an('object');
+    chai.expect(postResponse.body.success).to.be.equal(false);
+    chai.expect(postResponse.body.error).to.be.an('array');
+    chai.expect(postResponse.body.error[0]).to.be.an('object');
+    chai.expect(postResponse.body.error[0]).to.have.property('validation');
+    chai.expect(postResponse.body.error[0].validation).to.equal('regex');
+    chai.expect(postResponse.body.error[0]).to.have.property('code');
+    chai.expect(postResponse.body.error[0].code).to.equal('invalid_string');
+    chai.expect(postResponse.body.error[0]).to.have.property('message');
+    chai
+      .expect(postResponse.body.error[0].message)
+      .to.equal('Quiz name must be alpha characters only.');
+    chai.expect(postResponse.body.error[0]).to.have.property('path');
+    chai.expect(postResponse.body.error[0].path).to.be.an('array');
+    chai.expect(postResponse.body.error[0].path[0]).to.be.equal('name');
+  });
+
   it('Should not create a quiz where endDate is before startDate', async () => {
     const loginResponse = await agent
       .post('/api/v2/auth/login')
@@ -127,6 +163,45 @@ describe('It should fail to create quizzes', () => {
     chai.expect(postResponse.body.error[0]).to.have.property('path');
     chai.expect(postResponse.body.error[0].path).to.be.an('array');
     chai.expect(postResponse.body.error[0].path[0]).to.be.equal('endDate');
+  });
+
+  it('Should not create a quiz where number of questions is not 10', async () => {
+    const loginResponse = await agent
+      .post('/api/v2/auth/login')
+      .send(await getAdminUser());
+
+    const startDate = new Date();
+    const endDate = getNewDateWithAddedDays(startDate, 1);
+
+    const postResponse = await agent
+      .post(`/api/v2/quizzes`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` })
+      .send({
+        name: `Test six questions`,
+        startDate,
+        endDate,
+        difficulty: 'easy',
+        numberOfQuestions: 6,
+      });
+
+    chai.expect(postResponse.status).to.be.equal(422);
+    chai.expect(postResponse.body).to.be.an('object');
+    chai.expect(postResponse.body.success).to.be.equal(false);
+    chai.expect(postResponse.body.error).to.be.an('array');
+    chai.expect(postResponse.body.error[0]).to.be.an('object');
+    chai.expect(postResponse.body.error[0]).to.have.property('code');
+    chai.expect(postResponse.body.error[0].code).to.equal('invalid_literal');
+    chai.expect(postResponse.body.error[0]).to.have.property('expected');
+    chai.expect(postResponse.body.error[0].expected).to.equal(10);
+    chai.expect(postResponse.body.error[0]).to.have.property('message');
+    chai
+      .expect(postResponse.body.error[0].message)
+      .to.equal('Number of questions can only be 10.');
+    chai.expect(postResponse.body.error[0]).to.have.property('path');
+    chai.expect(postResponse.body.error[0].path).to.be.an('array');
+    chai
+      .expect(postResponse.body.error[0].path[0])
+      .to.be.equal('numberOfQuestions');
   });
 });
 
