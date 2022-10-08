@@ -80,4 +80,24 @@ const QuizCreateOneExtendedRulesSchema = z
     }
   );
 
-export { QuizCreateOneExtendedRulesSchema, QuizQuestionsInputSchema };
+const allowedStatuses = ['past', 'present', 'future'];
+
+const GetQuizParamsSchema = z
+  .object({
+    status: z.string().optional(),
+  })
+  .refine(
+    // Always pass the test if status is undefined, otherwise check if it's allowed
+    (data) =>
+      data.status === undefined ? true : allowedStatuses.includes(data.status),
+    {
+      message: `Status can only be past, present or future.`,
+      path: ['status'],
+    }
+  );
+
+export {
+  QuizCreateOneExtendedRulesSchema,
+  QuizQuestionsInputSchema,
+  GetQuizParamsSchema,
+};
