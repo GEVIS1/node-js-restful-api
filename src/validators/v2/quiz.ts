@@ -11,11 +11,9 @@ const invalidTypeError = {
     "Date must be formatted as 'December 17, 1995 03:24:00' or '1995-12-17T03:24:00'",
 };
 
-const QuizQuestionsInputSchema = z.object({
-  id: z.number({
-    required_error: 'Questions must be given by question ids.',
-    invalid_type_error: 'Question id must be a number.',
-  }),
+const QuizQuestionsInputSchema = z.number({
+  required_error: 'Questions must be given by question ids.',
+  invalid_type_error: 'Question id must be a number.',
 });
 
 const incorrectNumber: z.ZodErrorMap = (error, ctx) => {
