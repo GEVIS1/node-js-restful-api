@@ -119,8 +119,6 @@ const createQuiz = async (req: CreateQuizRequest, res: Response) => {
           Math.random() * fetchedQuestions.length
         );
         pickedQuestions.add(fetchedQuestions[randomQuestionId]);
-        // console.log('pickedQuestions.size', pickedQuestions.size)
-        // console.log('randomQuestionId', randomQuestionId)
       } while (pickedQuestions.size < 10);
 
       const selectedQuestions: QuestionInput[] = [...pickedQuestions].map(
