@@ -3,6 +3,7 @@ import { Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { z, ZodError } from 'zod';
 import { QuizCreateOneSchema } from '../../../prisma/v2/zod-schemas/schemas/createOneQuiz.schema';
+import { QuestionCreateNestedManyWithoutQuizzesInputObjectSchema } from '../../../prisma/v2/zod-schemas/schemas/objects/QuestionCreateNestedManyWithoutQuizzesInput.schema';
 import {
   AuthorizedRequest,
   JWT,
@@ -51,7 +52,7 @@ const createQuiz = async (req: CreateQuizRequest, res: Response) => {
       endDate: endDateString,
       difficulty,
       numberOfQuestions: numberOfQuestionsString,
-      questions,
+      questions: questionStrings,
     } = req.body;
 
     const numberOfQuestions = numberOfQuestionsString
@@ -64,6 +65,11 @@ const createQuiz = async (req: CreateQuizRequest, res: Response) => {
       : startDate instanceof Date
       ? getNewDateWithAddedDays(startDate, 5)
       : undefined;
+
+    const questions =
+      questionStrings === undefined
+        ? undefined
+        : questionStrings.map((q) => Number(q));
 
     const firstParse = QuizCreateOneExtendedRulesSchema.parse({
       name,
@@ -88,20 +94,18 @@ const createQuiz = async (req: CreateQuizRequest, res: Response) => {
       firstParse.questions !== undefined &&
       firstParse.questions.length === 10
     ) {
-      const tempQuestions: QuestionInput[] =
-        firstParse.questions as QuestionInput[];
+      const tempQuestions: Prisma.QuestionWhereUniqueInput[] =
+        firstParse.questions.map((n) => ({ id: n }));
 
-      tempQuestions.forEach((q) => {
-        QuizQuestionsInputSchema.parse(q);
-      });
-
-      // Now that we've verified that it's an array of question ids, insert them in the connect field.
-      // TODO: Fix unknown conversion
-      (firstParse.questions as unknown as { connect: QuestionInput[] }) = {
-        connect: [...tempQuestions],
-      };
+      (firstParse.questions as Prisma.QuestionCreateNestedManyWithoutQuizzesInput) =
+        {
+          connect: [...tempQuestions],
+        };
+      QuestionCreateNestedManyWithoutQuizzesInputObjectSchema.parse(
+        firstParse.questions
+      );
     } else {
-      // If the user gives no questions, insert ten random questions
+      // If the user gives no questions or not enough questions, insert ten random questions
       const fetchedQuestions = await prisma?.question.findMany({
         where: {
           difficulty,
@@ -118,16 +122,16 @@ const createQuiz = async (req: CreateQuizRequest, res: Response) => {
         const randomQuestionId = Math.floor(
           Math.random() * fetchedQuestions.length
         );
-        pickedQuestions.add(fetchedQuestions[randomQuestionId]);
+        pickedQuestions.add(fetchedQuestions[randomQuestionId].id);
       } while (pickedQuestions.size < 10);
 
-      const selectedQuestions: QuestionInput[] = [...pickedQuestions].map(
-        (q) => {
-          return { id: q.id };
-        }
-      );
+      type ConnectId = { id: QuestionInput };
 
-      (firstParse.questions as unknown as { connect: QuestionInput[] }) = {
+      const selectedQuestions: ConnectId[] = [...pickedQuestions].map((q) => {
+        return { id: q };
+      });
+
+      (firstParse.questions as unknown as { connect: ConnectId[] }) = {
         connect: [...selectedQuestions],
       };
     }
