@@ -442,3 +442,84 @@ describe('It should get quizzes', () => {
       .to.equal(getResponse.body.data.length);
   });
 });
+
+describe('It should fail to delete quizzes', () => {
+  it('should fail to delete a quiz as an ADMIN_USER', async () => {
+    const quizData = await prisma?.quiz.findFirst({});
+
+    if (!quizData) throw Error('Could not get random quiz.');
+
+    const loginResponse = await agent
+      .post('/api/v2/auth/login')
+      .send(await getAdminUser());
+    const deleteResponse = await agent
+      .delete(`/api/v2/quizzes/${quizData.id}`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` });
+
+    chai.expect(deleteResponse.status).to.be.equal(403);
+    chai.expect(deleteResponse.body).to.be.an('object');
+    chai.expect(deleteResponse.body.success).to.be.equal(false);
+    chai.expect(deleteResponse.body.error).to.be.a('string');
+    chai.expect(deleteResponse.body.error).to.equal('Unauthorized');
+  });
+
+  it('should fail to delete a quiz as a BASIC_USER', async () => {
+    const quizData = await prisma?.quiz.findFirst({});
+
+    if (!quizData) throw Error('Could not get random quiz.');
+
+    const loginResponse = await agent.post('/api/v2/auth/login').send(user);
+    const deleteResponse = await agent
+      .delete(`/api/v2/quizzes/${quizData.id}`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` });
+
+    chai.expect(deleteResponse.status).to.be.equal(403);
+    chai.expect(deleteResponse.body).to.be.an('object');
+    chai.expect(deleteResponse.body.success).to.be.equal(false);
+    chai.expect(deleteResponse.body.error).to.be.a('string');
+    chai.expect(deleteResponse.body.error).to.equal('Unauthorized');
+  });
+});
+
+describe('It should delete quizzes', () => {
+  it('should delete a quiz as a SUPER_ADMIN_USER', async () => {
+    const quizData = await prisma?.quiz.findFirst({});
+
+    if (!quizData) throw Error('Could not get random quiz.');
+
+    const {
+      difficulty,
+      endDate,
+      id,
+      name,
+      numberOfQuestions,
+      startDate,
+      userId,
+    } = quizData;
+
+    const randomQuiz = {
+      id,
+      name,
+      difficulty,
+      startDate: startDate.toJSON(),
+      endDate: endDate.toJSON(),
+      numberOfQuestions,
+      userId,
+    };
+
+    const loginResponse = await agent.post('/api/v2/auth/login').send(yoda);
+    const deleteResponse = await agent
+      .delete(`/api/v2/quizzes/${quizData.id}`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` });
+
+    chai.expect(deleteResponse.status).to.be.equal(200);
+    chai.expect(deleteResponse.body).to.be.an('object');
+    chai.expect(deleteResponse.body.success).to.be.equal(true);
+    chai.expect(deleteResponse.body.message).to.be.a('string');
+    chai
+      .expect(deleteResponse.body.message)
+      .to.equal(`Deleted quiz '${randomQuiz?.name}.'`);
+    chai.expect(deleteResponse.body.data).to.be.an('object');
+    chai.expect(deleteResponse.body.data).to.deep.equal(randomQuiz);
+  });
+});
