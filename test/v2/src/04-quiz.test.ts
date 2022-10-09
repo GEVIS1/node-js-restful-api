@@ -206,12 +206,108 @@ describe('It should fail to create quizzes', () => {
 });
 
 describe('It should create quizzes', () => {
-  it('should let an ADMIN_USER create a quiz', async () => {
+  it('should let an ADMIN_USER create a quiz with specified questions', async () => {
     const loginResponse = await agent
       .post('/api/v2/auth/login')
       .send(await getAdminUser());
 
     const quizName = 'Admin User User quiz';
+    const startDate = new Date();
+    const endDate = getNewDateWithAddedDays(startDate, 4);
+    const difficulties = [...Object.values(Difficulty)];
+    const difficulty =
+      difficulties[Math.floor(Math.random() * difficulties.length)];
+    const numberOfQuestions = 10;
+
+    const numQuestions = await prisma?.question.count();
+
+    if (!numQuestions) throw Error('Could not get questions count');
+
+    const highestQuestionId = numQuestions - 1;
+
+    const questionsSet = new Set<number>();
+
+    while (questionsSet.size < 10) {
+      const questionId = Math.floor(Math.random() * highestQuestionId);
+      questionsSet.add(questionId);
+    }
+
+    const questions = [...questionsSet.values()];
+
+    const postResponse = await agent
+      .post(`/api/v2/quizzes`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` })
+      .send({
+        name: quizName,
+        startDate,
+        endDate,
+        difficulty,
+        numberOfQuestions,
+        questions,
+      });
+
+    chai.expect(postResponse.status).to.be.equal(201);
+    chai.expect(postResponse.body).to.be.an('object');
+    chai.expect(postResponse.body.success).to.be.equal(true);
+    chai
+      .expect(postResponse.body.message)
+      .to.equal(`Successfully created quiz '${quizName}'`);
+    chai.expect(postResponse.body).to.have.property('data');
+    chai.expect(postResponse.body.data).to.be.an('object');
+    chai.expect(postResponse.body.data.name).to.equal(quizName);
+    chai.expect(postResponse.body.data).to.have.property('startDate');
+    chai.expect(postResponse.body.data.startDate).to.equal(startDate.toJSON());
+    chai.expect(postResponse.body.data).to.have.property('endDate');
+    chai.expect(postResponse.body.data.endDate).to.equal(endDate.toJSON());
+    chai.expect(postResponse.body.data).to.have.property('difficulty');
+    chai.expect(postResponse.body.data.difficulty).to.equal(difficulty);
+    chai.expect(postResponse.body.data).to.have.property('numberOfQuestions');
+    chai
+      .expect(postResponse.body.data.numberOfQuestions)
+      .to.equal(numberOfQuestions);
+    chai.expect(postResponse.body.data).to.have.property('questions');
+    chai.expect(postResponse.body.data.questions).to.be.an('array');
+    chai
+      .expect(postResponse.body.data.questions)
+      .to.be.of.length(numberOfQuestions);
+
+    chai.expect(postResponse.body.data.questions[0]).to.be.an('object');
+    chai.expect(postResponse.body.data.questions[0]).to.have.property('id');
+
+    // Fetch question so we can compare it
+    const question = await prisma?.question.findFirst({
+      where: {
+        id: postResponse.body.data.questions[0].id,
+      },
+    });
+
+    if (!question) throw Error('Could not find question.');
+
+    chai.expect(postResponse.body.data.questions[0].id).to.equal(question.id);
+    chai
+      .expect(postResponse.body.data.questions[0].categoryId)
+      .to.equal(question.categoryId);
+    chai
+      .expect(postResponse.body.data.questions[0].type)
+      .to.equal(question.type);
+    chai
+      .expect(postResponse.body.data.questions[0].difficulty)
+      .to.equal(question.difficulty);
+    chai
+      .expect(postResponse.body.data.questions[0].question)
+      .to.equal(question.question);
+    chai
+      .expect(postResponse.body.data.questions[0].correctAnswer)
+      .to.equal(question.correctAnswer);
+    chai
+      .expect(postResponse.body.data.questions[0].incorrectAnswers)
+      .to.deep.equal(question.incorrectAnswers);
+  });
+
+  it('should let a SUPER_ADMIN_USER create a quiz with random questions', async () => {
+    const loginResponse = await agent.post('/api/v2/auth/login').send(yoda);
+
+    const quizName = 'Super Admin User User quiz';
     const startDate = new Date();
     const endDate = getNewDateWithAddedDays(startDate, 4);
     const difficulties = [...Object.values(Difficulty)];
@@ -288,7 +384,7 @@ describe('It should create quizzes', () => {
       .to.deep.equal(question.incorrectAnswers);
   });
 
-  it('should let a SUPER_ADMIN_USER create a quiz', async () => {
+  it('should let a SUPER_ADMIN_USER create a quiz with random questions', async () => {
     const loginResponse = await agent.post('/api/v2/auth/login').send(yoda);
 
     const quizName = 'Super Admin User User quiz';
