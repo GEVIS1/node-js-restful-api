@@ -261,4 +261,51 @@ const getQuizzes = async (req: AuthorizedRequest, res: Response) => {
     }
   }
 };
-export { createQuiz, getQuizzes };
+
+const deleteQuiz = async (req: AuthorizedRequest, res: Response) => {
+  try {
+    const { role } = req.user as JWT;
+
+    if (role !== 'SUPER_ADMIN_USER') {
+      throw Error('Unauthorized');
+    }
+
+    const { id: idString } = req.params;
+
+    const id = Number(idString);
+
+    if (Number.isNaN(id)) {
+      throw Error('Invalid quiz id.');
+    }
+
+    const quiz = await prisma?.quiz.delete({
+      where: {
+        id,
+      },
+    });
+
+    return res.status(StatusCodes.OK).json({
+      success: true,
+      message: `Deleted quiz '${quiz?.name}.'`,
+      data: quiz,
+    });
+  } catch (err) {
+    if (err instanceof Error) {
+      const status =
+        err.message === 'Unauthorized'
+          ? StatusCodes.FORBIDDEN
+          : StatusCodes.UNPROCESSABLE_ENTITY;
+      return res.status(status).json({
+        success: false,
+        error: err.message,
+      });
+    } else {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        sucess: false,
+        error: err,
+      });
+    }
+  }
+};
+
+export { createQuiz, getQuizzes, deleteQuiz };
