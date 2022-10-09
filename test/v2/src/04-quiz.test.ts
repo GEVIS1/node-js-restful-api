@@ -219,16 +219,17 @@ describe('It should create quizzes', () => {
       difficulties[Math.floor(Math.random() * difficulties.length)];
     const numberOfQuestions = 10;
 
-    const numQuestions = await prisma?.question.count();
+    const allQuestions = await prisma?.question.findMany({});
 
-    if (!numQuestions) throw Error('Could not get questions count');
+    if (!allQuestions) throw Error('Could not get all questions');
 
-    const highestQuestionId = numQuestions - 1;
+    const highestQuestionId = allQuestions.length - 1;
 
     const questionsSet = new Set<number>();
 
     while (questionsSet.size < 10) {
-      const questionId = Math.floor(Math.random() * highestQuestionId);
+      const questionId =
+        allQuestions[Math.floor(Math.random() * highestQuestionId)].id;
       questionsSet.add(questionId);
     }
 
