@@ -6,7 +6,7 @@ import type { Prisma } from '@prisma/client';
 
 const Schema: z.ZodType<Prisma.ScoreUpdateWithoutQuizInput> = z
   .object({
-    User: z
+    user: z
       .lazy(() => UserUpdateOneRequiredWithoutScoresNestedInputObjectSchema)
       .optional(),
     score: z

@@ -83,13 +83,13 @@ model Quiz {
   questions         Question[]
   winner            User?      @relation(fields: [userId], references: [id])
   userId            Int?
-  Score             Score[]
-  Rating            Rating[]
+  score             Score[]
+  rating            Rating[]
 }
 
 model Score {
   userId Int
-  User   User @relation(fields: [userId], references: [id])
+  user   User @relation(fields: [userId], references: [id])
   quizId Int
   quiz   Quiz @relation(fields: [quizId], references: [id])
   score  Int  @db.SmallInt

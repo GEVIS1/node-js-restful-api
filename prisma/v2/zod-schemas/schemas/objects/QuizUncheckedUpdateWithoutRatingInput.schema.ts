@@ -60,7 +60,7 @@ const Schema: z.ZodType<Prisma.QuizUncheckedUpdateWithoutRatingInput> = z
       ])
       .optional()
       .nullable(),
-    Score: z
+    score: z
       .lazy(() => ScoreUncheckedUpdateManyWithoutQuizNestedInputObjectSchema)
       .optional(),
   })

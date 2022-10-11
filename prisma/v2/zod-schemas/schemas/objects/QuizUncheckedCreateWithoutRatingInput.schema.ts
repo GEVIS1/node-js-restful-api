@@ -19,7 +19,7 @@ const Schema: z.ZodType<Prisma.QuizUncheckedCreateWithoutRatingInput> = z
       )
       .optional(),
     userId: z.number().optional().nullable(),
-    Score: z
+    score: z
       .lazy(() => ScoreUncheckedCreateNestedManyWithoutQuizInputObjectSchema)
       .optional(),
   })

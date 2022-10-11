@@ -28,7 +28,7 @@ const Schema: z.ZodType<Prisma.ScoreWhereInput> = z
     userId: z
       .union([z.lazy(() => IntFilterObjectSchema), z.number()])
       .optional(),
-    User: z
+    user: z
       .union([
         z.lazy(() => UserRelationFilterObjectSchema),
         z.lazy(() => UserWhereInputObjectSchema),

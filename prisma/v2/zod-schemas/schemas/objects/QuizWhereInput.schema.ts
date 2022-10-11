@@ -62,8 +62,8 @@ const Schema: z.ZodType<Prisma.QuizWhereInput> = z
       .union([z.lazy(() => IntNullableFilterObjectSchema), z.number()])
       .optional()
       .nullable(),
-    Score: z.lazy(() => ScoreListRelationFilterObjectSchema).optional(),
-    Rating: z.lazy(() => RatingListRelationFilterObjectSchema).optional(),
+    score: z.lazy(() => ScoreListRelationFilterObjectSchema).optional(),
+    rating: z.lazy(() => RatingListRelationFilterObjectSchema).optional(),
   })
   .strict();
 

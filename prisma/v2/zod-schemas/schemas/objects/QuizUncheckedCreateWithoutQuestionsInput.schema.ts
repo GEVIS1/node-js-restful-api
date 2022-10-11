@@ -14,10 +14,10 @@ const Schema: z.ZodType<Prisma.QuizUncheckedCreateWithoutQuestionsInput> = z
     difficulty: z.lazy(() => DifficultySchema),
     numberOfQuestions: z.number().optional(),
     userId: z.number().optional().nullable(),
-    Score: z
+    score: z
       .lazy(() => ScoreUncheckedCreateNestedManyWithoutQuizInputObjectSchema)
       .optional(),
-    Rating: z
+    rating: z
       .lazy(() => RatingUncheckedCreateNestedManyWithoutQuizInputObjectSchema)
       .optional(),
   })

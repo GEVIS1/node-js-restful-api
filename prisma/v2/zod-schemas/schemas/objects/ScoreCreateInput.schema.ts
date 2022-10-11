@@ -6,7 +6,7 @@ import type { Prisma } from '@prisma/client';
 
 const Schema: z.ZodType<Prisma.ScoreCreateInput> = z
   .object({
-    User: z.lazy(() => UserCreateNestedOneWithoutScoresInputObjectSchema),
+    user: z.lazy(() => UserCreateNestedOneWithoutScoresInputObjectSchema),
     quiz: z.lazy(() => QuizCreateNestedOneWithoutScoreInputObjectSchema),
     score: z.number(),
   })

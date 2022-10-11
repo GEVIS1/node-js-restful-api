@@ -20,10 +20,10 @@ const Schema: z.ZodType<Prisma.QuizOrderByWithRelationInput> = z
       .optional(),
     winner: z.lazy(() => UserOrderByWithRelationInputObjectSchema).optional(),
     userId: z.lazy(() => SortOrderSchema).optional(),
-    Score: z
+    score: z
       .lazy(() => ScoreOrderByRelationAggregateInputObjectSchema)
       .optional(),
-    Rating: z
+    rating: z
       .lazy(() => RatingOrderByRelationAggregateInputObjectSchema)
       .optional(),
   })

@@ -20,10 +20,10 @@ const Schema: z.ZodType<Prisma.QuizCreateInput> = z
     winner: z
       .lazy(() => UserCreateNestedOneWithoutQuizzesInputObjectSchema)
       .optional(),
-    Score: z
+    score: z
       .lazy(() => ScoreCreateNestedManyWithoutQuizInputObjectSchema)
       .optional(),
-    Rating: z
+    rating: z
       .lazy(() => RatingCreateNestedManyWithoutQuizInputObjectSchema)
       .optional(),
   })
