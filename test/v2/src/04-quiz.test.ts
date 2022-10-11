@@ -620,3 +620,381 @@ describe('It should delete quizzes', () => {
     chai.expect(deleteResponse.body.data).to.deep.equal(randomQuiz);
   });
 });
+
+describe('It should not allow invalid quiz participations', () => {
+  it('should not let an ADMIN_USER participate in a quiz', async () => {
+    const loginResponse = await agent
+      .post('/api/v2/auth/login')
+      .send(await getAdminUser());
+
+    const quizzes = await prisma?.quiz.findMany({
+      include: {
+        questions: true,
+      },
+    });
+
+    if (!quizzes) throw Error('Could not get quizzes.');
+
+    const validQuizzes = quizzes.filter((q) => q.questions.length === 10);
+
+    const randomQuiz =
+      validQuizzes[Math.floor(Math.random() * validQuizzes.length)];
+
+    const correctAnswers = randomQuiz.questions.map((q) => q.correctAnswer);
+
+    const postResponse = await agent
+      .post(`/api/v2/quizzes/${randomQuiz.id}`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` })
+      .send({
+        answers: correctAnswers,
+      });
+
+    chai.expect(postResponse.status).to.be.equal(403);
+    chai.expect(postResponse.body).to.be.an('object');
+    chai.expect(postResponse.body.success).to.be.equal(false);
+    chai.expect(postResponse.body.error).to.be.a('string');
+    chai
+      .expect(postResponse.body.error)
+      .to.be.equal('Only BASIC_USERs can participate in quizzes. No cheating!');
+  });
+
+  it('should not let a SUPER_ADMIN_USER participate in a quiz', async () => {
+    const loginResponse = await agent.post('/api/v2/auth/login').send(yoda);
+
+    const quizzes = await prisma?.quiz.findMany({
+      include: {
+        questions: true,
+      },
+    });
+
+    if (!quizzes) throw Error('Could not get quizzes.');
+
+    const validQuizzes = quizzes?.filter((q) => q.questions.length === 10);
+
+    const randomQuiz =
+      validQuizzes[Math.floor(Math.random() * validQuizzes.length)];
+
+    const correctAnswers = randomQuiz.questions.map((q) => q.correctAnswer);
+
+    const postResponse = await agent
+      .post(`/api/v2/quizzes/${randomQuiz.id}`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` })
+      .send({
+        answers: correctAnswers,
+      });
+
+    chai.expect(postResponse.status).to.be.equal(403);
+    chai.expect(postResponse.body).to.be.an('object');
+    chai.expect(postResponse.body.success).to.be.equal(false);
+    chai.expect(postResponse.body.error).to.be.a('string');
+    chai
+      .expect(postResponse.body.error)
+      .to.be.equal('Only BASIC_USERs can participate in quizzes. No cheating!');
+  });
+
+  it('should not allow to participate with less than 10 answers', async () => {
+    const loginResponse = await agent.post('/api/v2/auth/login').send(user);
+
+    const quizzes = await prisma?.quiz.findMany({
+      include: {
+        questions: true,
+      },
+    });
+
+    if (!quizzes) throw Error('Could not get quizzes.');
+
+    const validQuizzes = quizzes?.filter((q) => q.questions.length === 10);
+
+    const randomQuiz =
+      validQuizzes[Math.floor(Math.random() * validQuizzes.length)];
+
+    const answers = Array(9).fill('answer');
+
+    const postResponse = await agent
+      .post(`/api/v2/quizzes/${randomQuiz.id}`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` })
+      .send({
+        answers,
+      });
+
+    chai.expect(postResponse.status).to.be.equal(400);
+    chai.expect(postResponse.body).to.be.an('object');
+    chai.expect(postResponse.body.success).to.be.equal(false);
+    chai.expect(postResponse.body.error).to.be.a('string');
+    chai
+      .expect(postResponse.body.error)
+      .to.be.equal('Please answer all 10 questions.');
+  });
+
+  it('should not allow to participate with more than 10 answers', async () => {
+    const loginResponse = await agent.post('/api/v2/auth/login').send(user);
+
+    const quizzes = await prisma?.quiz.findMany({
+      include: {
+        questions: true,
+      },
+    });
+
+    if (!quizzes) throw Error('Could not get quizzes.');
+
+    const validQuizzes = quizzes.filter((q) => q.questions.length === 10);
+
+    const randomQuiz =
+      validQuizzes[Math.floor(Math.random() * validQuizzes.length)];
+
+    const answers = Array(69).fill('answer');
+
+    const postResponse = await agent
+      .post(`/api/v2/quizzes/${randomQuiz.id}`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` })
+      .send({
+        answers,
+      });
+
+    chai.expect(postResponse.status).to.be.equal(400);
+    chai.expect(postResponse.body).to.be.an('object');
+    chai.expect(postResponse.body.success).to.be.equal(false);
+    chai.expect(postResponse.body.error).to.be.a('string');
+    chai
+      .expect(postResponse.body.error)
+      .to.be.equal(
+        'More answers were given than there were questions to answer.'
+      );
+  });
+
+  it('should not allow to participate with no answers given', async () => {
+    const loginResponse = await agent.post('/api/v2/auth/login').send(user);
+
+    const quizzes = await prisma?.quiz.findMany({
+      include: {
+        questions: true,
+      },
+    });
+
+    if (!quizzes) throw Error('Could not get quizzes.');
+
+    const validQuizzes = quizzes.filter((q) => q.questions.length === 10);
+
+    const randomQuiz =
+      validQuizzes[Math.floor(Math.random() * validQuizzes.length)];
+
+    const postResponse = await agent
+      .post(`/api/v2/quizzes/${randomQuiz.id}`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` });
+
+    chai.expect(postResponse.status).to.be.equal(400);
+    chai.expect(postResponse.body).to.be.an('object');
+    chai.expect(postResponse.body.success).to.be.equal(false);
+    chai.expect(postResponse.body.error).to.be.a('string');
+    chai
+      .expect(postResponse.body.error)
+      .to.be.equal("No 'answers' property in request body.");
+  });
+
+  it('should not allow to participate where answers is not an array', async () => {
+    const loginResponse = await agent.post('/api/v2/auth/login').send(user);
+
+    const quizzes = await prisma?.quiz.findMany({
+      include: {
+        questions: true,
+      },
+    });
+
+    if (!quizzes) throw Error('Could not get quizzes.');
+
+    const validQuizzes = quizzes?.filter((q) => q.questions.length === 10);
+
+    const randomQuiz =
+      validQuizzes[Math.floor(Math.random() * validQuizzes.length)];
+
+    const postResponse = await agent
+      .post(`/api/v2/quizzes/${randomQuiz.id}`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` })
+      .send({
+        answers: 'nah',
+      });
+
+    chai.expect(postResponse.status).to.be.equal(400);
+    chai.expect(postResponse.body).to.be.an('object');
+    chai.expect(postResponse.body.success).to.be.equal(false);
+    chai.expect(postResponse.body.error).to.be.a('string');
+    chai.expect(postResponse.body.error).to.be.equal('Answers not parseable.');
+  });
+
+  it('should not allow to participate in quiz before the startDate', async () => {
+    const loginResponse = await agent.post('/api/v2/auth/login').send(user);
+
+    const quizzes = await prisma?.quiz.findMany({
+      include: {
+        questions: true,
+      },
+    });
+
+    if (!quizzes) throw Error('Could not get quizzes.');
+
+    const now = new Date();
+
+    const validQuizzes = quizzes?.filter((q) => +q.startDate > +now);
+
+    const randomQuiz =
+      validQuizzes[Math.floor(Math.random() * validQuizzes.length)];
+
+    const postResponse = await agent
+      .post(`/api/v2/quizzes/${randomQuiz.id}`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` });
+
+    chai.expect(postResponse.status).to.be.equal(403);
+    chai.expect(postResponse.body).to.be.an('object');
+    chai.expect(postResponse.body.success).to.be.equal(false);
+    chai.expect(postResponse.body.error).to.be.a('string');
+    chai
+      .expect(postResponse.body.error)
+      .to.be.equal(
+        `Can not participate in future quizzes.\nThis quiz opens on ${randomQuiz.startDate}`
+      );
+  });
+
+  it('should not allow to participate in quiz after the endDate', async () => {
+    const loginResponse = await agent.post('/api/v2/auth/login').send(user);
+
+    const quizzes = await prisma?.quiz.findMany({
+      include: {
+        questions: true,
+      },
+    });
+
+    if (!quizzes) throw Error('Could not get quizzes.');
+
+    const now = new Date();
+
+    const validQuizzes = quizzes?.filter((q) => +q.endDate < +now);
+
+    const randomQuiz =
+      validQuizzes[Math.floor(Math.random() * validQuizzes.length)];
+
+    const postResponse = await agent
+      .post(`/api/v2/quizzes/${randomQuiz.id}`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` });
+
+    chai.expect(postResponse.status).to.be.equal(403);
+    chai.expect(postResponse.body).to.be.an('object');
+    chai.expect(postResponse.body.success).to.be.equal(false);
+    chai.expect(postResponse.body.error).to.be.a('string');
+    chai
+      .expect(postResponse.body.error)
+      .to.be.equal(
+        `Can not participate in past quizzes.\nThis quiz ended on ${randomQuiz.endDate}`
+      );
+  });
+});
+
+let sameQuiz: number;
+
+describe('It should let users participate in quizzes', () => {
+  it('should participate in quiz', async () => {
+    const loginResponse = await agent.post('/api/v2/auth/login').send(user);
+
+    const quizzes = await prisma?.quiz.findMany({
+      include: {
+        questions: true,
+      },
+    });
+
+    if (!quizzes) throw Error('Could not get quizzes.');
+
+    const validQuizzes = quizzes?.filter((q) => q.questions.length === 10);
+
+    const randomQuiz =
+      validQuizzes[Math.floor(Math.random() * validQuizzes.length)];
+
+    sameQuiz = randomQuiz.id;
+
+    const correctAnswers = randomQuiz.questions.map((q) => q.correctAnswer);
+
+    const postResponse = await agent
+      .post(`/api/v2/quizzes/${randomQuiz.id}`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` })
+      .send({
+        answers: correctAnswers,
+      });
+
+    chai.expect(postResponse.status).to.be.equal(200);
+    chai.expect(postResponse.body).to.be.an('object');
+    chai.expect(postResponse.body.success).to.be.equal(true);
+    chai.expect(postResponse.body.message).to.be.a('string');
+    chai
+      .expect(postResponse.body.message)
+      .to.be.equal(
+        `${user.username} has successfully participated in ${randomQuiz.name}`
+      );
+    chai.expect(postResponse.body.score).to.be.a('number');
+    chai.expect(postResponse.body.score).to.be.equal(correctAnswers.length);
+
+    const quizAfterScoreAdded = await prisma?.quiz.findFirst({
+      where: {
+        id: randomQuiz.id,
+      },
+      include: {
+        score: true,
+      },
+    });
+
+    if (!quizAfterScoreAdded) throw Error('Could not get quiz data.');
+
+    const averageScore =
+      quizAfterScoreAdded.score.reduce((prev, cur) => prev + cur.score, 0) /
+      quizAfterScoreAdded.score.length;
+    chai
+      .expect(postResponse.body.averageScore)
+      .to.be.equal(averageScore.toFixed(2));
+  });
+});
+
+describe('It should not let users participate more than once', () => {
+  it('should not be able to participate in the same quiz twice', async () => {
+    const loginResponse = await agent.post('/api/v2/auth/login').send(user);
+
+    const userData = await prisma?.user.findFirst({
+      where: {
+        username: user.username,
+      },
+    });
+
+    if (!userData) throw Error('Could not get user data.');
+
+    if (!sameQuiz)
+      throw Error("sameQuiz was not in 'should participate in quiz' yet");
+
+    const quiz = await prisma?.quiz.findFirst({
+      where: {
+        id: sameQuiz,
+      },
+      include: {
+        questions: true,
+        score: true,
+      },
+    });
+
+    if (!quiz) throw Error('Could not get quiz.');
+
+    const correctAnswers = quiz.questions.map((q) => q.correctAnswer);
+
+    const postResponse = await agent
+      .post(`/api/v2/quizzes/${quiz.id}`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` })
+      .send({
+        answers: correctAnswers,
+      });
+
+    chai.expect(postResponse.status).to.be.equal(403);
+    chai.expect(postResponse.body).to.be.an('object');
+    chai.expect(postResponse.body.success).to.be.equal(false);
+    chai.expect(postResponse.body.error).to.be.a('string');
+    chai
+      .expect(postResponse.body.error)
+      .to.be.equal('Can not participate in a quiz more than once.');
+    chai
+      .expect(postResponse.body.score)
+      .to.be.equal(quiz.score.filter((s) => s.userId === userData.id)[0].score);
+  });
+});
