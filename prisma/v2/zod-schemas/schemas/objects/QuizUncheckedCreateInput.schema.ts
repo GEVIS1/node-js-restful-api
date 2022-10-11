@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { DifficultySchema } from '../enums/Difficulty.schema';
 import { QuestionUncheckedCreateNestedManyWithoutQuizzesInputObjectSchema } from './QuestionUncheckedCreateNestedManyWithoutQuizzesInput.schema';
 import { ScoreUncheckedCreateNestedManyWithoutQuizInputObjectSchema } from './ScoreUncheckedCreateNestedManyWithoutQuizInput.schema';
+import { RatingUncheckedCreateNestedManyWithoutQuizInputObjectSchema } from './RatingUncheckedCreateNestedManyWithoutQuizInput.schema';
 
 import type { Prisma } from '@prisma/client';
 
@@ -21,6 +22,9 @@ const Schema: z.ZodType<Prisma.QuizUncheckedCreateInput> = z
     userId: z.number().optional().nullable(),
     Score: z
       .lazy(() => ScoreUncheckedCreateNestedManyWithoutQuizInputObjectSchema)
+      .optional(),
+    Rating: z
+      .lazy(() => RatingUncheckedCreateNestedManyWithoutQuizInputObjectSchema)
       .optional(),
   })
   .strict();

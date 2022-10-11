@@ -6,6 +6,7 @@ import { EnumDifficultyFieldUpdateOperationsInputObjectSchema } from './EnumDiff
 import { IntFieldUpdateOperationsInputObjectSchema } from './IntFieldUpdateOperationsInput.schema';
 import { QuestionUpdateManyWithoutQuizzesNestedInputObjectSchema } from './QuestionUpdateManyWithoutQuizzesNestedInput.schema';
 import { ScoreUpdateManyWithoutQuizNestedInputObjectSchema } from './ScoreUpdateManyWithoutQuizNestedInput.schema';
+import { RatingUpdateManyWithoutQuizNestedInputObjectSchema } from './RatingUpdateManyWithoutQuizNestedInput.schema';
 
 import type { Prisma } from '@prisma/client';
 
@@ -46,6 +47,9 @@ const Schema: z.ZodType<Prisma.QuizUpdateWithoutWinnerInput> = z
       .optional(),
     Score: z
       .lazy(() => ScoreUpdateManyWithoutQuizNestedInputObjectSchema)
+      .optional(),
+    Rating: z
+      .lazy(() => RatingUpdateManyWithoutQuizNestedInputObjectSchema)
       .optional(),
   })
   .strict();

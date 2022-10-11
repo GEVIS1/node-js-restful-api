@@ -9,6 +9,7 @@ import { UserRelationFilterObjectSchema } from './UserRelationFilter.schema';
 import { UserWhereInputObjectSchema } from './UserWhereInput.schema';
 import { IntNullableFilterObjectSchema } from './IntNullableFilter.schema';
 import { ScoreListRelationFilterObjectSchema } from './ScoreListRelationFilter.schema';
+import { RatingListRelationFilterObjectSchema } from './RatingListRelationFilter.schema';
 
 import type { Prisma } from '@prisma/client';
 
@@ -62,6 +63,7 @@ const Schema: z.ZodType<Prisma.QuizWhereInput> = z
       .optional()
       .nullable(),
     Score: z.lazy(() => ScoreListRelationFilterObjectSchema).optional(),
+    Rating: z.lazy(() => RatingListRelationFilterObjectSchema).optional(),
   })
   .strict();
 

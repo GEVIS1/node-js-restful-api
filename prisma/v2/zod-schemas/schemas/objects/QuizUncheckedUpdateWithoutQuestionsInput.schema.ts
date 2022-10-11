@@ -6,6 +6,7 @@ import { DifficultySchema } from '../enums/Difficulty.schema';
 import { EnumDifficultyFieldUpdateOperationsInputObjectSchema } from './EnumDifficultyFieldUpdateOperationsInput.schema';
 import { NullableIntFieldUpdateOperationsInputObjectSchema } from './NullableIntFieldUpdateOperationsInput.schema';
 import { ScoreUncheckedUpdateManyWithoutQuizNestedInputObjectSchema } from './ScoreUncheckedUpdateManyWithoutQuizNestedInput.schema';
+import { RatingUncheckedUpdateManyWithoutQuizNestedInputObjectSchema } from './RatingUncheckedUpdateManyWithoutQuizNestedInput.schema';
 
 import type { Prisma } from '@prisma/client';
 
@@ -56,6 +57,9 @@ const Schema: z.ZodType<Prisma.QuizUncheckedUpdateWithoutQuestionsInput> = z
       .nullable(),
     Score: z
       .lazy(() => ScoreUncheckedUpdateManyWithoutQuizNestedInputObjectSchema)
+      .optional(),
+    Rating: z
+      .lazy(() => RatingUncheckedUpdateManyWithoutQuizNestedInputObjectSchema)
       .optional(),
   })
   .strict();

@@ -3,6 +3,7 @@ import { DifficultySchema } from '../enums/Difficulty.schema';
 import { QuestionCreateNestedManyWithoutQuizzesInputObjectSchema } from './QuestionCreateNestedManyWithoutQuizzesInput.schema';
 import { UserCreateNestedOneWithoutQuizzesInputObjectSchema } from './UserCreateNestedOneWithoutQuizzesInput.schema';
 import { ScoreCreateNestedManyWithoutQuizInputObjectSchema } from './ScoreCreateNestedManyWithoutQuizInput.schema';
+import { RatingCreateNestedManyWithoutQuizInputObjectSchema } from './RatingCreateNestedManyWithoutQuizInput.schema';
 
 import type { Prisma } from '@prisma/client';
 
@@ -21,6 +22,9 @@ const Schema: z.ZodType<Prisma.QuizCreateInput> = z
       .optional(),
     Score: z
       .lazy(() => ScoreCreateNestedManyWithoutQuizInputObjectSchema)
+      .optional(),
+    Rating: z
+      .lazy(() => RatingCreateNestedManyWithoutQuizInputObjectSchema)
       .optional(),
   })
   .strict();

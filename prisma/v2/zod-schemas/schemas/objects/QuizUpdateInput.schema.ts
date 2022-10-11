@@ -7,6 +7,7 @@ import { IntFieldUpdateOperationsInputObjectSchema } from './IntFieldUpdateOpera
 import { QuestionUpdateManyWithoutQuizzesNestedInputObjectSchema } from './QuestionUpdateManyWithoutQuizzesNestedInput.schema';
 import { UserUpdateOneWithoutQuizzesNestedInputObjectSchema } from './UserUpdateOneWithoutQuizzesNestedInput.schema';
 import { ScoreUpdateManyWithoutQuizNestedInputObjectSchema } from './ScoreUpdateManyWithoutQuizNestedInput.schema';
+import { RatingUpdateManyWithoutQuizNestedInputObjectSchema } from './RatingUpdateManyWithoutQuizNestedInput.schema';
 
 import type { Prisma } from '@prisma/client';
 
@@ -50,6 +51,9 @@ const Schema: z.ZodType<Prisma.QuizUpdateInput> = z
       .optional(),
     Score: z
       .lazy(() => ScoreUpdateManyWithoutQuizNestedInputObjectSchema)
+      .optional(),
+    Rating: z
+      .lazy(() => RatingUpdateManyWithoutQuizNestedInputObjectSchema)
       .optional(),
   })
   .strict();

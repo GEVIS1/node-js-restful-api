@@ -21,8 +21,10 @@ const Schema: z.ZodType<Prisma.RatingScalarWhereInput> = z
         z.lazy(() => RatingScalarWhereInputObjectSchema).array(),
       ])
       .optional(),
-    id: z.union([z.lazy(() => IntFilterObjectSchema), z.number()]).optional(),
     userId: z
+      .union([z.lazy(() => IntFilterObjectSchema), z.number()])
+      .optional(),
+    quizId: z
       .union([z.lazy(() => IntFilterObjectSchema), z.number()])
       .optional(),
     rating: z

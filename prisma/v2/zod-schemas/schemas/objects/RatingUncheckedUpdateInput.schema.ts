@@ -5,13 +5,13 @@ import type { Prisma } from '@prisma/client';
 
 const Schema: z.ZodType<Prisma.RatingUncheckedUpdateInput> = z
   .object({
-    id: z
+    userId: z
       .union([
         z.number(),
         z.lazy(() => IntFieldUpdateOperationsInputObjectSchema),
       ])
       .optional(),
-    userId: z
+    quizId: z
       .union([
         z.number(),
         z.lazy(() => IntFieldUpdateOperationsInputObjectSchema),
