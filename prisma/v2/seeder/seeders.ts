@@ -161,13 +161,13 @@ const seedQuestions = async (
       iterations++;
     } while (questions.size < QUESTIONS && iterations < MAX_REQUEST);
 
-    if (consoleLog) console.log();
-
-    if (iterations >= MAX_REQUEST) {
-      process.stdout.write('Hit max iterations. ');
-    }
-
     if (consoleLog) {
+      console.log();
+
+      if (iterations >= MAX_REQUEST) {
+        process.stdout.write('Hit max iterations. ');
+      }
+
       console.log(`Fetched ${questions.size} questions.`);
     }
 
