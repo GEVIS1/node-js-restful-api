@@ -399,7 +399,7 @@ const participateInQuiz = async (req: AuthorizedRequest, res: Response) => {
     const incorrectAnswers =
       answers.length < 10
         ? 'Please answer all 10 questions.'
-        : answers.length < 10
+        : answers.length > 10
         ? 'More answers were given than there were questions to answer.'
         : undefined;
 
