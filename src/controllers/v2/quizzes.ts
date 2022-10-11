@@ -338,6 +338,12 @@ const participateInQuiz = async (req: AuthorizedRequest, res: Response) => {
         StatusCodes.BAD_REQUEST
       );
 
+    if (user.role !== 'BASIC_USER')
+      throw new RequestError(
+        'Only BASIC_USERs can participate in quizzes. No cheating!',
+        StatusCodes.FORBIDDEN
+      );
+
     const { id: quizId } = req.params;
 
     const quiz = await prisma?.quiz.findFirst({
