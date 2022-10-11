@@ -460,17 +460,17 @@ const participateInQuiz = async (req: AuthorizedRequest, res: Response) => {
   } catch (err) {
     if (err instanceof RequestError) {
       return res.status(err.statusCode).json({
-        sucess: false,
+        success: false,
         error: err.message,
       });
     } else if (err instanceof Error) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-        sucess: false,
+        success: false,
         error: { ...err },
       });
     } else {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-        sucess: false,
+        success: false,
         error: err,
       });
     }
