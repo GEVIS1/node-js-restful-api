@@ -355,7 +355,18 @@ const participateInQuiz = async (req: AuthorizedRequest, res: Response) => {
         StatusCodes.BAD_REQUEST
       );
 
-    // TODO: Check if quiz is still participatable
+    const now = new Date();
+
+    if (+now > +quiz.endDate)
+      throw new RequestError(
+        `Can not participate in past quizzes.\nThis quiz ended on ${quiz.endDate}`,
+        StatusCodes.FORBIDDEN
+      );
+    if (+now < +quiz.startDate)
+      throw new RequestError(
+        `Can not participate in future quizzes.\nThis quiz opens on ${quiz.startDate}`,
+        StatusCodes.FORBIDDEN
+      );
 
     // TODO: Check if user has already participated
 
