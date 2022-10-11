@@ -352,6 +352,7 @@ const participateInQuiz = async (req: AuthorizedRequest, res: Response) => {
       },
       include: {
         questions: true,
+        score: true,
       },
     });
 
@@ -374,7 +375,15 @@ const participateInQuiz = async (req: AuthorizedRequest, res: Response) => {
         StatusCodes.FORBIDDEN
       );
 
-    // TODO: Check if user has already participated
+    const previousAttempts = quiz.score.filter((s) => s.userId === user.id);
+
+    if (previousAttempts.length > 0) {
+      return res.status(StatusCodes.FORBIDDEN).json({
+        success: false,
+        message: 'Can not participate in a quiz more than once.',
+        score: previousAttempts[0].score,
+      });
+    }
 
     const { answers } = req.body;
 
