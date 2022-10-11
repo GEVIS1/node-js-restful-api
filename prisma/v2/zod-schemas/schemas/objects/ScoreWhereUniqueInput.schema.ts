@@ -1,10 +1,13 @@
 import { z } from 'zod';
+import { ScoreUserIdQuizIdCompoundUniqueInputObjectSchema } from './ScoreUserIdQuizIdCompoundUniqueInput.schema';
 
 import type { Prisma } from '@prisma/client';
 
 const Schema: z.ZodType<Prisma.ScoreWhereUniqueInput> = z
   .object({
-    id: z.number().optional(),
+    userId_quizId: z
+      .lazy(() => ScoreUserIdQuizIdCompoundUniqueInputObjectSchema)
+      .optional(),
   })
   .strict();
 

@@ -62,7 +62,7 @@ model Question {
   categoryId       Int?
   type             QuestionType
   difficulty       Difficulty
-  question         String       @unique     @db.VarChar(200)
+  question         String       @unique @db.VarChar(200)
   correctAnswer    String
   incorrectAnswers String[]
   quizzes          Quiz[]
@@ -83,13 +83,17 @@ model Quiz {
   questions         Question[]
   winner            User?      @relation(fields: [userId], references: [id])
   userId            Int?
+  Score             Score[]
 }
 
 model Score {
-  id     Int  @id @default(autoincrement())
-  user   User @relation(fields: [userId], references: [id])
   userId Int
+  User   User @relation(fields: [userId], references: [id])
+  quizId Int
+  quiz   Quiz @relation(fields: [quizId], references: [id])
   score  Int  @db.SmallInt
+
+  @@id([userId, quizId])
 }
 
 model Rating {

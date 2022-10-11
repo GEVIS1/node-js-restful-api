@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { SortOrderSchema } from '../enums/SortOrder.schema';
 import { QuestionOrderByRelationAggregateInputObjectSchema } from './QuestionOrderByRelationAggregateInput.schema';
 import { UserOrderByWithRelationInputObjectSchema } from './UserOrderByWithRelationInput.schema';
+import { ScoreOrderByRelationAggregateInputObjectSchema } from './ScoreOrderByRelationAggregateInput.schema';
 
 import type { Prisma } from '@prisma/client';
 
@@ -18,6 +19,9 @@ const Schema: z.ZodType<Prisma.QuizOrderByWithRelationInput> = z
       .optional(),
     winner: z.lazy(() => UserOrderByWithRelationInputObjectSchema).optional(),
     userId: z.lazy(() => SortOrderSchema).optional(),
+    Score: z
+      .lazy(() => ScoreOrderByRelationAggregateInputObjectSchema)
+      .optional(),
   })
   .strict();
 
