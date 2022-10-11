@@ -380,7 +380,7 @@ const participateInQuiz = async (req: AuthorizedRequest, res: Response) => {
     if (previousAttempts.length > 0) {
       return res.status(StatusCodes.FORBIDDEN).json({
         success: false,
-        message: 'Can not participate in a quiz more than once.',
+        error: 'Can not participate in a quiz more than once.',
         score: previousAttempts[0].score,
       });
     }
