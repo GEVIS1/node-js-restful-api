@@ -30,6 +30,8 @@ Typescript Error: Property “user” does not exist on type “Request.” (201
 
 Robinson, S. (2021, July 16). Encoding and Decoding Base64 Strings in Node.js. Stack Abuse. Retrieved October 5, 2022, from https://stackabuse.com/encoding-and-decoding-base64-strings-in-node-js/
 
+Au-Yeung, J. (2022, September 2). How to extending error class with TypeScript? The Web Dev. Retrieved October 11, 2022, from https://thewebdev.info/2022/05/12/how-to-extending-error-class-with-typescript/
+
 ## TODO:
 ### User:
 You will have three types of users:
