@@ -21,6 +21,9 @@ const Schema: z.ZodType<Prisma.ScoreScalarWhereWithAggregatesInput> = z
         z.lazy(() => ScoreScalarWhereWithAggregatesInputObjectSchema).array(),
       ])
       .optional(),
+    id: z
+      .union([z.lazy(() => IntWithAggregatesFilterObjectSchema), z.number()])
+      .optional(),
     userId: z
       .union([z.lazy(() => IntWithAggregatesFilterObjectSchema), z.number()])
       .optional(),

@@ -5,7 +5,7 @@ import { RatingCreateNestedManyWithoutUserInputObjectSchema } from './RatingCrea
 
 import type { Prisma } from '@prisma/client';
 
-const Schema: z.ZodType<Prisma.UserCreateWithoutQuizzesInput> = z
+const Schema: z.ZodType<Prisma.UserCreateWithoutQuizInput> = z
   .object({
     firstname: z.string(),
     lastname: z.string(),
@@ -15,13 +15,13 @@ const Schema: z.ZodType<Prisma.UserCreateWithoutQuizzesInput> = z
     avatar: z.string(),
     role: z.lazy(() => RoleSchema).optional(),
     createdAt: z.date().optional(),
-    scores: z
+    score: z
       .lazy(() => ScoreCreateNestedManyWithoutUserInputObjectSchema)
       .optional(),
-    ratings: z
+    rating: z
       .lazy(() => RatingCreateNestedManyWithoutUserInputObjectSchema)
       .optional(),
   })
   .strict();
 
-export const UserCreateWithoutQuizzesInputObjectSchema = Schema;
+export const UserCreateWithoutQuizInputObjectSchema = Schema;

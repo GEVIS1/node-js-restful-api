@@ -4,6 +4,7 @@ import { StringFieldUpdateOperationsInputObjectSchema } from './StringFieldUpdat
 import { DateTimeFieldUpdateOperationsInputObjectSchema } from './DateTimeFieldUpdateOperationsInput.schema';
 import { DifficultySchema } from '../enums/Difficulty.schema';
 import { EnumDifficultyFieldUpdateOperationsInputObjectSchema } from './EnumDifficultyFieldUpdateOperationsInput.schema';
+import { NullableIntFieldUpdateOperationsInputObjectSchema } from './NullableIntFieldUpdateOperationsInput.schema';
 
 import type { Prisma } from '@prisma/client';
 
@@ -45,6 +46,13 @@ const Schema: z.ZodType<Prisma.QuizUncheckedUpdateManyWithoutQuizzesInput> = z
         z.lazy(() => IntFieldUpdateOperationsInputObjectSchema),
       ])
       .optional(),
+    userId: z
+      .union([
+        z.number(),
+        z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema),
+      ])
+      .optional()
+      .nullable(),
   })
   .strict();
 

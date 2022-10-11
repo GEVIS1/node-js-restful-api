@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { SortOrderSchema } from '../enums/SortOrder.schema';
-import { ScoreOrderByRelationAggregateInputObjectSchema } from './ScoreOrderByRelationAggregateInput.schema';
 import { QuizOrderByRelationAggregateInputObjectSchema } from './QuizOrderByRelationAggregateInput.schema';
+import { ScoreOrderByRelationAggregateInputObjectSchema } from './ScoreOrderByRelationAggregateInput.schema';
 import { RatingOrderByRelationAggregateInputObjectSchema } from './RatingOrderByRelationAggregateInput.schema';
 
 import type { Prisma } from '@prisma/client';
@@ -17,13 +17,13 @@ const Schema: z.ZodType<Prisma.UserOrderByWithRelationInput> = z
     avatar: z.lazy(() => SortOrderSchema).optional(),
     role: z.lazy(() => SortOrderSchema).optional(),
     createdAt: z.lazy(() => SortOrderSchema).optional(),
-    scores: z
-      .lazy(() => ScoreOrderByRelationAggregateInputObjectSchema)
-      .optional(),
-    quizzes: z
+    quiz: z
       .lazy(() => QuizOrderByRelationAggregateInputObjectSchema)
       .optional(),
-    ratings: z
+    score: z
+      .lazy(() => ScoreOrderByRelationAggregateInputObjectSchema)
+      .optional(),
+    rating: z
       .lazy(() => RatingOrderByRelationAggregateInputObjectSchema)
       .optional(),
   })

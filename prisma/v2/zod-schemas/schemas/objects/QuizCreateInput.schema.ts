@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { DifficultySchema } from '../enums/Difficulty.schema';
 import { QuestionCreateNestedManyWithoutQuizzesInputObjectSchema } from './QuestionCreateNestedManyWithoutQuizzesInput.schema';
-import { UserCreateNestedOneWithoutQuizzesInputObjectSchema } from './UserCreateNestedOneWithoutQuizzesInput.schema';
+import { UserCreateNestedOneWithoutQuizInputObjectSchema } from './UserCreateNestedOneWithoutQuizInput.schema';
 import { ScoreCreateNestedManyWithoutQuizInputObjectSchema } from './ScoreCreateNestedManyWithoutQuizInput.schema';
 import { RatingCreateNestedManyWithoutQuizInputObjectSchema } from './RatingCreateNestedManyWithoutQuizInput.schema';
 
@@ -18,7 +18,7 @@ const Schema: z.ZodType<Prisma.QuizCreateInput> = z
       .lazy(() => QuestionCreateNestedManyWithoutQuizzesInputObjectSchema)
       .optional(),
     winner: z
-      .lazy(() => UserCreateNestedOneWithoutQuizzesInputObjectSchema)
+      .lazy(() => UserCreateNestedOneWithoutQuizInputObjectSchema)
       .optional(),
     score: z
       .lazy(() => ScoreCreateNestedManyWithoutQuizInputObjectSchema)

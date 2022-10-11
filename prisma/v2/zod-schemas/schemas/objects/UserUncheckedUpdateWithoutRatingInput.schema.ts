@@ -5,11 +5,11 @@ import { RoleSchema } from '../enums/Role.schema';
 import { EnumRoleFieldUpdateOperationsInputObjectSchema } from './EnumRoleFieldUpdateOperationsInput.schema';
 import { DateTimeFieldUpdateOperationsInputObjectSchema } from './DateTimeFieldUpdateOperationsInput.schema';
 import { QuizUncheckedUpdateManyWithoutWinnerNestedInputObjectSchema } from './QuizUncheckedUpdateManyWithoutWinnerNestedInput.schema';
-import { RatingUncheckedUpdateManyWithoutUserNestedInputObjectSchema } from './RatingUncheckedUpdateManyWithoutUserNestedInput.schema';
+import { ScoreUncheckedUpdateManyWithoutUserNestedInputObjectSchema } from './ScoreUncheckedUpdateManyWithoutUserNestedInput.schema';
 
 import type { Prisma } from '@prisma/client';
 
-const Schema: z.ZodType<Prisma.UserUncheckedUpdateWithoutScoresInput> = z
+const Schema: z.ZodType<Prisma.UserUncheckedUpdateWithoutRatingInput> = z
   .object({
     id: z
       .union([
@@ -65,13 +65,13 @@ const Schema: z.ZodType<Prisma.UserUncheckedUpdateWithoutScoresInput> = z
         z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema),
       ])
       .optional(),
-    quizzes: z
+    quiz: z
       .lazy(() => QuizUncheckedUpdateManyWithoutWinnerNestedInputObjectSchema)
       .optional(),
-    ratings: z
-      .lazy(() => RatingUncheckedUpdateManyWithoutUserNestedInputObjectSchema)
+    score: z
+      .lazy(() => ScoreUncheckedUpdateManyWithoutUserNestedInputObjectSchema)
       .optional(),
   })
   .strict();
 
-export const UserUncheckedUpdateWithoutScoresInputObjectSchema = Schema;
+export const UserUncheckedUpdateWithoutRatingInputObjectSchema = Schema;

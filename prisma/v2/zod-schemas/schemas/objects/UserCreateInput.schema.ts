@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { RoleSchema } from '../enums/Role.schema';
-import { ScoreCreateNestedManyWithoutUserInputObjectSchema } from './ScoreCreateNestedManyWithoutUserInput.schema';
 import { QuizCreateNestedManyWithoutWinnerInputObjectSchema } from './QuizCreateNestedManyWithoutWinnerInput.schema';
+import { ScoreCreateNestedManyWithoutUserInputObjectSchema } from './ScoreCreateNestedManyWithoutUserInput.schema';
 import { RatingCreateNestedManyWithoutUserInputObjectSchema } from './RatingCreateNestedManyWithoutUserInput.schema';
 
 import type { Prisma } from '@prisma/client';
@@ -16,13 +16,13 @@ const Schema: z.ZodType<Prisma.UserCreateInput> = z
     avatar: z.string(),
     role: z.lazy(() => RoleSchema).optional(),
     createdAt: z.date().optional(),
-    scores: z
-      .lazy(() => ScoreCreateNestedManyWithoutUserInputObjectSchema)
-      .optional(),
-    quizzes: z
+    quiz: z
       .lazy(() => QuizCreateNestedManyWithoutWinnerInputObjectSchema)
       .optional(),
-    ratings: z
+    score: z
+      .lazy(() => ScoreCreateNestedManyWithoutUserInputObjectSchema)
+      .optional(),
+    rating: z
       .lazy(() => RatingCreateNestedManyWithoutUserInputObjectSchema)
       .optional(),
   })

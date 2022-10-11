@@ -4,7 +4,7 @@ import { DateTimeFieldUpdateOperationsInputObjectSchema } from './DateTimeFieldU
 import { DifficultySchema } from '../enums/Difficulty.schema';
 import { EnumDifficultyFieldUpdateOperationsInputObjectSchema } from './EnumDifficultyFieldUpdateOperationsInput.schema';
 import { IntFieldUpdateOperationsInputObjectSchema } from './IntFieldUpdateOperationsInput.schema';
-import { UserUpdateOneWithoutQuizzesNestedInputObjectSchema } from './UserUpdateOneWithoutQuizzesNestedInput.schema';
+import { UserUpdateOneWithoutQuizNestedInputObjectSchema } from './UserUpdateOneWithoutQuizNestedInput.schema';
 import { ScoreUpdateManyWithoutQuizNestedInputObjectSchema } from './ScoreUpdateManyWithoutQuizNestedInput.schema';
 import { RatingUpdateManyWithoutQuizNestedInputObjectSchema } from './RatingUpdateManyWithoutQuizNestedInput.schema';
 
@@ -43,7 +43,7 @@ const Schema: z.ZodType<Prisma.QuizUpdateWithoutQuestionsInput> = z
       ])
       .optional(),
     winner: z
-      .lazy(() => UserUpdateOneWithoutQuizzesNestedInputObjectSchema)
+      .lazy(() => UserUpdateOneWithoutQuizNestedInputObjectSchema)
       .optional(),
     score: z
       .lazy(() => ScoreUpdateManyWithoutQuizNestedInputObjectSchema)

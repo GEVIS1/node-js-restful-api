@@ -5,6 +5,12 @@ import type { Prisma } from '@prisma/client';
 
 const Schema: z.ZodType<Prisma.RatingUncheckedUpdateWithoutQuizInput> = z
   .object({
+    id: z
+      .union([
+        z.number(),
+        z.lazy(() => IntFieldUpdateOperationsInputObjectSchema),
+      ])
+      .optional(),
     userId: z
       .union([
         z.number(),

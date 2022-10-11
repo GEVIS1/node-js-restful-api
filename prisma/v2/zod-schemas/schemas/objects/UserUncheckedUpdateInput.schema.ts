@@ -4,8 +4,8 @@ import { StringFieldUpdateOperationsInputObjectSchema } from './StringFieldUpdat
 import { RoleSchema } from '../enums/Role.schema';
 import { EnumRoleFieldUpdateOperationsInputObjectSchema } from './EnumRoleFieldUpdateOperationsInput.schema';
 import { DateTimeFieldUpdateOperationsInputObjectSchema } from './DateTimeFieldUpdateOperationsInput.schema';
-import { ScoreUncheckedUpdateManyWithoutUserNestedInputObjectSchema } from './ScoreUncheckedUpdateManyWithoutUserNestedInput.schema';
 import { QuizUncheckedUpdateManyWithoutWinnerNestedInputObjectSchema } from './QuizUncheckedUpdateManyWithoutWinnerNestedInput.schema';
+import { ScoreUncheckedUpdateManyWithoutUserNestedInputObjectSchema } from './ScoreUncheckedUpdateManyWithoutUserNestedInput.schema';
 import { RatingUncheckedUpdateManyWithoutUserNestedInputObjectSchema } from './RatingUncheckedUpdateManyWithoutUserNestedInput.schema';
 
 import type { Prisma } from '@prisma/client';
@@ -66,13 +66,13 @@ const Schema: z.ZodType<Prisma.UserUncheckedUpdateInput> = z
         z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema),
       ])
       .optional(),
-    scores: z
-      .lazy(() => ScoreUncheckedUpdateManyWithoutUserNestedInputObjectSchema)
-      .optional(),
-    quizzes: z
+    quiz: z
       .lazy(() => QuizUncheckedUpdateManyWithoutWinnerNestedInputObjectSchema)
       .optional(),
-    ratings: z
+    score: z
+      .lazy(() => ScoreUncheckedUpdateManyWithoutUserNestedInputObjectSchema)
+      .optional(),
+    rating: z
       .lazy(() => RatingUncheckedUpdateManyWithoutUserNestedInputObjectSchema)
       .optional(),
   })

@@ -4,11 +4,11 @@ import { RoleSchema } from '../enums/Role.schema';
 import { EnumRoleFieldUpdateOperationsInputObjectSchema } from './EnumRoleFieldUpdateOperationsInput.schema';
 import { DateTimeFieldUpdateOperationsInputObjectSchema } from './DateTimeFieldUpdateOperationsInput.schema';
 import { ScoreUpdateManyWithoutUserNestedInputObjectSchema } from './ScoreUpdateManyWithoutUserNestedInput.schema';
-import { QuizUpdateManyWithoutWinnerNestedInputObjectSchema } from './QuizUpdateManyWithoutWinnerNestedInput.schema';
+import { RatingUpdateManyWithoutUserNestedInputObjectSchema } from './RatingUpdateManyWithoutUserNestedInput.schema';
 
 import type { Prisma } from '@prisma/client';
 
-const Schema: z.ZodType<Prisma.UserUpdateWithoutRatingsInput> = z
+const Schema: z.ZodType<Prisma.UserUpdateWithoutQuizInput> = z
   .object({
     firstname: z
       .union([
@@ -58,13 +58,13 @@ const Schema: z.ZodType<Prisma.UserUpdateWithoutRatingsInput> = z
         z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema),
       ])
       .optional(),
-    scores: z
+    score: z
       .lazy(() => ScoreUpdateManyWithoutUserNestedInputObjectSchema)
       .optional(),
-    quizzes: z
-      .lazy(() => QuizUpdateManyWithoutWinnerNestedInputObjectSchema)
+    rating: z
+      .lazy(() => RatingUpdateManyWithoutUserNestedInputObjectSchema)
       .optional(),
   })
   .strict();
 
-export const UserUpdateWithoutRatingsInputObjectSchema = Schema;
+export const UserUpdateWithoutQuizInputObjectSchema = Schema;

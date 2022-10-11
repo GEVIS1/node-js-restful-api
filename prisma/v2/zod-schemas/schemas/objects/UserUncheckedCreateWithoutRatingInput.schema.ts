@@ -1,11 +1,11 @@
 import { z } from 'zod';
 import { RoleSchema } from '../enums/Role.schema';
+import { QuizUncheckedCreateNestedManyWithoutWinnerInputObjectSchema } from './QuizUncheckedCreateNestedManyWithoutWinnerInput.schema';
 import { ScoreUncheckedCreateNestedManyWithoutUserInputObjectSchema } from './ScoreUncheckedCreateNestedManyWithoutUserInput.schema';
-import { RatingUncheckedCreateNestedManyWithoutUserInputObjectSchema } from './RatingUncheckedCreateNestedManyWithoutUserInput.schema';
 
 import type { Prisma } from '@prisma/client';
 
-const Schema: z.ZodType<Prisma.UserUncheckedCreateWithoutQuizzesInput> = z
+const Schema: z.ZodType<Prisma.UserUncheckedCreateWithoutRatingInput> = z
   .object({
     id: z.number().optional(),
     firstname: z.string(),
@@ -16,13 +16,13 @@ const Schema: z.ZodType<Prisma.UserUncheckedCreateWithoutQuizzesInput> = z
     avatar: z.string(),
     role: z.lazy(() => RoleSchema).optional(),
     createdAt: z.date().optional(),
-    scores: z
-      .lazy(() => ScoreUncheckedCreateNestedManyWithoutUserInputObjectSchema)
+    quiz: z
+      .lazy(() => QuizUncheckedCreateNestedManyWithoutWinnerInputObjectSchema)
       .optional(),
-    ratings: z
-      .lazy(() => RatingUncheckedCreateNestedManyWithoutUserInputObjectSchema)
+    score: z
+      .lazy(() => ScoreUncheckedCreateNestedManyWithoutUserInputObjectSchema)
       .optional(),
   })
   .strict();
 
-export const UserUncheckedCreateWithoutQuizzesInputObjectSchema = Schema;
+export const UserUncheckedCreateWithoutRatingInputObjectSchema = Schema;

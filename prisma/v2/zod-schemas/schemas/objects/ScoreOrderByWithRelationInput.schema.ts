@@ -7,6 +7,7 @@ import type { Prisma } from '@prisma/client';
 
 const Schema: z.ZodType<Prisma.ScoreOrderByWithRelationInput> = z
   .object({
+    id: z.lazy(() => SortOrderSchema).optional(),
     userId: z.lazy(() => SortOrderSchema).optional(),
     user: z.lazy(() => UserOrderByWithRelationInputObjectSchema).optional(),
     quizId: z.lazy(() => SortOrderSchema).optional(),

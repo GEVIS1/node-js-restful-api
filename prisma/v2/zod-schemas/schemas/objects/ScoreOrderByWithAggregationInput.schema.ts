@@ -10,6 +10,7 @@ import type { Prisma } from '@prisma/client';
 
 const Schema: z.ZodType<Prisma.ScoreOrderByWithAggregationInput> = z
   .object({
+    id: z.lazy(() => SortOrderSchema).optional(),
     userId: z.lazy(() => SortOrderSchema).optional(),
     quizId: z.lazy(() => SortOrderSchema).optional(),
     score: z.lazy(() => SortOrderSchema).optional(),

@@ -1,22 +1,15 @@
 import { z } from 'zod';
-import { IntFieldUpdateOperationsInputObjectSchema } from './IntFieldUpdateOperationsInput.schema';
 import { StringFieldUpdateOperationsInputObjectSchema } from './StringFieldUpdateOperationsInput.schema';
 import { RoleSchema } from '../enums/Role.schema';
 import { EnumRoleFieldUpdateOperationsInputObjectSchema } from './EnumRoleFieldUpdateOperationsInput.schema';
 import { DateTimeFieldUpdateOperationsInputObjectSchema } from './DateTimeFieldUpdateOperationsInput.schema';
-import { ScoreUncheckedUpdateManyWithoutUserNestedInputObjectSchema } from './ScoreUncheckedUpdateManyWithoutUserNestedInput.schema';
-import { QuizUncheckedUpdateManyWithoutWinnerNestedInputObjectSchema } from './QuizUncheckedUpdateManyWithoutWinnerNestedInput.schema';
+import { QuizUpdateManyWithoutWinnerNestedInputObjectSchema } from './QuizUpdateManyWithoutWinnerNestedInput.schema';
+import { ScoreUpdateManyWithoutUserNestedInputObjectSchema } from './ScoreUpdateManyWithoutUserNestedInput.schema';
 
 import type { Prisma } from '@prisma/client';
 
-const Schema: z.ZodType<Prisma.UserUncheckedUpdateWithoutRatingsInput> = z
+const Schema: z.ZodType<Prisma.UserUpdateWithoutRatingInput> = z
   .object({
-    id: z
-      .union([
-        z.number(),
-        z.lazy(() => IntFieldUpdateOperationsInputObjectSchema),
-      ])
-      .optional(),
     firstname: z
       .union([
         z.string(),
@@ -65,13 +58,13 @@ const Schema: z.ZodType<Prisma.UserUncheckedUpdateWithoutRatingsInput> = z
         z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema),
       ])
       .optional(),
-    scores: z
-      .lazy(() => ScoreUncheckedUpdateManyWithoutUserNestedInputObjectSchema)
+    quiz: z
+      .lazy(() => QuizUpdateManyWithoutWinnerNestedInputObjectSchema)
       .optional(),
-    quizzes: z
-      .lazy(() => QuizUncheckedUpdateManyWithoutWinnerNestedInputObjectSchema)
+    score: z
+      .lazy(() => ScoreUpdateManyWithoutUserNestedInputObjectSchema)
       .optional(),
   })
   .strict();
 
-export const UserUncheckedUpdateWithoutRatingsInputObjectSchema = Schema;
+export const UserUpdateWithoutRatingInputObjectSchema = Schema;

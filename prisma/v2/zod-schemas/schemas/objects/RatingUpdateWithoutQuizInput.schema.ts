@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { UserUpdateOneRequiredWithoutRatingsNestedInputObjectSchema } from './UserUpdateOneRequiredWithoutRatingsNestedInput.schema';
+import { UserUpdateOneRequiredWithoutRatingNestedInputObjectSchema } from './UserUpdateOneRequiredWithoutRatingNestedInput.schema';
 import { IntFieldUpdateOperationsInputObjectSchema } from './IntFieldUpdateOperationsInput.schema';
 
 import type { Prisma } from '@prisma/client';
@@ -7,7 +7,7 @@ import type { Prisma } from '@prisma/client';
 const Schema: z.ZodType<Prisma.RatingUpdateWithoutQuizInput> = z
   .object({
     user: z
-      .lazy(() => UserUpdateOneRequiredWithoutRatingsNestedInputObjectSchema)
+      .lazy(() => UserUpdateOneRequiredWithoutRatingNestedInputObjectSchema)
       .optional(),
     rating: z
       .union([
