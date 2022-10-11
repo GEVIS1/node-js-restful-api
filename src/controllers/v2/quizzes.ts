@@ -13,6 +13,7 @@ import {
   QuizCreateOneExtendedRulesSchema,
   QuizQuestionsInputSchema,
 } from '../../validators/v2/quiz';
+import { RequestError } from './misc/RequestError';
 
 interface QuizRequestBody {
   name: string;
@@ -310,4 +311,144 @@ const deleteQuiz = async (req: AuthorizedRequest, res: Response) => {
   }
 };
 
-export { createQuiz, getQuizzes, deleteQuiz };
+interface QuestionResult {
+  id: number;
+  correct: boolean;
+}
+
+/**
+ * Controller function that lets a user participate in a quiz.
+ * @param req Authorized request
+ * @param res Express Response
+ * @returns The result of participating in the quiz.
+ */
+const participateInQuiz = async (req: AuthorizedRequest, res: Response) => {
+  try {
+    const { id: userId } = req.user as JWT;
+
+    const user = await prisma?.user.findFirst({
+      where: {
+        id: Number(userId),
+      },
+    });
+
+    if (!user)
+      throw new RequestError(
+        'Could not find user data.',
+        StatusCodes.BAD_REQUEST
+      );
+
+    const { id: quizId } = req.params;
+
+    const quiz = await prisma?.quiz.findFirst({
+      where: {
+        id: Number(quizId),
+      },
+      include: {
+        questions: true,
+      },
+    });
+
+    if (!quiz)
+      throw new RequestError(
+        `Could not find quiz with id: ${quizId}`,
+        StatusCodes.BAD_REQUEST
+      );
+
+    // TODO: Check if quiz is still participatable
+
+    // TODO: Check if user has already participated
+
+    const { answers } = req.body;
+
+    if (!answers)
+      throw new RequestError(
+        "No 'answers' property in request body.",
+        StatusCodes.BAD_REQUEST
+      );
+
+    if (!(answers instanceof Array))
+      throw new RequestError('Answers not parseable.', StatusCodes.BAD_REQUEST);
+
+    const incorrectAnswers =
+      answers.length < 10
+        ? 'Please answer all 10 questions.'
+        : answers.length < 10
+        ? 'More answers were given than there were questions to answer.'
+        : undefined;
+
+    if (incorrectAnswers !== undefined)
+      throw new RequestError(incorrectAnswers, StatusCodes.BAD_REQUEST);
+
+    const results: QuestionResult[] = [];
+
+    quiz.questions.forEach((question, index) => {
+      results.push({
+        id: question.id,
+        correct: question.correctAnswer === answers[index],
+      });
+    });
+
+    const score = results.reduce((prev, cur) => {
+      if (cur.correct) return prev + 1;
+      return prev;
+    }, 0);
+
+    const quizAfterScoreAdded = await prisma?.quiz.update({
+      where: {
+        id: quiz.id,
+      },
+      data: {
+        score: {
+          create: [
+            {
+              userId: user.id,
+              score,
+            },
+          ],
+        },
+      },
+      include: {
+        score: true,
+      },
+    });
+
+    if (!quizAfterScoreAdded)
+      throw new RequestError(
+        'Could not add score to quiz.',
+        StatusCodes.INTERNAL_SERVER_ERROR
+      );
+
+    const averageScore =
+      quizAfterScoreAdded.score.length > 0
+        ? quizAfterScoreAdded.score.reduce((prev, cur) => prev + cur.score, 0) /
+          quizAfterScoreAdded.score.length
+        : 0;
+
+    return res.status(StatusCodes.OK).json({
+      success: true,
+      message: `${user.username} has successfully participated in ${quiz.name}`,
+      score,
+      averageScore: averageScore.toFixed(2),
+    });
+  } catch (err) {
+    if (err instanceof RequestError) {
+      return res.status(err.statusCode).json({
+        sucess: false,
+        error: err.message,
+      });
+    } else if (err instanceof Error) {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        sucess: false,
+        error: { ...err },
+      });
+    } else {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        sucess: false,
+        error: err,
+      });
+    }
+  }
+};
+
+export { createQuiz, getQuizzes, deleteQuiz, participateInQuiz };
