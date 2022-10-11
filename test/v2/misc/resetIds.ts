@@ -46,7 +46,11 @@ const resetIdIncrementor = async (table: Prisma.ModelName, resetIds = true) => {
   );
 };
 
-const skippedTables: [keyof typeof Prisma.ModelName] = ['Category'];
+const skippedTables: (keyof typeof Prisma.ModelName)[] = [
+  'Category',
+  'Score',
+  'Rating',
+];
 
 export const clearDataAndResetIds = async () => {
   for (const model in Prisma.ModelName) {
