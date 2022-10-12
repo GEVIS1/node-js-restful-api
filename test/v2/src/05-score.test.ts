@@ -1,3 +1,4 @@
+import { Quiz } from '@prisma/client';
 import chai from 'chai';
 
 import { yoda } from '../../../prisma/v2/seeder/users';
@@ -68,5 +69,86 @@ describe('It should get quiz scores', () => {
     chai
       .expect(quizIdAndAvgScoreReality)
       .to.deep.equal(quizIdAndAvgScoreExpected);
+  });
+
+  it('should get winner with quizzes where it is now past the endDate', async () => {
+    // TODO: Rewrite this entire test
+    const { username, firstname, lastname } = yoda;
+
+    const loginResponse = await agent.post('/api/v2/auth/login').send(yoda);
+
+    const getPastQuizzesResponse = await agent
+      .get(`/api/v2/quizzes?status=past`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` });
+
+    const quizzes = getPastQuizzesResponse.body.data;
+
+    const userData = await prisma?.user.findFirst({
+      where: {
+        username,
+      },
+    });
+
+    if (!userData) throw Error('Could not get user data.');
+
+    const include = {
+      score: true,
+      questions: {
+        include: {
+          category: true,
+          quizzes: true,
+        },
+      },
+      winner: true,
+    };
+
+    const randomQuizId = quizzes[Math.floor(Math.random() * quizzes.length)].id;
+
+    await prisma?.quiz.update({
+      where: {
+        id: randomQuizId,
+      },
+      data: {
+        score: {
+          create: {
+            score: 10,
+            user: {
+              connect: {
+                id: userData.id,
+              },
+            },
+          },
+        },
+      },
+      include,
+    });
+
+    const getResponse = await agent
+      .get(`/api/v2/quizzes`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` });
+
+    chai.expect(getResponse.status).to.be.equal(200);
+    chai.expect(getResponse.body).to.be.an('object');
+    chai.expect(getResponse.body.success).to.be.equal(true);
+
+    const updatedQuiz: Quiz[] = getResponse.body.data.filter(
+      (q: Quiz) => q.id === randomQuizId
+    );
+
+    if (updatedQuiz.length !== 1) throw Error('Could not find winning quiz.');
+
+    const winningQuiz = updatedQuiz.pop();
+
+    if (!winningQuiz) throw Error('Could not find winning quiz.');
+
+    chai
+      .expect(winningQuiz)
+      .to.be.an('object')
+      .which.has.property('id')
+      .that.equals(randomQuizId);
+    chai
+      .expect(winningQuiz)
+      .to.have.property('winner')
+      .which.deep.equals({ firstname, lastname });
   });
 });
