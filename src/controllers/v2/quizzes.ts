@@ -242,13 +242,36 @@ const getQuizzes = async (req: AuthorizedRequest, res: Response) => {
 
     const quizzes = await prisma?.quiz.findMany({
       where,
+      include: {
+        questions: true,
+        winner: true,
+        score: true,
+      },
+    });
+
+    if (!quizzes)
+      throw new RequestError(
+        'Could not get quizzes.',
+        StatusCodes.INTERNAL_SERVER_ERROR
+      );
+
+    // Calculate average scores
+    const quizzesWithAvgScore = quizzes.map((q) => {
+      const averageScore =
+        q.score.length > 0
+          ? q.score.reduce((prev, cur) => prev + cur.score, 0) / q.score.length
+          : 0;
+      return {
+        ...q,
+        averageScore,
+      };
     });
 
     // TODO: Iterate quizzes and update winner if there is no winner and the endDate is lt now
 
     return res.status(StatusCodes.OK).json({
       success: true,
-      data: quizzes,
+      data: quizzesWithAvgScore,
     });
   } catch (err) {
     if (err instanceof ZodError) {
