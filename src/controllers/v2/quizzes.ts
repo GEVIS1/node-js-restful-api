@@ -567,4 +567,122 @@ const participateInQuiz = async (req: AuthorizedRequest, res: Response) => {
   }
 };
 
-export { createQuiz, getQuizzes, deleteQuiz, participateInQuiz };
+const rateQuiz = async (req: AuthorizedRequest, res: Response) => {
+  try {
+    const { id: quizIdString } = req.params;
+    const quizId = Number(quizIdString);
+    if (Number.isNaN(quizId))
+      throw new RequestError(
+        'Could not parse quiz id from URL. /:id',
+        StatusCodes.BAD_REQUEST
+      );
+    const { id: userId } = req.user as JWT;
+    if (!userId)
+      throw new RequestError('Could not read userId', StatusCodes.UNAUTHORIZED);
+
+    const user = await prisma?.user.findFirst({
+      where: {
+        id: userId,
+      },
+    });
+
+    if (!user)
+      throw new RequestError(
+        'Could not find user',
+        StatusCodes.INTERNAL_SERVER_ERROR
+      );
+
+    if (user.role !== 'BASIC_USER')
+      throw new RequestError(
+        'Only BASIC_USERs can rate a quiz!',
+        StatusCodes.FORBIDDEN
+      );
+
+    const quiz = await prisma?.quiz.findFirst({
+      where: {
+        id: quizId,
+      },
+      include: {
+        score: true,
+        rating: true,
+      },
+    });
+
+    if (!quiz)
+      throw new RequestError(
+        'Could not find quiz',
+        StatusCodes.INTERNAL_SERVER_ERROR
+      );
+
+    // Check if user has participated in quiz
+    if (quiz.score.filter((s) => s.userId === user.id).length > 0)
+      throw new RequestError(
+        'Can only rate a that you have participated in.',
+        StatusCodes.FORBIDDEN
+      );
+
+    // Check if user has not already rated the quiz
+    const ratings = quiz.rating.filter((r) => r.userId === user.id);
+    if (ratings.length > 0) {
+      return res.status(StatusCodes.FORBIDDEN).json({
+        success: false,
+        rating: ratings[0].rating.toFixed(2),
+      });
+    }
+
+    // Add rating to rating table
+
+    // Calculate average rating
+    const rating = 10,
+      averageRating = 10;
+    // const quizAfterRatingAdded = await prisma?.quiz.update({
+    //   where: {
+    //     id: quiz.id,
+    //   },
+    //   data: {
+    //     rating: {
+    //       create: [
+    //         {
+    //           rating,
+    //           userId: user.id
+    //         }
+    //       ],
+    //     },
+    //   },
+    //   include: {
+    //     rating: true,
+    //   },
+    // });
+    // const averageRating =
+    // quizAfterRatingAdded.rating.length > 0
+    //   ? quizAfterRatingAdded.rating.reduce((prev, cur) => prev + cur.rating, 0) /
+    //     quizAfterRatingAdded.rating.length
+    //   : 0;
+
+    return res.status(StatusCodes.CREATED).json({
+      success: true,
+      message: `${user.username} has successfully rated ${quiz.name}`,
+      rating,
+      averageRating: averageRating.toFixed(2),
+    });
+  } catch (err) {
+    if (err instanceof RequestError) {
+      return res.status(err.statusCode).json({
+        success: false,
+        error: err.message,
+      });
+    } else if (err instanceof Error) {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        success: false,
+        error: { ...err },
+      });
+    } else {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        success: false,
+        error: err,
+      });
+    }
+  }
+};
+
+export { createQuiz, getQuizzes, deleteQuiz, participateInQuiz, rateQuiz };
