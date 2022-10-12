@@ -23,7 +23,7 @@ describe('It should fail to create quizzes', () => {
     chai.expect(postResponse.body.error).to.equal('Unauthorized');
   });
 
-  it('Should not create a quiz where name is too short', async () => {
+  it('should not create a quiz where name is too short', async () => {
     const loginResponse = await agent
       .post('/api/v2/auth/login')
       .send(await getAdminUser());
@@ -59,7 +59,7 @@ describe('It should fail to create quizzes', () => {
     chai.expect(postResponse.body.error[0].path[0]).to.be.equal('name');
   });
 
-  it('Should not create a quiz where name is too long', async () => {
+  it('should not create a quiz where name is too long', async () => {
     const loginResponse = await agent
       .post('/api/v2/auth/login')
       .send(await getAdminUser());
@@ -95,7 +95,7 @@ describe('It should fail to create quizzes', () => {
     chai.expect(postResponse.body.error[0].path[0]).to.be.equal('name');
   });
 
-  it('Should not create a quiz where name is not alpha only', async () => {
+  it('should not create a quiz where name is not alpha only', async () => {
     const loginResponse = await agent
       .post('/api/v2/auth/login')
       .send(await getAdminUser());
@@ -131,7 +131,7 @@ describe('It should fail to create quizzes', () => {
     chai.expect(postResponse.body.error[0].path[0]).to.be.equal('name');
   });
 
-  it('Should not create a quiz where endDate is before startDate', async () => {
+  it('should not create a quiz where endDate is before startDate', async () => {
     const loginResponse = await agent
       .post('/api/v2/auth/login')
       .send(await getAdminUser());
@@ -165,7 +165,7 @@ describe('It should fail to create quizzes', () => {
     chai.expect(postResponse.body.error[0].path[0]).to.be.equal('endDate');
   });
 
-  it('Should not create a quiz where number of questions is not 10', async () => {
+  it('should not create a quiz where number of questions is not 10', async () => {
     const loginResponse = await agent
       .post('/api/v2/auth/login')
       .send(await getAdminUser());
@@ -467,7 +467,7 @@ describe('It should create quizzes', () => {
 });
 
 describe('It should get quizzes', () => {
-  it('Should get past quizzes', async () => {
+  it('should get past quizzes', async () => {
     const now = new Date();
     const loginResponse = await agent.post('/api/v2/auth/login').send(yoda);
     const getResponse = await agent
@@ -490,7 +490,7 @@ describe('It should get quizzes', () => {
       .to.equal(getResponse.body.data.length);
   });
 
-  it('Should get present quizzes', async () => {
+  it('should get present quizzes', async () => {
     const now = new Date();
     const loginResponse = await agent.post('/api/v2/auth/login').send(yoda);
     const getResponse = await agent
@@ -514,7 +514,7 @@ describe('It should get quizzes', () => {
       .to.equal(getResponse.body.data.length);
   });
 
-  it('Should get future quizzes', async () => {
+  it('should get future quizzes', async () => {
     const now = new Date();
     const loginResponse = await agent.post('/api/v2/auth/login').send(yoda);
     const getResponse = await agent
