@@ -1,4 +1,4 @@
-import { Difficulty, Prisma, Question } from '@prisma/client';
+import { Difficulty, Prisma, Question, Score } from '@prisma/client';
 import { Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { z, ZodError } from 'zod';
@@ -243,9 +243,8 @@ const getQuizzes = async (req: AuthorizedRequest, res: Response) => {
     const quizzes = await prisma?.quiz.findMany({
       where,
       include: {
-        questions: true,
-        winner: true,
         score: true,
+        winner: true,
       },
     });
 
@@ -255,8 +254,78 @@ const getQuizzes = async (req: AuthorizedRequest, res: Response) => {
         StatusCodes.INTERNAL_SERVER_ERROR
       );
 
+    // Iterate all fetched quizzes and update winner if endDate is in the past
+    quizzes.forEach(async (q) => {
+      // If the quiz is in the past and there is no winner and there are scores
+      if (
+        +q.endDate < +now &&
+        q.winner === null &&
+        q.userId === null &&
+        q.score.length > 0
+      ) {
+        // Reduce the scores to the highest score
+        const highestScore = q.score.reduce((prev, cur) => {
+          if (prev < cur.score) return cur.score;
+          else return prev;
+        }, 0);
+
+        // Potential winners are all scores where they match the highestScore
+        const potentialWinners = q.score.filter(
+          (s) => s.score === highestScore
+        );
+
+        // The score data of the winning entry
+        // TODO: add creationTime to score table instead of lowest id to find winner
+        const finalWinner = potentialWinners.reduce(
+          (prev: undefined | Score, cur: Score) => {
+            if (prev === undefined) return cur;
+            else if (cur.id < prev.id) return cur;
+            else return prev;
+          },
+          undefined
+        );
+
+        if (finalWinner) {
+          await prisma?.quiz.update({
+            where: {
+              id: finalWinner.quizId,
+            },
+            data: {
+              userId: finalWinner.userId,
+            },
+          });
+        }
+      }
+    });
+
+    const quizzesAfterUpdatingWinner = await prisma?.quiz.findMany({
+      where,
+      select: {
+        id: true,
+        name: true,
+        startDate: true,
+        endDate: true,
+        difficulty: true,
+        numberOfQuestions: true,
+        userId: true,
+        score: true,
+        winner: {
+          select: {
+            firstname: true,
+            lastname: true,
+          },
+        },
+      },
+    });
+
+    if (!quizzesAfterUpdatingWinner)
+      throw new RequestError(
+        'Could not get quizzes after updating winner.',
+        StatusCodes.INTERNAL_SERVER_ERROR
+      );
+
     // Calculate average scores
-    const quizzesWithAvgScore = quizzes.map((q) => {
+    const quizzesWithAvgScore = quizzesAfterUpdatingWinner.map((q) => {
       const averageScore =
         q.score.length > 0
           ? q.score.reduce((prev, cur) => prev + cur.score, 0) / q.score.length
@@ -266,8 +335,6 @@ const getQuizzes = async (req: AuthorizedRequest, res: Response) => {
         averageScore,
       };
     });
-
-    // TODO: Iterate quizzes and update winner if there is no winner and the endDate is lt now
 
     return res.status(StatusCodes.OK).json({
       success: true,
