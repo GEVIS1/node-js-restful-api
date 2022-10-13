@@ -1,10 +1,11 @@
+import { Prisma } from '@prisma/client';
 import { Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
 import { AuthorizedRequest } from '../../middleware/v2/authorization/authRoute';
 import { RequestError } from './misc/RequestError';
 
-export const getScoresSelect = {
+export const getScoresSelect: Prisma.ScoreSelect = {
   id: true,
   quizId: true,
   quiz: {
