@@ -20,7 +20,7 @@ import ratings from './routes/v2/ratings';
 
 import { checkEnv } from './utils/v1/env';
 import authRoute from './middleware/v2/authorization/authRoute';
-// import cacheRoute from './middleware/v1/caching/cacheRoute';
+import cacheRoute from './middleware/v2/caching/cacheRoute';
 
 /**
  * An object holding all the routes available in the API
@@ -67,7 +67,7 @@ app.use(cors());
 app.use(helmet());
 app.use(compression());
 app.use(rateLimiter);
-//app.use(cacheRoute);
+app.use(cacheRoute);
 
 /**
  * Iterate over the routes and add them to the express app
