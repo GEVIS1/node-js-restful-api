@@ -2,6 +2,7 @@ import { Quiz } from '@prisma/client';
 import chai from 'chai';
 
 import { yoda } from '../../../prisma/v2/seeder/users';
+import { getScoresSelect } from '../../../src/controllers/v2/scores';
 import { agent } from './00-setup.test';
 
 describe('It should get quiz scores', () => {
@@ -150,5 +151,24 @@ describe('It should get quiz scores', () => {
       .expect(winningQuiz)
       .to.have.property('winner')
       .which.deep.equals({ firstname, lastname });
+  });
+
+  it('should get all scores', async () => {
+    const loginResponse = await agent.post('/api/v2/auth/login').send(yoda);
+    const getResponse = await agent
+      .get(`/api/v2/scores`)
+      .set({ Authorization: `Bearer ${loginResponse.body.token}` });
+
+    const scores = await prisma?.score.findMany({
+      select: getScoresSelect,
+    });
+
+    if (!scores) throw Error('Could not get score data.');
+
+    chai.expect(getResponse.status).to.be.equal(200);
+    chai.expect(getResponse.body).to.be.an('object');
+    chai.expect(getResponse.body.success).to.be.equal(true);
+    chai.expect(getResponse.body.data).to.be.an('array');
+    chai.expect(getResponse.body.data).to.deep.equal(scores);
   });
 });
