@@ -51,7 +51,16 @@
     "schema": "prisma/v2/schema.prisma",
     "seed": "ts-node --experimental-specifier-resolution=node prisma/v2/seeder/run-seeding.ts"
   },
-  "c8": {},
+  "c8": {
+    "exclude": [
+      "**/v1/**",
+      "**/zod-schemas"
+    ],
+    "all": true,
+    "reporter": [
+      "html"
+    ]
+  },
   "dependencies": {
     "@prisma/client": "^4.2.1",
     "axios": "^0.27.2",
