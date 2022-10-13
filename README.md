@@ -41,6 +41,8 @@ This project uses mocha for tests.
 To quickly run all tests and output code coverage as HTML execute:
 > `npm test`
 
+Once tests are passed the code coverage HTML file can be found [here](./coverage/index.html)
+
 ## Entity Relationship Diagram
 ![](./prisma/v2/ERD.png)
 
