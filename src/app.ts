@@ -9,6 +9,7 @@ import helmet from 'helmet';
 import { StatusCodes } from 'http-status-codes';
 import listEndpoints from 'express-list-endpoints';
 import compression from 'compression';
+import rateLimit from 'express-rate-limit';
 
 import auth from './routes/v2/auth';
 import seed from './routes/v2/seed';
@@ -47,11 +48,25 @@ const CURRENT_VERSION = 'v2';
  */
 const { PORT } = process.env;
 
+/**
+ * Create the rate limiting request handler
+ */
+/** The maximum requests within the time window */
+export const maxRequests = process.env.NODE_ENV === 'testing' ? 100 : 25;
+/** Milliseconds in timeout window */
+const windowMs = 60000;
+
+const rateLimiter = rateLimit({
+  windowMs,
+  max: maxRequests,
+});
+
 app.use(urlencoded({ extended: false }));
 app.use(json());
 app.use(cors());
 app.use(helmet());
 app.use(compression());
+app.use(rateLimiter);
 //app.use(cacheRoute);
 
 /**
