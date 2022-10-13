@@ -19,6 +19,18 @@ To deploy your own version of the API simply run the following commands:
 heroku apps:create <appname>
 heroku git:remote -a <appname>
 git push heroku main
+
+## At this point you will have to manually insert all the variables in your env with heroku config:set NAME=value, or run the script below:
+#!/bin/bash
+while read -r p; do
+    if [[ ! $p =~ ^\#.* ]]; then
+        echo heroku config:set "$p" >> configure-heroku.sh
+    fi
+done <.env
+
+./configure-heroku.sh
+rm configure-heroku.sh
+echo "Deployed!"
 ```
 
 
