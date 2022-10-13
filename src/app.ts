@@ -13,6 +13,7 @@ import seed from './routes/v2/seed';
 import users from './routes/v2/users';
 import quizzes from './routes/v2/quizzes';
 import scores from './routes/v2/scores';
+import ratings from './routes/v2/ratings';
 
 import { checkEnv } from './utils/v1/env';
 import authRoute from './middleware/v2/authorization/authRoute';
@@ -21,7 +22,7 @@ import authRoute from './middleware/v2/authorization/authRoute';
 /**
  * An object holding all the routes available in the API
  */
-const routes = { seed, users, quizzes, scores };
+const routes = { seed, users, quizzes, scores, ratings };
 
 dotenv.config();
 
