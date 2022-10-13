@@ -8,7 +8,7 @@
   },
   "type": "module",
   "scripts": {
-    "start": "ts-node --experimental-specifier-resolution=node src/app.ts",
+    "start": "npx ts-node --experimental-specifier-resolution=node src/app.ts",
     "dev": "nodemon --experimental-specifier-resolution=node src/app.ts",
     "test": "npx cross-env NODE_ENV=testing c8 mocha --exit",
     "prisma:migrate": "npx prisma migrate dev",
