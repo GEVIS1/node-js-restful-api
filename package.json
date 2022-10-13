@@ -8,7 +8,8 @@
   },
   "type": "module",
   "scripts": {
-    "start": "nodemon --experimental-specifier-resolution=node src/app.ts",
+    "start": "ts-node --experimental-specifier-resolution=node src/app.ts",
+    "dev": "nodemon --experimental-specifier-resolution=node src/app.ts",
     "test": "npx cross-env NODE_ENV=testing c8 mocha --exit",
     "prisma:migrate": "npx prisma migrate dev",
     "prisma:studio": "npx prisma studio",
@@ -108,7 +109,7 @@
     "husky": "^8.0.1",
     "lint-staged": "^13.0.3",
     "mocha": "^10.0.0",
-    "nodemon": "^2.0.19",
+    "nodemon": "^2.0.20",
     "prettier": "^2.7.1",
     "prisma": "^4.2.1",
     "prisma-erd-generator": "^1.0.2",
