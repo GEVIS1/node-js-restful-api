@@ -12,7 +12,7 @@ Node version 17 or greater.
 2. `npm start`
 
 ## Deployment:
-The API is live [here](https://node-js-restful-api-gevis1.herokuapp.com/)
+The API is live [here](https://node-js-restful-api-gevis1.herokuapp.com/api/v2)
 
 To deploy your own version of the API simply run the following commands:
 ```shell
