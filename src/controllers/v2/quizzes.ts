@@ -615,7 +615,7 @@ const rateQuiz = async (req: AuthorizedRequest, res: Response) => {
       );
 
     // Check if user has participated in quiz
-    if (quiz.score.filter((s) => s.userId === user.id).length > 0)
+    if (!quiz.score.find((s) => s.userId === user.id))
       throw new RequestError(
         'Can only rate a that you have participated in.',
         StatusCodes.FORBIDDEN
@@ -623,41 +623,60 @@ const rateQuiz = async (req: AuthorizedRequest, res: Response) => {
 
     // Check if user has not already rated the quiz
     const ratings = quiz.rating.filter((r) => r.userId === user.id);
-    if (ratings.length > 0) {
+    if (ratings.length > 0)
       return res.status(StatusCodes.FORBIDDEN).json({
         success: false,
+        message: `User with id: ${user.id} has already rated quiz with id: ${quiz.id}.`,
         rating: ratings[0].rating.toFixed(2),
       });
-    }
 
-    // Add rating to rating table
+    const { rating: ratingString } = req.body;
 
-    // Calculate average rating
-    const rating = 10,
-      averageRating = 10;
-    // const quizAfterRatingAdded = await prisma?.quiz.update({
-    //   where: {
-    //     id: quiz.id,
-    //   },
-    //   data: {
-    //     rating: {
-    //       create: [
-    //         {
-    //           rating,
-    //           userId: user.id
-    //         }
-    //       ],
-    //     },
-    //   },
-    //   include: {
-    //     rating: true,
-    //   },
-    // });
-    // const averageRating =
-    // quizAfterRatingAdded.rating.length > 0
-    //   ? quizAfterRatingAdded.rating.reduce((prev, cur) => prev + cur.rating, 0) /
-    //     quizAfterRatingAdded.rating.length
-    //   : 0;
+    const rating = Number(ratingString);
+    if (Number.isNaN(rating))
+      throw new RequestError(
+        'Incorrect rating value.',
+        StatusCodes.BAD_REQUEST
+      );
+
+    if (rating < 0 || rating > 10)
+      throw new RequestError(
+        'Rating must be between 0 and 10.',
+        StatusCodes.BAD_REQUEST
+      );
+
+    const quizAfterRatingAdded = await prisma?.quiz.update({
+      where: {
+        id: quiz.id,
+      },
+      data: {
+        rating: {
+          create: [
+            {
+              userId: user.id,
+              rating: rating,
+            },
+          ],
+        },
+      },
+      include: {
+        rating: true,
+      },
+    });
+
+    if (!quizAfterRatingAdded)
+      throw new RequestError(
+        'Could not add rating to quiz.',
+        StatusCodes.INTERNAL_SERVER_ERROR
+      );
+
+    const averageRating =
+      quizAfterRatingAdded.rating.length > 0
+        ? quizAfterRatingAdded.rating.reduce(
+            (prev, cur) => prev + cur.rating,
+            0
+          ) / quizAfterRatingAdded.rating.length
+        : 0;
 
     return res.status(StatusCodes.CREATED).json({
       success: true,
