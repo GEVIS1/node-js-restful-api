@@ -9,7 +9,7 @@
   "type": "module",
   "scripts": {
     "start": "nodemon --experimental-specifier-resolution=node src/app.ts",
-    "test": "npx cross-env NODE_ENV=testing mocha --exit",
+    "test": "npx cross-env NODE_ENV=testing c8 mocha --exit",
     "prisma:migrate": "npx prisma migrate dev",
     "prisma:studio": "npx prisma studio",
     "prisma:generate": "npx prisma generate",
@@ -51,10 +51,12 @@
     "schema": "prisma/v2/schema.prisma",
     "seed": "ts-node --experimental-specifier-resolution=node prisma/v2/seeder/run-seeding.ts"
   },
+  "c8": {},
   "dependencies": {
     "@prisma/client": "^4.2.1",
     "axios": "^0.27.2",
     "bcryptjs": "^2.4.3",
+    "c8": "^7.12.0",
     "compression": "^1.7.4",
     "cors": "^2.8.5",
     "dotenv": "^16.0.1",
