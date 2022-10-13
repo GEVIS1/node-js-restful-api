@@ -8,7 +8,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import { StatusCodes } from 'http-status-codes';
 import listEndpoints from 'express-list-endpoints';
-// import compression from 'compression';
+import compression from 'compression';
 
 import auth from './routes/v2/auth';
 import seed from './routes/v2/seed';
@@ -51,7 +51,7 @@ app.use(urlencoded({ extended: false }));
 app.use(json());
 app.use(cors());
 app.use(helmet());
-//app.use(compression({ filter: compressionFilter }));
+app.use(compression());
 //app.use(cacheRoute);
 
 /**
