@@ -111,7 +111,8 @@ https://opentdb.com/api config.php. The difficulties will be easy, medium & hard
 multiple choice or true/false.
 Each user can: 
 - [x] get all quizzes, get all past quizzes, get all present quizzes, get all future quizzes
-- [ ] get a list of scores & get a list of ratings.
+- [ ] get a list of scores 
+- [ ] get a list of ratings.
 - [x] A super admin & an admin user can create a quiz.
 - [x] A super admin user can delete a quiz. 
 - [ ] A basic user can participate in a quiz & rate a quiz.
@@ -123,11 +124,11 @@ characters only.
   - [x] Number of questions has to be ten.
 For each error check, a status code & response message is returned, i.e., ”Name must have a minimum
 length of five characters”.
-- [ ] When performing a POST request for a basic user who is participating in a quiz, the following error
+- [x] When performing a POST request for a basic user who is participating in a quiz, the following error
 checking must be implemented:
-  - [ ] Can not participate if today’s date is before the start date & after the end date.
-  - [ ] Answered all ten questions.
-- [ ] When performing a POST request for a basic user who has participated in a quiz, return a status
+  - [x] Can not participate if today’s date is before the start date & after the end date.
+  - [x] Answered all ten questions.
+- [x] When performing a POST request for a basic user who has participated in a quiz, return a status
 code, a response message, i.e., ”<User’s username> has successfully participated in <Quiz’s name>”,
 user’s score & quiz’s average score.
 ### HTTP:
