@@ -111,7 +111,7 @@ https://opentdb.com/api config.php. The difficulties will be easy, medium & hard
 multiple choice or true/false.
 Each user can: 
 - [x] get all quizzes, get all past quizzes, get all present quizzes, get all future quizzes
-- [ ] get a list of scores 
+- [x] get a list of scores 
 - [ ] get a list of ratings.
 - [x] A super admin & an admin user can create a quiz.
 - [x] A super admin user can delete a quiz. 
