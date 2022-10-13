@@ -115,7 +115,7 @@ Each user can:
 - [x] get a list of ratings.
 - [x] A super admin & an admin user can create a quiz.
 - [x] A super admin user can delete a quiz. 
-- [ ] A basic user can participate in a quiz & rate a quiz.
+- [x] A basic user can participate in a quiz & rate a quiz.
 - [x] When performing a POST request for creating a quiz, the following error checking must be implemented:
   - [x] Name has a minimum length of five characters, a maximum length of 30 characters & alpha
 characters only.
@@ -132,9 +132,9 @@ checking must be implemented:
 code, a response message, i.e., ”<User’s username> has successfully participated in <Quiz’s name>”,
 user’s score & quiz’s average score.
 ### HTTP:
-- [ ] When performing a GET request for /api/v2/, return a response containing all available endpoints
+- [x] When performing a GET request for /api/v2/, return a response containing all available endpoints
 in the RESTful API.
-- [ ] Headers are secured using Helmet.
+- [x] Headers are secured using Helmet.
 - [ ] Implement CORS, compression, caching & rate limiting.
 ### Testing:
 - [x] API tests are written using Mocha & Chai.
