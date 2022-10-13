@@ -137,8 +137,8 @@ in the RESTful API.
 - [x] Headers are secured using Helmet.
 - [x] Implement CORS
 - [x] rate limiting.
-- [ ] compression, 
-- [ ] caching
+- [x] compression, 
+- [x] caching
 ### Testing:
 - [x] API tests are written using Mocha & Chai.
 - [x] At least 40 API/integration tests verifying the user & quiz functionality.
