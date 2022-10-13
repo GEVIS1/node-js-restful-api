@@ -135,7 +135,10 @@ user’s score & quiz’s average score.
 - [x] When performing a GET request for /api/v2/, return a response containing all available endpoints
 in the RESTful API.
 - [x] Headers are secured using Helmet.
-- [ ] Implement CORS, compression, caching & rate limiting.
+- [x] Implement CORS
+- [x] rate limiting.
+- [ ] compression, 
+- [ ] caching
 ### Testing:
 - [x] API tests are written using Mocha & Chai.
 - [x] At least 40 API/integration tests verifying the user & quiz functionality.
