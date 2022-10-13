@@ -2,6 +2,8 @@
 
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 
+This project uses the [Zod](https://zod.dev/) validation library.
+
 ## Requirements:
 Node version 17 or greater.
 
@@ -9,7 +11,16 @@ Node version 17 or greater.
 1. Copy `example.env` to `.env` and fill out the missing variables
 2. `npm start`
 
-This project uses the [Zod](https://zod.dev/) validation library.
+## Deployment:
+The API is live [here](https://node-js-restful-api-gevis1.herokuapp.com/)
+
+To deploy your own version of the API simply run the following commands:
+```shell
+heroku apps:create <appname>
+heroku git:remote -a <appname>
+git push heroku main
+```
+
 
 ## Manipulating Prisma
 To create a new migration use: 
@@ -17,6 +28,18 @@ To create a new migration use:
 
 To see the current data in the database:
 > `npm run prisma:studio`
+
+## Linting & Formatting
+Linting and formatting is done automatically on commit,
+but it can also be done manually with the following commands:
+*  npm run prettier:check
+*  npm run prettier:fix
+*  npm run lint:fix
+
+## Tests
+This project uses mocha for tests.
+To quickly run all tests and output code coverage as HTML execute:
+> `npm test`
 
 ## Entity Relationship Diagram
 ![](./prisma/v2/ERD.png)
