@@ -3,9 +3,11 @@
  */
 
 import dotenv from 'dotenv';
-import express, { urlencoded, json /*Request, Response*/ } from 'express';
+import express, { urlencoded, json, Request, Response } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import { StatusCodes } from 'http-status-codes';
+import listEndpoints from 'express-list-endpoints';
 // import compression from 'compression';
 
 import auth from './routes/v2/auth';
@@ -22,7 +24,7 @@ import authRoute from './middleware/v2/authorization/authRoute';
 /**
  * An object holding all the routes available in the API
  */
-const routes = { seed, users, quizzes, scores, ratings };
+export const routes = { seed, users, quizzes, scores, ratings };
 
 dotenv.config();
 
@@ -63,6 +65,21 @@ for (const [routeName, route] of Object.entries(routes)) {
  * Separately use for the auth router since it does not use the authRoute middleware
  */
 app.use(`/${BASE_URL}/${CURRENT_VERSION}/auth`, auth);
+
+/**
+ * Setup endpoint exposing the possible routes in the API
+ * Map out only the path and methods, since we're not interested in the middlewares property.
+ */
+app
+  .route(`/${BASE_URL}/${CURRENT_VERSION}/`)
+  .get((req: Request, res: Response) => {
+    return res.status(StatusCodes.OK).json(
+      listEndpoints(app).map((path) => {
+        const { path: url, methods } = path;
+        return { url, methods };
+      })
+    );
+  });
 
 app.listen(PORT, () =>
   // eslint-disable-next-line no-console
