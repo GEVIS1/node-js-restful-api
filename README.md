@@ -112,7 +112,7 @@ multiple choice or true/false.
 Each user can: 
 - [x] get all quizzes, get all past quizzes, get all present quizzes, get all future quizzes
 - [x] get a list of scores 
-- [ ] get a list of ratings.
+- [x] get a list of ratings.
 - [x] A super admin & an admin user can create a quiz.
 - [x] A super admin user can delete a quiz. 
 - [ ] A basic user can participate in a quiz & rate a quiz.
