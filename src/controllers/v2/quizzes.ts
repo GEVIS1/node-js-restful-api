@@ -315,6 +315,7 @@ const getQuizzes = async (req: AuthorizedRequest, res: Response) => {
             lastname: true,
           },
         },
+        rating: true,
       },
     });
 
@@ -336,9 +337,22 @@ const getQuizzes = async (req: AuthorizedRequest, res: Response) => {
       };
     });
 
+    // Calculate average ratings
+    const quizzesWithAvgScoreAndRating = quizzesWithAvgScore.map((q) => {
+      const averageRating =
+        q.rating.length > 0
+          ? q.rating.reduce((prev, cur) => prev + cur.rating, 0) /
+            q.rating.length
+          : 0;
+      return {
+        ...q,
+        averageRating,
+      };
+    });
+
     return res.status(StatusCodes.OK).json({
       success: true,
-      data: quizzesWithAvgScore,
+      data: quizzesWithAvgScoreAndRating,
     });
   } catch (err) {
     if (err instanceof ZodError) {
