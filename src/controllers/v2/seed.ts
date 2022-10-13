@@ -1,3 +1,8 @@
+/**
+ * The seed controller holds the createSeeder function which returns a seeding function
+ * for either ADMIN_USERs or SUPER_ADMIN_USERS depending on its given gistURL and role arguments.
+ */
+
 import axios from 'axios';
 import bcryptjs from 'bcryptjs';
 import { Optional } from 'utility-types';
@@ -15,6 +20,12 @@ import { UserCreateOneSchema } from '../../../prisma/v2/zod-schemas/schemas/crea
 import { AuthorizedRequest } from '../../middleware/v2/authorization/authRoute';
 import { unauthorizedResponse, wordToAvatar } from './auth';
 
+/**
+ * Function that creates a seeding function based on input.
+ * @param gistURL URL to the github gist holding the user JSON data.
+ * @param role The type of users to seed.
+ * @returns A seeder function matching the input arguments.
+ */
 const createSeeder =
   (gistURL: string, role: Role) =>
   async (req: AuthorizedRequest, res: Response) => {

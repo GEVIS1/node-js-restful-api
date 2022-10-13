@@ -1,3 +1,10 @@
+/**
+ * The quizzes controller file contains the functionality to create a quiz,
+ * get quizzes, participate in a quiz, rate a quiz and delete a quiz.
+ * Rating a quiz is in this controller because a rating is functionally dependent on a quiz,
+ * so it makes sense to get the quiz in here and then add its rating.
+ */
+
 import { Difficulty, Prisma, Question, Score } from '@prisma/client';
 import { Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
@@ -39,6 +46,13 @@ export const getNewDateWithAddedDays = (oldDate: Date, days: number) => {
   return newDate;
 };
 
+/**
+ * Controller for creating a quiz.
+ * @param req An Express Request extended with the authroute middleware.
+ * @param res An Express Response.
+ * @returns A status message containing the created quiz, or an error message.
+ * @extra This function will pick ten questions at random if questions are not supplied. This was initially a debugging feature but I found it useful to be able to generate random quizzes, so I left it in.
+ */
 const createQuiz = async (req: CreateQuizRequest, res: Response) => {
   try {
     const { role } = req.user as JWT;
@@ -369,6 +383,12 @@ const getQuizzes = async (req: AuthorizedRequest, res: Response) => {
   }
 };
 
+/**
+ * Controller for deleting a quiz.
+ * @param req An Express Request extended by the authroute middleware.
+ * @param res An Express Response.
+ * @returns The status of the delete operation.
+ */
 const deleteQuiz = async (req: AuthorizedRequest, res: Response) => {
   try {
     const { role } = req.user as JWT;
@@ -581,6 +601,12 @@ const participateInQuiz = async (req: AuthorizedRequest, res: Response) => {
   }
 };
 
+/**
+ * Controller function for rating a quiz.
+ * @param req An Express Request extended by the authroute middleware.
+ * @param res An Express Response.
+ * @returns The status result of rating the quiz.
+ */
 const rateQuiz = async (req: AuthorizedRequest, res: Response) => {
   try {
     const { id: quizIdString } = req.params;

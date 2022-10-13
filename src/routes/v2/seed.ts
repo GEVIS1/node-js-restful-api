@@ -1,3 +1,8 @@
+/**
+ * The seed router contains the routes for seeding ADMIN_USERS, SUPER_ADMIN_USERS and categories.
+ * The categories are gotten from the opentdb API.
+ */
+
 import { Router } from 'express';
 const router = Router();
 

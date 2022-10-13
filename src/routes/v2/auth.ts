@@ -1,3 +1,6 @@
+/**
+ * The auth router contains the routes for registering, logging in and logging out a user.
+ */
 import { Router } from 'express';
 const router = Router();
 

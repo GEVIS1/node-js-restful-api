@@ -1,3 +1,9 @@
+/**
+ * The categories.ts file holds the functions for the categories Controller.
+ * Currently it is only possible to seed categories from the open trivia database.
+ * So the only controller in this file is a seeding function.
+ */
+
 import { Response } from 'express';
 import { z, ZodError } from 'zod';
 import { StatusCodes } from 'http-status-codes';

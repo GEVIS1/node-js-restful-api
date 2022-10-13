@@ -1,3 +1,7 @@
+/**
+ * The quizzes router contains the routes for getting quizzes, creating a quiz, deleting a quiz
+ * participating in a quiz and rating a quiz.
+ */
 import { Router } from 'express';
 const router = Router();
 

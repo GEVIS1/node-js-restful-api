@@ -1,3 +1,6 @@
+/**
+ * The users controller file contains the functions for reading, creating and manipulating users.
+ */
 import { Prisma, Role, User } from '@prisma/client';
 import { Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
@@ -47,6 +50,12 @@ const isAuthorized = async (
   }
 };
 
+/**
+ * Controller function for getting all users
+ * @param req Express Request with JWT
+ * @param res Express Response
+ * @returns All user data or error.
+ */
 const getUsers = async (req: AuthorizedRequest, res: Response) => {
   try {
     if (req.user === undefined) {
@@ -125,6 +134,12 @@ const getUsers = async (req: AuthorizedRequest, res: Response) => {
   }
 };
 
+/**
+ * Controller function for getting a specific user
+ * @param req Express Request with JWT
+ * @param res Express Response
+ * @returns User data or error.
+ */
 const getUser = async (req: AuthorizedRequest, res: Response) => {
   try {
     if (req.user === undefined) {
@@ -211,6 +226,12 @@ const getUser = async (req: AuthorizedRequest, res: Response) => {
   }
 };
 
+/**
+ * Controller function for updating a user
+ * @param req Express Request with JWT
+ * @param res Express Response
+ * @returns Updated user data or error.
+ */
 const updateUser = async (req: AuthorizedRequest, res: Response) => {
   try {
     if (req.user === undefined) {
@@ -351,6 +372,12 @@ const updateUser = async (req: AuthorizedRequest, res: Response) => {
   }
 };
 
+/**
+ * Controller function for deleting a user
+ * @param req Express Request with JWT
+ * @param res Express Response
+ * @returns Result of deletion or error.
+ */
 const deleteUser = async (req: AuthorizedRequest, res: Response) => {
   try {
     if (req.user === undefined) {

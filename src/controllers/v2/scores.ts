@@ -1,3 +1,9 @@
+/**
+ * The scores controller holds the getScores function which simply returns all the scores
+ * in the database currently. To get average scores for a quiz you will need
+ * to use the getQuizzes function in the quizzes controller.
+ */
+
 import { Prisma } from '@prisma/client';
 import { Response } from 'express';
 import { StatusCodes } from 'http-status-codes';

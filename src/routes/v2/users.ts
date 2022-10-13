@@ -1,3 +1,8 @@
+/**
+ * The users router contains the routes for getting all the users, getting a specific user,
+ * updating a user and deleting a user.
+ */
+
 import { Router } from 'express';
 const router = Router();
 

@@ -1,3 +1,9 @@
+/**
+ * The ratings controller holds the getRatings function which returns all the existing ratings
+ * in the database. To get average ratings for a quiz you will need to go to getQuizzes in the quizzes controller,
+ * since the calculation is done there.
+ */
+
 import { Prisma } from '@prisma/client';
 import { Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
