@@ -977,7 +977,7 @@ describe('It should delete users', () => {
       .to.equal(`${deleteUser.username} has been successfully deleted`);
   });
 
-  it('should delete an admin user', async () => {
+  it('should delete a basic user', async () => {
     const loginResponse = await agent.post('/api/v2/auth/login').send(yoda);
 
     const basicUsers = await prisma?.user.findMany({
@@ -986,7 +986,7 @@ describe('It should delete users', () => {
       },
     });
 
-    if (!basicUsers) throw Error('Could not find admin users');
+    if (!basicUsers) throw Error('Could not find basic users');
 
     const deleteUser = basicUsers[Math.floor(basicUsers.length / 2)];
 
