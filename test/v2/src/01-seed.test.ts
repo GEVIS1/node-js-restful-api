@@ -144,7 +144,7 @@ describe('It should seed categories', () => {
       .expect(seedResponse.body.message)
       .to.equal(`Successfully inserted ${categoryCount} categories.`);
     chai.expect(seedResponse.body.data).to.be.of.length(categoryCount);
-  }).timeout(20000);
+  });
 
   it('should fail if categories are already seeded', async () => {
     const { username, password } = yoda;
@@ -190,7 +190,7 @@ describe('It should seed categories', () => {
       .expect(seedResponse.body.message)
       .to.equal(`Successfully inserted ${categoryCount} categories.`);
     chai.expect(seedResponse.body.data).to.be.of.length(categoryCount);
-  }).timeout(20000);
+  });
 });
 
 describe('It should seed questions', () => {

@@ -1,12 +1,10 @@
 {
-  "extension": [
-    "ts"
-  ],
+  "extension": ["ts"],
   "spec": "test/v2/src/*.test.ts",
   "require": "ts-node/register",
   "node-option": [
     "experimental-specifier-resolution=node",
     "loader=ts-node/esm"
   ],
-  "timeout": "10s"
+  "timeout": "20s"
 }
