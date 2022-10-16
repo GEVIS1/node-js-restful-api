@@ -44,9 +44,9 @@ To see the current data in the database:
 ## Linting & Formatting
 Linting and formatting is done automatically on commit,
 but it can also be done manually with the following commands:
-*  npm run prettier:check
-*  npm run prettier:fix
-*  npm run lint:fix
+*  `npm run prettier:check`
+*  `npm run prettier:fix`
+*  `npm run lint:fix`
 
 ## Tests
 This project uses mocha for tests.
