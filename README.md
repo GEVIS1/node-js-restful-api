@@ -11,29 +11,6 @@ Node version 17 or greater.
 1. Copy `example.env` to `.env` and fill out the missing variables
 2. `npm start`
 
-## Deployment:
-The API is live [here](https://node-js-restful-api-gevis1.herokuapp.com/api/v2)
-
-To deploy your own version of the API simply run the following commands:
-```shell
-heroku apps:create <appname>
-heroku git:remote -a <appname>
-git push heroku main
-
-## At this point you will have to manually insert all the variables in your env with heroku config:set NAME=value, or run the script below:
-#!/bin/bash
-while read -r p; do
-    if [[ ! $p =~ ^\#.* ]]; then
-        echo heroku config:set "$p" >> configure-heroku.sh
-    fi
-done <.env
-
-./configure-heroku.sh
-rm configure-heroku.sh
-echo "Deployed!"
-```
-
-
 ## Manipulating Prisma
 To create a new migration use: 
 > `npm run prisma:migrate -- --name <migration_name>`
